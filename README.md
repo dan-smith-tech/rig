@@ -444,7 +444,7 @@ Enter and confirm the root password.
 Create productivity user:
 
 ```bash
-useradd -m -G wheel p
+useradd -m -G wheel -d /mnt/p p 
 ```
 
 Set productivity user password:
@@ -458,7 +458,7 @@ Enter and confirm the password.
 Create entertainment user:
 
 ```bash
-useradd -m -G wheel e
+useradd -m -G wheel -d /mnt/e e
 ```
 
 Set entertainment user password:
