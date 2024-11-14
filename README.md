@@ -294,13 +294,13 @@ swapon /dev/vg_system/lv_swap
 Create the logical volume for the productivity user partition:
 
 ```bash
-lvcreate -L 235GB vg_system -n lv_productivity
+lvcreate -L 235GB vg_system -n lv_p
 ```
 
 Create the logical volume for the entertainment user partition:
 
 ```bash
-lvcreate -l 100%FREE vg_system -n lv_entertainment
+lvcreate -l 100%FREE vg_system -n lv_e
 ```
 
 > **Note**: We can run `vgdisplay` to see the volume group information, and `lvdisplay` to see the logical volume information.
@@ -344,13 +344,13 @@ mkfs.ext4 /dev/vg_system/lv_root
 Format the productivity user partition as ext4:
 
 ```bash
-mkfs.ext4 /dev/vg_system/lv_productivity
+mkfs.ext4 /dev/vg_system/lv_p
 ```
 
 Format the entertainment user partition as ext4:
 
 ```bash
-mkfs.ext4 /dev/vg_system/lv_entertainment
+mkfs.ext4 /dev/vg_system/lv_e
 ```
 
 Format the games partition as ext4:
@@ -390,7 +390,7 @@ mkdir /mnt/p
 Mount the productivity user volume:
 
 ```bash
-mount /dev/vg_system/lv_productivity /mnt/p
+mount /dev/vg_system/lv_p /mnt/p
 ```
 
 Create the entertainment user directory:
@@ -402,7 +402,7 @@ mkdir /mnt/e
 Mount the entertainment user volume:
 
 ```bash
-mount /dev/vg_system/lv_entertainment /mnt/e
+mount /dev/vg_system/lv_e /mnt/e
 ```
 
 Create the games directory:
