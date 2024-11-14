@@ -41,13 +41,7 @@ When the Arch Linux ISO boots, you will be presented with a GRUB2 menu. Select t
 
 > **Note**: If Arch Linux does not boot into the live environment because it cannot find a device or path, then you may need to enter GRUB2 mode in Ventoy by pressing `ctrl + r` before booting into the Arch Linux ISO.
 
-Ensure the system is working by setting your font:
-
-```bash
-setfont ter-132b
-```
-
-Set the system timezone:
+Ensure the system is working by setting the system timezone:
 
 ```bash
 timedatectl set-timezone <Region>/<City>
