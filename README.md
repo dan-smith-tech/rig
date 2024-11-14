@@ -308,13 +308,13 @@ lvcreate -l 100%FREE vg_system -n lv_e
 Create the games volume group:
 
 ```bash
-vgcreate vg_games /dev/sda4
+vgcreate vg_bulk /dev/sda4
 ```
 
 Create the logical volume for the games partition:
 
 ```bash
-lvcreate -l 100%FREE vg_games -n lv_g
+lvcreate -l 100%FREE vg_bulk -n lv_b
 ```
 
 Load the necessary kernel modules:
@@ -356,7 +356,7 @@ mkfs.ext4 /dev/vg_system/lv_e
 Format the games partition as ext4:
 
 ```bash
-mkfs.ext4 /dev/vg_games/lv_g
+mkfs.ext4 /dev/vg_bulk/lv_b
 ```
 
 ## Partition mounting
@@ -414,7 +414,7 @@ mkdir /mnt/g
 Mount the games partition:
 
 ```bash
-mount /dev/vg_games/lv_g /mnt/g
+mount /dev/vg_bulk/lv_b /mnt/g
 ```
 
 ## Configure base system
