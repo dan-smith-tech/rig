@@ -472,12 +472,31 @@ Enter and confirm the password.
 Install system packages:
 
 ```bash
-pacman -S alacritty alsa-tools alsa-utils base base-devel clang docker docker-compose efibootmgr fd feh firefox fzf git github-cli grub lib32-nvidia-utils linux linux-firmware linux-headers lvm2 neovim networkmanager nodejs npm nvidia nvidia-utils pipewire pipewire-alsa pipewire-audio pipewire-pulse ripgrep steam stow sudo sysstat ttf-jetbrains-mono-nerd ttf-liberation ttf-nerd-fonts-symbols-mono unzip wget xfwm4 xorg xorg-server xorg-xinit zoxide zsh
+pacman -S alacritty alsa-tools alsa-utils base base-devel clang docker docker-compose efibootmgr fd feh firefox fzf git github-cli grub linux linux-firmware linux-headers lvm2 neovim networkmanager nodejs npm nvidia nvidia-utils pipewire pipewire-alsa pipewire-audio pipewire-pulse ripgrep stow sudo sysstat ttf-jetbrains-mono-nerd ttf-liberation ttf-nerd-fonts-symbols-mono unzip wget xfwm4 xorg xorg-server xorg-xinit zoxide zsh
 ```
 
 > **Note**: If any packages ask which version to install, select the default version by pressing `Enter`.
 
 > **Note**: If using Intel or AMD graphics, instead of installing the Nvidia packages, install `mesa intel-media-driver` instead.
+
+Uncomment the `multilib` section in `/etc/pacman.conf` to enable 32-bit packages to be installed:
+
+```bash
+[multilib]
+Include = /etc/pacman.d/mirrorlist
+```
+
+Upgrade the system:
+
+```bash
+pacman -Syu
+```
+
+Install 32-bit packages:
+
+```bash
+pacman -S lib32-nvidia-utils steam
+```
 
 Grant the user sudo privileges:
 
@@ -783,19 +802,6 @@ Go to 'Keyboard Settings' -> 'Application Shortcuts' and set the following comma
   ```bash
   chmod +x Scripts/logout.sh
   ```
-
-Uncomment the `multilib` section in `/etc/pacman.conf`:
-
-```bash
-[multilib]
-Include = /etc/pacman.d/mirrorlist
-```
-
-Upgrade the system:
-
-```bash
-pacman -Syu
-```
 
 Give permissions to external mount points if games are stored on them:
 
