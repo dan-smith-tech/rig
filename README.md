@@ -402,13 +402,13 @@ mount /dev/vg_system/lv_e /mnt/e
 Create the games directory:
 
 ```bash
-mkdir /mnt/g
+mkdir /mnt/b
 ```
 
 Mount the games partition:
 
 ```bash
-mount /dev/vg_bulk/lv_b /mnt/g
+mount /dev/vg_bulk/lv_b /mnt/b
 ```
 
 ## Configure base system
