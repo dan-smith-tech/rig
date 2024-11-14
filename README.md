@@ -222,19 +222,19 @@ w
 Format the boot (first) partition as FAT32:
 
 ```bash
-mkfs.fat -F32 /dev/<device>p1
+mkfs.fat -F32 /dev/<device>1
 ```
 
 Format the EFI (second) partition as FAT32:
 
 ```bash
-mkfs.ext4 /dev/<device>p2
+mkfs.ext4 /dev/<device>2
 ```
 
 Encrypt the home LVM (third) partition, as it will contain the root and swap volumes (i.e., the actual stuff we store and use on our computer):
 
 ```bash
-cryptsetup luksFormat /dev/<device>p3
+cryptsetup luksFormat /dev/<device>3
 ```
 
 Type `YES` to confirm the encryption.
@@ -244,7 +244,7 @@ Enter and verify the passphrase for the encryption (i.e., the password you will 
 Open the encrypted partition:
 
 ```bash
-cryptsetup open --type luks /dev/<device>p3 lvm
+cryptsetup open --type luks /dev/<device>3 lvm
 ```
 
 > **Note**: The `lvm` name is arbitrary and can be anything you want - it is how we will refer to the partition in the next steps.
@@ -370,7 +370,7 @@ mkdir /mnt/boot
 Mount the EFI (second) partition:
 
 ```bash
-mount /dev/<device>p2 /mnt/boot
+mount /dev/<device>2 /mnt/boot
 ```
 
 > **Note**: We are not mounting the boot (first) partition...
@@ -539,10 +539,10 @@ Add the encrypt device to the GRUB configuration:
 nvim /etc/default/grub
 ```
 
-Add `cryptdevice=/dev/<device>p3:vg_system` to the `GRUB_CMDLINE_LINUX_DEFAULT` line:
+Add `cryptdevice=/dev/<device>3:vg_system` to the `GRUB_CMDLINE_LINUX_DEFAULT` line:
 
 ```bash
-GRUB_CMDLINE_LINUX_DEFAULT="loglevel=3 quiet cryptdevice=/dev/<device>p3:vg_system"
+GRUB_CMDLINE_LINUX_DEFAULT="loglevel=3 quiet cryptdevice=/dev/<device>3:vg_system"
 ```
 
 Setup EFI partition:
@@ -554,7 +554,7 @@ mkdir /boot/EFI
 Mount the EFI partition:
 
 ```bash
-mount /dev/<device>p1 /boot/EFI
+mount /dev/<device>1 /boot/EFI
 ```
 
 Install bootloader:
