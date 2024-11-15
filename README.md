@@ -808,3 +808,9 @@ Give permissions to external mount points if games are stored on them:
 ```bash
 sudo chown -R <user> /home/<user>/games
 ```
+
+## Miscellaneous configuration
+
+## Change Firefox UI scaling
+
+Inside `about:config` adjust `layout.css.devPixelsPerPx`.
