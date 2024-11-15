@@ -504,7 +504,7 @@ Grant the user sudo privileges:
 sudo EDITOR=nvim visudo
 ```
 
-Uncomment the line:
+Uncomment the line (or the `NOPASSWD` variant where applicable):
 
 ```bash
 %wheel ALL=(ALL:ALL) ALL
@@ -651,6 +651,12 @@ chsh -s </path/to/zhs>
 ```
 
 > **Note:** The configuration for ZHS can be found in the `~/.zshrc` and `~/.zprofile` files (stored in the `stow` subdirectory of this repo).
+
+Enable auto-login by adding the following to the top of `/etc/pam.d/login`:
+
+```bash
+auth sufficient pam_permit.so
+```
 
 For each of the users, clone this repo into the root directory:
 
