@@ -472,7 +472,7 @@ Enter and confirm the password.
 Install system packages:
 
 ```bash
-pacman -S alacritty alsa-tools alsa-utils base base-devel clang docker docker-compose efibootmgr fd feh firefox fzf git github-cli grub linux linux-firmware linux-headers lvm2 neovim networkmanager nodejs npm nvidia nvidia-utils pipewire pipewire-alsa pipewire-audio pipewire-pulse ripgrep stow sudo sysstat ttf-jetbrains-mono-nerd ttf-liberation ttf-nerd-fonts-symbols-mono unzip wget xfwm4 xorg xorg-server xorg-xinit zoxide zsh
+pacman -S alacritty alsa-tools alsa-utils base base-devel clang docker docker-compose efibootmgr fd feh firefox fzf git github-cli grub linux linux-firmware linux-headers lvm2 neovim networkmanager nodejs npm nvidia nvidia-utils pipewire pipewire-alsa pipewire-audio pipewire-pulse ripgrep stow sudo sysstat ttf-jetbrains-mono-nerd ttf-liberation ttf-nerd-fonts-symbols-mono unzip wget xclip xfwm4 xorg xorg-server xorg-xinit zoxide zsh
 ```
 
 > **Note**: If any packages ask which version to install, select the default version by pressing `Enter`.
@@ -811,6 +811,30 @@ sudo chown -R <user> /home/<user>/games
 
 ## Miscellaneous configuration
 
-## Change Firefox UI scaling
+### Locally adjusting for display sizes
 
-Inside `about:config` adjust `layout.css.devPixelsPerPx`.
+Depending on what monitors are used, some local adjustments (that do not want to be synced here) may need to be made.
+
+_Note: The following are examples of config alterations I made for a large TV being used as a monitor._
+
+#### DWM
+
+Inside `./p/dwm/config.def.h`, adjust the following sizing constant values:
+
+- `22` replaced with `42`
+
+- `12` replaced with `35`
+
+- `3` replaced with `6`
+
+#### Alacritty
+
+Inside `./p/dwm/config.def.h`, adjust the Alacritty launch command to pass in scaling options:
+
+```c
+static const char *openTerminal[]  = { "alacritty", "--option", "font.size=6", "--option", "window.padding.x=6", "--option", "window.padding.y=6", NULL };
+```
+
+#### Firefox
+
+Inside `about:config`, set `layout.css.devPixelsPerPx` to `3`.
