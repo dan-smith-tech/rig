@@ -790,11 +790,17 @@ Go to 'Keyboard Settings' -> 'Application Shortcuts' and set the following comma
 
 - `xfce4-appfinder` : `Super-F`
 
+- `alacritty` : `Super-Return`
+
+- `firefox` : `Super-Space`
+
+- `xkill` : `Super-C`
+
 - `poweroff` : `Shift-Super-Q`
 
 - `reboot` : `Shift-Super-R`
 
-- `/mnt/e/Scripts/logout.sh` : `Super-Q`
+- `/mnt/e/scripts/logout.sh` : `Super-Q`
 
   In order to get this command to work, create the `/mnt/e/Scripts/logout.sh` file with the following content:
 
