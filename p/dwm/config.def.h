@@ -59,7 +59,6 @@ static const Layout layouts[] = {
 /* function commands */
 static const char *volumeUp[]   = { "amixer", "sset", "Master", "5%+", NULL };
 static const char *volumeDown[]   = { "amixer", "sset", "Master", "5%-", NULL };
-static const char *volumeStatus[]   = { "pkill", "-RTMIN+1", "dwmblocks", NULL };
 
 /* program commands */
 static const char *openTerminal[]  = { "alacritty", NULL };
@@ -75,9 +74,7 @@ static const Key keys[] = {
 
 	/* functions */
    { 0,				XF86XK_AudioRaiseVolume,	spawn,          {.v = volumeUp } },
-   { 0,				XF86XK_AudioRaiseVolume,	spawn,         	{.v = volumeStatus } },
    { 0,				XF86XK_AudioLowerVolume,	spawn,          {.v = volumeDown } },
-   { 0,				XF86XK_AudioLowerVolume,	spawn,         	{.v = volumeStatus } },
 
 	/* programs */
 	{ MODKEY,			XK_Return,			spawn,          {.v = openTerminal } },
