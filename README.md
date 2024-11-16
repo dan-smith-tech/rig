@@ -796,6 +796,8 @@ Go to 'Keyboard Settings' -> 'Application Shortcuts' and set the following comma
 
 - `firefox` : `Super-Space`
 
+- `steam` : `Super-S`
+
 - `xkill` : `Super-C`
 
 - `poweroff` : `Shift-Super-Q`
