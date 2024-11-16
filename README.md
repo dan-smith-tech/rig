@@ -655,7 +655,7 @@ chsh -l
 Set ZHS as the default shell:
 
 ```bash
-chsh -s </path/to/zhs>
+chsh -s /usr/bin/zsh
 ```
 
 > **Note:** The configuration for ZHS can be found in the `~/.zshrc` and `~/.zprofile` files (stored in the `stow` subdirectory of this repo).
