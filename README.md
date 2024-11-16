@@ -738,32 +738,6 @@ Copy the Xorg startup configuration from the `p` subdirectory of this repo:
 sudo cp ~/rig/p/.xinitrc ~/.xinitrc
 ```
 
-### _Laptop-Specific_ Configuration
-
-In order to auto-login as a specific user, open the `getty tty1` service config file:
-
-```bash
-sudo systemctl edit getty@tty1
-```
-
-Between the comments that don't get overriden (towards the top of the file)m add:
-
-```bash
-[Service]
-ExecStart=
-ExecStart=-/usr/bin/agetty --autologin your_username --noclear %I $TERM
-```
-
-Enabled the modified service:
-
-```bash
-sudo systemctl daemon-reload
-```
-
-```bash
-sudo systemctl enable getty@tty1
-```
-
 ## Entertainment (e) user configuration
 
 Download Fluent XFCE theme:
@@ -860,3 +834,29 @@ Inside `about:config`, set `layout.css.devPixelsPerPx` to `3`.
 #### XFCE
 
 Inside the 'Display' application, set the scale to `0.4`.
+
+### Laptop-specific configuration
+
+In order to auto-login as a specific user, open the `getty tty1` service config file:
+
+```bash
+sudo systemctl edit getty@tty1
+```
+
+Between the comments that don't get overriden (towards the top of the file)m add:
+
+```bash
+[Service]
+ExecStart=
+ExecStart=-/usr/bin/agetty --autologin your_username --noclear %I $TERM
+```
+
+Enabled the modified service:
+
+```bash
+sudo systemctl daemon-reload
+```
+
+```bash
+sudo systemctl enable getty@tty1
+```
