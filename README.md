@@ -638,6 +638,14 @@ hostnamectl hostname <host>
 
 ## Global user configuration
 
+Enable auto-login by adding the following to the top of `/etc/pam.d/login`:
+
+```bash
+auth sufficient pam_permit.so
+```
+
+**Perform the following for each user individually...**
+
 List installed shells:
 
 ```bash
@@ -652,13 +660,7 @@ chsh -s </path/to/zhs>
 
 > **Note:** The configuration for ZHS can be found in the `~/.zshrc` and `~/.zprofile` files (stored in the `stow` subdirectory of this repo).
 
-Enable auto-login by adding the following to the top of `/etc/pam.d/login`:
-
-```bash
-auth sufficient pam_permit.so
-```
-
-For each of the users, clone this repo into the root directory:
+Clone this repo into the root directory:
 
 ```bash
 git clone https://github.com/dan-smith-tech/rig.git
