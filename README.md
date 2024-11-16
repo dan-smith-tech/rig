@@ -812,7 +812,7 @@ Go to 'Keyboard Settings' -> 'Application Shortcuts' and set the following comma
   It must then be made executable:
 
   ```bash
-  chmod +x Scripts/logout.sh
+  chmod +x scripts/logout.sh
   ```
 
 Give permissions to external mount points if games are stored on them:
@@ -839,14 +839,14 @@ Inside `./p/dwm/config.def.h`, adjust the following sizing constant values:
 
 - `3` replaced with `6`
 
-#### Alacritty
-
 Inside `./p/dwm/config.def.h`, adjust the Alacritty launch command to pass in scaling options:
 
 ```c
 static const char *openTerminal[]  = { "alacritty", "--option", "font.size=6", "--option", "window.padding.x=6", "--option", "window.padding.y=6", NULL };
 ```
 
-#### Firefox
-
 Inside `about:config`, set `layout.css.devPixelsPerPx` to `3`.
+
+#### XFCE
+
+Inside the 'Display' application, set the scale to `0.4`.
