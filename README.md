@@ -784,7 +784,7 @@ Also inside 'Window Manager', ensure workspaces are not wrapped when windows are
 
 Inside the 'Desktop' application, set the wallpaper to be the one stored in `~/.config/wallpaper.png`.
 
-Inside the 'Session and Startup' application, under 'Current Session' set the Restart Style of `xfce4-panel` to `Never` (do this for any programs that are running by default and that you don't want - e.g., Firefox will run on start if it was open when the system was powered off).
+Run `killall xfce4-panel` and then inside the 'Session and Startup' application, under 'Current Session' set the Restart Style of `xfce4-panel` to `Never` (do this for any programs that are running by default and shouldn't on startup). Then save the current session.
 
 Go to 'Keyboard Settings' -> 'Application Shortcuts' and set the following commands:
 
