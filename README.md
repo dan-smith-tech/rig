@@ -800,6 +800,10 @@ Go to 'Keyboard Settings' -> 'Application Shortcuts' and set the following comma
 
 - `xkill` : `Super-C`
 
+- `amixer sset Master 5%+` : `AudioRaiseVolume`
+
+- `amixer sset Master 5%-` : `AudioLowerVolume`
+
 - `poweroff` : `Shift-Super-Q`
 
 - `reboot` : `Shift-Super-R`
