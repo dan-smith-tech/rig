@@ -780,24 +780,11 @@ Go to 'Keyboard Settings' -> 'Application Shortcuts' and set the following comma
 
 - `amixer sset Master 5%-` : `AudioLowerVolume`
 
+- `xfce4-session-logout` : `Super-Q`
+
 - `poweroff` : `Shift-Super-Q`
 
 - `reboot` : `Shift-Super-R`
-
-- `/mnt/e/scripts/logout.sh` : `Super-Q`
-
-  In order to get this command to work, create the `/mnt/e/Scripts/logout.sh` file with the following content:
-
-  ```bash
-  #!/bin/bash
-  pkill -KILL -u $USER
-  ```
-
-  It must then be made executable:
-
-  ```bash
-  chmod +x scripts/logout.sh
-  ```
 
 Give permissions to external mount points if games are stored on them:
 
