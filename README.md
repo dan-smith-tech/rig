@@ -780,8 +780,6 @@ Go to 'Keyboard Settings' -> 'Application Shortcuts' and set the following comma
 
 - `amixer sset Master 5%-` : `AudioLowerVolume`
 
-- `xfce4-session-logout` : `Super-Q`
-
 - `poweroff` : `Shift-Super-Q`
 
 - `reboot` : `Shift-Super-R`
