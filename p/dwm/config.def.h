@@ -90,7 +90,6 @@ static const Key keys[] = {
 
 	/* utility */
    { MODKEY,			XK_c,				   killclient,     {0} },
-	{ MODKEY,			XK_q,				quit,           {0} },
 	{ MODKEY|ShiftMask,		XK_r,				spawn,          {.v = rebootMachine } },
 	{ MODKEY|ShiftMask,		XK_q,				spawn,		{.v = poweroffMachine } },
 
