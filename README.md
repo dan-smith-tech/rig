@@ -93,7 +93,7 @@ lsblk
 
 Identify the disk you want to install Arch Linux on. If you are unsure, use the size of the disk to determine which is the primary disk.
 
-> **Note**: if re-partitioning a device, `lvremove`, `vgremove`, and `wipefs` can be used to remove all volumes and wipe a device.
+> **Note**: If re-partitioning a device, run `sgdisk --zap-all /dev/sda` followed by `partprobe /dev/sda` to completely wipe it beforehand. A restart may be required for everything to sync.
 
 Enter disk partitioning mode for the disk:
 
