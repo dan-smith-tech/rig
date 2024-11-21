@@ -816,11 +816,13 @@ Inside `./p/dwm/config.def.h`, adjust the Alacritty launch command to pass in sc
 static const char *openTerminal[]  = { "alacritty", "--option", "font.size=6", "--option", "window.padding.x=6", "--option", "window.padding.y=6", NULL };
 ```
 
-Inside `about:config`, set `layout.css.devPixelsPerPx` to `3`.
-
 #### XFCE
 
 Inside the 'Display' application, set the scale to `0.4`.
+
+#### Firefox
+
+Inside `about:config`, set `layout.css.devPixelsPerPx` to `3`.
 
 ### Laptop-specific configuration
 
