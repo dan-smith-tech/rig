@@ -786,10 +786,10 @@ Go to 'Keyboard Settings' -> 'Application Shortcuts' and set the following comma
 
 - `reboot` : `Shift-Super-R`
 
-Give permissions to external mount points if games are stored on them:
+Give permissions to the `/g` mountpoint where games are stored:
 
 ```bash
-sudo chown -R <user> /home/<user>/games
+sudo chown -R e /g
 ```
 
 ## Miscellaneous configuration
