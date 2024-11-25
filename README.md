@@ -792,6 +792,26 @@ Give permissions to the `/g` mountpoint where games are stored:
 sudo chown -R e /g
 ```
 
+#### Setup controller dongle with `xone`
+
+Clone the repo:
+
+```bash
+git clone https://github.com/medusalix/xone
+```
+
+Install `xone`:
+
+```bash
+cd xone && sudo ./install.sh --release
+```
+
+Download dongle firmware:
+
+```bash
+sudo xone-get-firmware.sh
+```
+
 ## Miscellaneous configuration
 
 ### Locally adjusting for display sizes
