@@ -800,6 +800,8 @@ Clone the repo:
 git clone https://github.com/medusalix/xone
 ```
 
+> Note: At the time of writing this documentation [this](https://github.com/tskaar/xone/tree/fix-6.12) fork and branch are required to fix compatibility issue with new kernel.
+
 Install `xone`:
 
 ```bash
