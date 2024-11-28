@@ -446,7 +446,7 @@ Enter and confirm the root password.
 Create productivity user:
 
 ```bash
-useradd -m -G wheel -d /mnt/p p 
+useradd -m -G wheel -d /mnt/p p
 ```
 
 Set productivity user password:
@@ -474,7 +474,7 @@ Enter and confirm the password.
 Install system packages:
 
 ```bash
-pacman -S alacritty alsa-tools alsa-utils base base-devel clang docker docker-compose efibootmgr fd feh firefox fzf git github-cli grub linux linux-firmware linux-headers lvm2 neovim networkmanager nodejs npm nvidia nvidia-utils pipewire pipewire-alsa pipewire-audio pipewire-pulse ripgrep stow sudo sysstat ttf-jetbrains-mono-nerd ttf-liberation ttf-nerd-fonts-symbols-mono unzip wget xclip xfwm4 xorg xorg-server xorg-xinit zoxide zsh
+pacman -S alacritty alsa-tools alsa-utils base base-devel clang docker docker-compose efibootmgr fd feh firefox fzf git github-cli grub linux linux-firmware linux-headers lvm2 neovim networkmanager nodejs npm nvidia nvidia-utils pipewire pipewire-alsa pipewire-audio pipewire-pulse ripgrep stow sudo sysstat ttf-jetbrains-mono-nerd ttf-liberation ttf-nerd-fonts-symbols-mono unzip wget xclip xdg-utils xfwm4 xorg xorg-server xorg-xinit zoxide zsh
 ```
 
 > **Note**: If any packages ask which version to install, select the default version by pressing `Enter`.
@@ -738,6 +738,14 @@ Copy the Xorg startup configuration from the `p` subdirectory of this repo:
 
 ```bash
 sudo cp ~/rig/p/.xinitrc ~/.xinitrc
+```
+
+Configure Firefox to be the default browser:
+
+```bash
+xdg-settings set default-web-browser firefox.desktop
+sudo ln -s /usr/bin/firefox /usr/local/bin/x-www-browser
+sudo ln -s /usr/bin/firefox /usr/local/bin/www-browser
 ```
 
 ## Entertainment (e) user configuration
