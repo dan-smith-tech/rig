@@ -832,6 +832,12 @@ Inside `./p/dwm/config.def.h`, adjust the following sizing constant values:
 
 - `3` replaced with `6`
 
+Change the font size to be `35`:
+
+```c
+static const char *fonts[] = {"JetBrainsMono Nerd Font:weight=bold:size=35"};
+```
+
 Inside `./p/dwm/config.def.h`, adjust the Alacritty launch command to pass in scaling options:
 
 ```c
