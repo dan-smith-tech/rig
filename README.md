@@ -764,6 +764,12 @@ sudo ln -s /usr/bin/firefox /usr/local/bin/www-browser
 
 ## Entertainment (e) user configuration
 
+Add the configuration for the XFCE window manager:
+
+```
+cp -rf rig/e/.config/xfce4 .config/.
+```
+
 Download Fluent XFCE theme:
 
 ```bash
@@ -777,36 +783,6 @@ Fluent-gtk-theme/install.sh -n Fluent -c dark -s standard -i arch --tweaks solid
 ```
 
 > Note: XFCE themes are stored in `~/.local/share/themes`.
-
-Set the active theme to Fluent inside the 'Appearence' and 'Window Manager' programs.
-
-Also inside 'Window Manager', ensure workspaces are not wrapped when windows are dragged to the edge of the screen.
-
-Inside the 'Desktop' application, set the wallpaper to be the one stored in `~/.config/wallpaper.png`.
-
-Also inside the 'Desktop' application, untick all of the settings under Icons.
-
-Run `killall xfce4-panel` and then inside the 'Session and Startup' application, under 'Current Session' set the Restart Style of `xfce4-panel` to `Never` (do this for any programs that are running by default and shouldn't on startup). Then save the current session.
-
-Go to 'Keyboard Settings' -> 'Application Shortcuts' and set the following commands:
-
-- `xfce4-appfinder` : `Super-F`
-
-- `alacritty` : `Super-Return`
-
-- `firefox` : `Super-Space`
-
-- `steam` : `Super-S`
-
-- `xkill` : `Super-C`
-
-- `amixer sset Master 5%+` : `AudioRaiseVolume`
-
-- `amixer sset Master 5%-` : `AudioLowerVolume`
-
-- `poweroff` : `Shift-Super-Q`
-
-- `reboot` : `Shift-Super-R`
 
 Give permissions to the `/g` mountpoint where games are stored:
 
