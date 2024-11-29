@@ -380,25 +380,39 @@ mount /dev/<device>2 /mnt/boot
 Create the productivity user directory:
 
 ```bash
-mkdir /mnt/p
+mkdir /mnt/home/p
 ```
 
 Mount the productivity user volume:
 
 ```bash
-mount /dev/vg_system/lv_p /mnt/p
+mount /dev/vg_system/lv_p /mnt/home/p
+```
+
+Set permissions on the productivity users's home directory:
+
+```bash
+chmod 700 /mnt/home/p
+chown p:p /mnt/home/p
 ```
 
 Create the entertainment user directory:
 
 ```bash
-mkdir /mnt/e
+mkdir /mnt/home/e
 ```
 
 Mount the entertainment user volume:
 
 ```bash
-mount /dev/vg_system/lv_e /mnt/e
+mount /dev/vg_system/lv_e /mnt/home/e
+```
+
+Set permissions on the entertainment users's home directory:
+
+```bash
+chmod 700 /mnt/home/e
+chown e:e /mnt/home/e
 ```
 
 Create the games directory:
@@ -424,7 +438,7 @@ pacstrap -i /mnt base
 Generate the `fstab` file (the file that automatically mounts volumes/partitions on boot):
 
 ```bash
-genfstab -U /mnt >> /mnt/etc/fstab
+genfstab -U /mnt >> /mnt/home/etc/fstab
 ```
 
 > This will append the UUIDs of the partitions to the `fstab` file: root, boot, home, and swap.
@@ -446,7 +460,7 @@ Enter and confirm the root password.
 Create productivity user:
 
 ```bash
-useradd -m -G tty,input,video,audio,optical,storage,wheel -d /mnt/p p
+useradd -m -G tty,input,video,audio,optical,storage,wheel -d /mnt/home/p p
 ```
 
 Set productivity user password:
@@ -460,7 +474,7 @@ Enter and confirm the password.
 Create entertainment user:
 
 ```bash
-useradd -m -G tty,input,video,audio,optical,storage,wheel -d /mnt/e e
+useradd -m -G tty,input,video,audio,optical,storage,wheel -d /mnt/home/e e
 ```
 
 Set entertainment user password:
