@@ -290,13 +290,13 @@ swapon /dev/vg_system/lv_swap
 Create the logical volume for the productivity user partition:
 
 ```bash
-lvcreate -L 235GB vg_system -n lv_p
+lvcreate -l 50%FREE vg_system -n lv_p
 ```
 
 Create the logical volume for the entertainment user partition:
 
 ```bash
-lvcreate -l 100%FREE vg_system -n lv_e
+lvcreate -l 50%FREE vg_system -n lv_e
 ```
 
 > **Note**: We can run `vgdisplay` to see the volume group information, and `lvdisplay` to see the logical volume information.
