@@ -870,8 +870,5 @@ Enabled the modified service:
 
 ```bash
 sudo systemctl daemon-reload
-```
-
-```bash
 sudo systemctl enable getty@tty1
 ```
