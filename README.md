@@ -640,16 +640,16 @@ reboot
 
 ### Post-installation
 
+Name the device:
+
+```bash
+sudo hostnamectl hostname <name>
+```
+
 Connect to the network (if using wireless):
 
 ```bash
 nmcli device wifi connect <SSID> password <password>
-```
-
-Name the device:
-
-```bash
-hostnamectl hostname <host>
 ```
 
 ## Global user configuration
