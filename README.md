@@ -826,7 +826,7 @@ Inside `./p/dwm/config.def.h`, adjust the following sizing constant values:
 
 - `22` replaced with `42`
 
-- `12` replaced with `35`
+- `12` replaced with `18`
 
 - `3` replaced with `6`
 
