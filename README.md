@@ -690,6 +690,18 @@ stow --adopt -t ~ -d rig/stow .
 
 > Note: The `--adopt` flag overrides the dotfiles stored in this repo with the ones already configured on the system. This can be used to override all files dotfiles on the system easily without having to delete them first, and then after the symlinks are created, `git restore .` can be applied to this repo to revert all configs to how they are here.
 
+### Firefox
+
+1. Sign in to Firefox Sync, wait for a sync to complete, and then sign into/configure each extension (enabling sync per-extension where possible).
+
+2. Go through the `Privacy & Security` settings and configure them to be strict and track no history.
+
+3. Inside `about:config`:
+
+   1. Set `services.sync.prefs.sync.browser.uiCustomization.state` to `true`.
+
+   2. Clear all `toolkit.telemetry` settings.
+
 ## Productivity (p) user configuration
 
 Clone the DWM repository:
