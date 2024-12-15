@@ -700,7 +700,9 @@ stow --adopt -t ~ -d rig/stow .
 
    1. Set `services.sync.prefs.sync.browser.uiCustomization.state` to `true`.
 
-   2. Clear all `toolkit.telemetry` settings.
+   2. Set `browser.sessionstore.max_resumed_crashes` to `0`.
+  
+   3. Clear all `toolkit.telemetry` settings.
 
 ## Productivity (p) user configuration
 
