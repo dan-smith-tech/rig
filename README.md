@@ -460,7 +460,7 @@ Enter and confirm the root password.
 Create productivity user:
 
 ```bash
-useradd -m -G tty,input,video,audio,optical,storage,wheel -d /mnt/home/p p
+useradd -m -G docker,tty,input,video,audio,optical,storage,wheel -d /mnt/home/p p
 ```
 
 Set productivity user password:
@@ -474,7 +474,7 @@ Enter and confirm the password.
 Create entertainment user:
 
 ```bash
-useradd -m -G tty,input,video,audio,optical,storage,wheel -d /mnt/home/e e
+useradd -m -G docker,tty,input,video,audio,optical,storage,wheel -d /mnt/home/e e
 ```
 
 Set entertainment user password:
