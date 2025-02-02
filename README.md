@@ -826,6 +826,20 @@ sudo xone-get-firmware.sh
 
 ## Miscellaneous configuration
 
+## If `pacman` mirrors start to return `404`s
+
+Delete the mirror sync:
+
+```bash
+sudo rm -rf /var/lib/pacman/sync/*
+```
+
+Refresh the package databses:
+
+```bash
+sudo pacman -Syy
+```
+
 ### Locally adjusting for display sizes
 
 Depending on what monitors are used, some local adjustments (that do not want to be synced here) may need to be made.
