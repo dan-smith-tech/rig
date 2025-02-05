@@ -9,7 +9,7 @@ multiplier = 3
 
 
 [font]
-size = 9
+size = 12
 
 [font.normal]
 family = "JetBrains Mono Nerd Font"
