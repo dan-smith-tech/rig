@@ -149,7 +149,7 @@ Make this new partition 1 gigabyte in size:
 +1G
 ```
 
-### Create the home LVM partition
+### Create the LVM partition
 
 Create a new partition:
 
@@ -161,39 +161,7 @@ Leave the partition number as the default: press `Enter`.
 
 Leave the first sector (beginning of the partition) as the default: press `Enter`.
 
-Make this new partition 500 gigabytes in size:
-
-```bash
-+500G
-```
-
-Enter type selection mode:
-
-```bash
-t
-```
-
-Select the partition you just created: press `Enter`.
-
-Select the Linux large volume manager (LVM) type:
-
-```bash
-44
-```
-
-### Create the games LVM partition
-
-Create a new partition:
-
-```bash
-n
-```
-
-Leave the partition number as the default: press `Enter`.
-
-Leave the first sector (beginning of the partition) as the default: press `Enter`.
-
-Press `Enter` to use the remaining space on the disk.
+Leave the last sector (end of the partition) as the default, to use all remaining space: press `Enter`.
 
 Enter type selection mode:
 
@@ -263,7 +231,7 @@ Create the system volume group:
 vgcreate vg_system /dev/mapper/lvm
 ```
 
-Create the logical volume for the root partition:
+Create the logical volume for the system:
 
 ```bash
 lvcreate -L 30GB vg_system -n lv_root
@@ -287,33 +255,7 @@ mkswap /dev/vg_system/lv_swap
 swapon /dev/vg_system/lv_swap
 ```
 
-Create the logical volume for the productivity user partition:
-
-```bash
-lvcreate -l 50%FREE vg_system -n lv_p
-```
-
-Create the logical volume for the entertainment user partition:
-
-```bash
-lvcreate -l 50%FREE vg_system -n lv_e
-```
-
 > **Note**: We can run `vgdisplay` to see the volume group information, and `lvdisplay` to see the logical volume information.
-
-Create the games volume group:
-
-```bash
-vgcreate vg_bulk /dev/sda4
-```
-
-Create the logical volume for the games partition:
-
-```bash
-lvcreate -l 100%FREE vg_bulk -n lv_b
-```
-
-Load the necessary kernel modules:
 
 ```bash
 modprobe dm_mod
@@ -331,28 +273,10 @@ Activate the volume group:
 vgchange -ay
 ```
 
-Format the root partition as ext4:
+Format the LVM partition as ext4:
 
 ```bash
-mkfs.ext4 /dev/vg_system/lv_root
-```
-
-Format the productivity user partition as ext4:
-
-```bash
-mkfs.ext4 /dev/vg_system/lv_p
-```
-
-Format the entertainment user partition as ext4:
-
-```bash
-mkfs.ext4 /dev/vg_system/lv_e
-```
-
-Format the games partition as ext4:
-
-```bash
-mkfs.ext4 /dev/vg_bulk/lv_b
+mkfs.ext4 /dev/vg_system/lv_system
 ```
 
 ## Partition mounting
@@ -360,7 +284,7 @@ mkfs.ext4 /dev/vg_bulk/lv_b
 Mount the root partition:
 
 ```bash
-mount /dev/vg_system/lv_root /mnt
+mount /dev/vg_system/lv_system /mnt
 ```
 
 Create the boot directory:
@@ -377,56 +301,6 @@ mount /dev/<device>2 /mnt/boot
 
 > **Note**: We are not mounting the boot (first) partition...
 
-Create the productivity user directory:
-
-```bash
-mkdir /mnt/home/p
-```
-
-Mount the productivity user volume:
-
-```bash
-mount /dev/vg_system/lv_p /mnt/home/p
-```
-
-Set permissions on the productivity users's home directory:
-
-```bash
-chmod 700 /mnt/home/p
-chown p:p /mnt/home/p
-```
-
-Create the entertainment user directory:
-
-```bash
-mkdir /mnt/home/e
-```
-
-Mount the entertainment user volume:
-
-```bash
-mount /dev/vg_system/lv_e /mnt/home/e
-```
-
-Set permissions on the entertainment users's home directory:
-
-```bash
-chmod 700 /mnt/home/e
-chown e:e /mnt/home/e
-```
-
-Create the games directory:
-
-```bash
-mkdir /mnt/b
-```
-
-Mount the games partition:
-
-```bash
-mount /dev/vg_bulk/lv_b /mnt/b
-```
-
 ## Configure base system
 
 ```bash
@@ -438,7 +312,7 @@ pacstrap -i /mnt base
 Generate the `fstab` file (the file that automatically mounts volumes/partitions on boot):
 
 ```bash
-genfstab -U /mnt >> /mnt/home/etc/fstab
+genfstab -U /mnt >> /mnt/etc/fstab
 ```
 
 > This will append the UUIDs of the partitions to the `fstab` file: root, boot, home, and swap.
@@ -460,7 +334,7 @@ Enter and confirm the root password.
 Create productivity user:
 
 ```bash
-useradd -m -G docker,tty,input,video,audio,optical,storage,wheel -d /mnt/home/p p
+useradd -m -G tty,input,video,audio,optical,storage,wheel p
 ```
 
 Set productivity user password:
@@ -474,7 +348,7 @@ Enter and confirm the password.
 Create entertainment user:
 
 ```bash
-useradd -m -G docker,tty,input,video,audio,optical,storage,wheel -d /mnt/home/e e
+useradd -m -G tty,input,video,audio,optical,storage,wheel e
 ```
 
 Set entertainment user password:
@@ -636,7 +510,7 @@ Reboot the system:
 reboot
 ```
 
-> **Note**: You can unplug the USB drive before the system reboots.
+> **Note**: You can now unplug the USB.
 
 ### Post-installation
 
