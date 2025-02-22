@@ -69,7 +69,7 @@ static const char* volumeUp[] = {"amixer", "sset", "Master", "5%+", NULL};
 static const char* volumeDown[] = {"amixer", "sset", "Master", "5%-", NULL};
 
 /* program commands */
-static const char* openTerminal[] = {"alacritty", NULL};
+static const char* openTerminal[] = {"kitty", NULL};
 static const char* openBrowser[] = {"firefox", NULL};
 static const char* openComms[] = {"element-desktop", NULL};
 
