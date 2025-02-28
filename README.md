@@ -576,6 +576,15 @@ stow --adopt -t ~ -d rig/stow .
 
    2. Clear all `toolkit.telemetry` settings.
 
+### Git
+
+Configure Kitty to be the diff tool:
+
+```bash
+git config --global diff.tool kitty
+git config --global difftool.kitty.cmd 'kitten diff $LOCAL $REMOTE'
+```
+
 ## Productivity (p) user configuration
 
 Clone the DWM repository:
