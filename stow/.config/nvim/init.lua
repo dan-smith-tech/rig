@@ -1,6 +1,5 @@
 -- Enable line numbers
 vim.opt.number = true
-:lua require('magick')
 -- Use spaces instead of tabs
 vim.opt.expandtab = true
 
