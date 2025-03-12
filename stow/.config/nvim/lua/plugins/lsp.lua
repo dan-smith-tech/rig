@@ -19,7 +19,7 @@ return {
                -- Web
                "html",
                "cssls",
-               "tsserver",
+               "ts_ls",
                "eslint",
 
                -- Lua
@@ -44,7 +44,13 @@ return {
          local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
          -- Python
-         lspconfig.pyright.setup({ capabilities = capabilities })
+         lspconfig.pyright.setup({
+            capabilities = capabilities,
+
+            before_init = function(_, config)
+               config.settings.python.pythonPath = vim.env.VIRTUAL_ENV .. "/bin/python3"
+            end,
+         })
 
          -- C/C++
          lspconfig.clangd.setup({ capabilities = capabilities })
@@ -52,11 +58,19 @@ return {
          -- Web
          lspconfig.html.setup({ capabilities = capabilities })
          lspconfig.cssls.setup({ capabilities = capabilities })
-         lspconfig.tsserver.setup({ capabilities = capabilities })
+         lspconfig.ts_ls.setup({ capabilities = capabilities })
          lspconfig.eslint.setup({ capabilities = capabilities })
 
          -- Lua
-         lspconfig.lua_ls.setup({ capabilities = capabilities })
+         lspconfig.lua_ls.setup({
+            capabilities = capabilities,
+            settings = {
+               Lua = {
+                  runtime = { version = "LuaJIT" },
+                  workspace = { library = vim.api.nvim_get_runtime_file("", true) },
+               },
+            },
+         })
 
          -- JSON
          lspconfig.jsonls.setup({ capabilities = capabilities })
