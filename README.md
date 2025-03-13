@@ -362,7 +362,7 @@ Enter and confirm the password.
 Install system packages:
 
 ```bash
-pacman -S alsa-tools alsa-utils base base-devel clang docker docker-compose efibootmgr element-desktop fd feh firefox fzf git github-cli grub kitty linux linux-firmware linux-headers lvm2 neovim networkmanager nodejs npm nvidia nvidia-utils pipewire pipewire-alsa pipewire-audio pipewire-pulse ripgrep stow sudo sysstat ttf-dejavu ttf-jetbrains-mono-nerd ttf-liberation ttf-nerd-fonts-symbols-mono unzip wget xclip xdg-utils xfwm4 xorg xorg-server xorg-xinit zoxide zsh
+pacman -S alsa-tools alsa-utils base base-devel clang docker docker-compose efibootmgr element-desktop fd feh fzf git github-cli grub kitty linux linux-firmware linux-headers lvm2 neovim networkmanager nodejs npm nvidia nvidia-utils pipewire pipewire-alsa pipewire-audio pipewire-pulse ripgrep stow sudo sysstat ttf-dejavu ttf-jetbrains-mono-nerd ttf-liberation ttf-nerd-fonts-symbols-mono unzip wget xclip xdg-utils xfwm4 xorg xorg-server xorg-xinit zoxide zsh
 ```
 
 > **Note**: If any packages ask which version to install, select the default version by pressing `Enter`.
@@ -526,6 +526,20 @@ Connect to the network (if using wireless):
 nmcli device wifi connect <SSID> password <password>
 ```
 
+Install the AUR:
+
+```bash
+git clone https://aur.archlinux.org/yay.git
+cd yay
+makepkg -si
+```
+
+Install Brave (browser):
+
+```bash
+yay -Sy brave-bin
+```
+
 ## Global user configuration
 
 Enable auto-login by adding the following to the top of `/etc/pam.d/login`:
@@ -563,18 +577,6 @@ stow --adopt -t ~ -d rig/stow .
 ```
 
 > Note: The `--adopt` flag overrides the dotfiles stored in this repo with the ones already configured on the system. This can be used to override all files dotfiles on the system easily without having to delete them first, and then after the symlinks are created, `git restore .` can be applied to this repo to revert all configs to how they are here.
-
-### Firefox
-
-1. Sign in to Firefox Sync, wait for a sync to complete, and then sign into/configure each extension (enabling sync per-extension where possible).
-
-2. Go through the `Privacy & Security` settings and configure them to be strict and track no history.
-
-3. Inside `about:config`:
-
-   1. Set `services.sync.prefs.sync.browser.uiCustomization.state` to `true`.
-
-   2. Clear all `toolkit.telemetry` settings.
 
 ### Git
 
@@ -649,14 +651,6 @@ Copy the Xorg startup configuration from the `p` subdirectory of this repo:
 sudo cp ~/rig/p/.xinitrc ~/.xinitrc
 ```
 
-Configure Firefox to be the default browser:
-
-```bash
-xdg-settings set default-web-browser firefox.desktop
-sudo ln -s /usr/bin/firefox /usr/local/bin/x-www-browser
-sudo ln -s /usr/bin/firefox /usr/local/bin/www-browser
-```
-
 ## Entertainment (e) user configuration
 
 Add the configuration for the XFCE window manager:
@@ -709,7 +703,7 @@ sudo xone-get-firmware.sh
 
 ## Miscellaneous configuration
 
-## If `pacman` mirrors start to return `404`s
+## If `pacman` mirrors start to `404`
 
 Delete the mirror sync:
 
@@ -722,36 +716,6 @@ Refresh the package databses:
 ```bash
 sudo pacman -Syy
 ```
-
-### Locally adjusting for display sizes
-
-Depending on what monitors are used, some local adjustments (that do not want to be synced here) may need to be made.
-
-_Note: The following are examples of config alterations I made for a large TV being used as a monitor._
-
-#### DWM
-
-Inside `./p/dwm/config.def.h`, adjust the following sizing constant values:
-
-- `22` replaced with `42`
-
-- `12` replaced with `18`
-
-- `3` replaced with `6`
-
-Change the font size to be `35`:
-
-```c
-static const char *fonts[] = {"JetBrainsMono Nerd Font:weight=bold:size=35"};
-```
-
-#### XFCE
-
-Inside the 'Display' application, set the scale to `0.4`.
-
-#### Firefox
-
-Inside `about:config`, set `layout.css.devPixelsPerPx` to `3`.
 
 ### Laptop-specific configuration
 
