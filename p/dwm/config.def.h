@@ -71,7 +71,6 @@ static const char *volumeDown[] = {"amixer", "sset", "Master", "5%-", NULL};
 /* program commands */
 static const char *openTerminal[] = {"kitty", NULL};
 static const char *openBrowser[] = {"brave", NULL};
-static const char *openComms[] = {"signal-desktop", NULL};
 
 /* utility commands */
 static const char *logoutMachine[] = {"pkill -KILL -u $USER", NULL};
@@ -89,7 +88,6 @@ static const Key keys[] = {
     /* programs */
     {MODKEY, XK_Return, spawn, {.v = openTerminal}},
     {MODKEY, XK_space, spawn, {.v = openBrowser}},
-    {MODKEY, XK_p, spawn, {.v = openComms}},
 
     /* layout */
     {MODKEY, XK_j, focusstack, {.i = +1}},
