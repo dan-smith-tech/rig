@@ -715,6 +715,12 @@ sudo pacman -Syy
 
 ### Laptop-specific configuration
 
+Add the following to `~/.Xdefaults` in order to scale the UI:
+
+```bash
+Xft.dpi: 192
+```
+
 In order to auto-login as a specific user, open the `getty tty1` service config file:
 
 ```bash
