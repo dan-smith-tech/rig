@@ -16,6 +16,9 @@ return {
                -- C/C++
                "clangd",
 
+               -- Rust
+               "rust-analyzer",
+
                -- Web
                "html",
                "cssls",
@@ -31,7 +34,7 @@ return {
                -- YAML
                "yamlls",
 
-               -- Rust / TOML
+               -- TOML
                "taplo",
             },
          })
@@ -54,6 +57,21 @@ return {
 
          -- C/C++
          lspconfig.clangd.setup({ capabilities = capabilities })
+
+         -- Rust
+         lspconfig.rust_analyzer.setup({
+            capabilities = capabilities,
+            settings = {
+               ["rust-analyzer"] = {
+                  check = {
+                     command = "clippy",
+                  },
+                  diagnostics = {
+                     enable = true,
+                  },
+               },
+            },
+         })
 
          -- Web
          lspconfig.html.setup({ capabilities = capabilities })
