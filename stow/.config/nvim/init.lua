@@ -1,3 +1,5 @@
+vim.g.mapleader = " "
+
 -- Enable line numbers
 vim.opt.number = true
 -- Use spaces instead of tabs
