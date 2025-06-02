@@ -113,7 +113,10 @@ return {
 				require("telescope.builtin").diagnostics()
 			end, { desc = "Telescope workspace diagnostics" })
 			vim.keymap.set("n", "<leader>a", vim.lsp.buf.code_action, {})
-			vim.keymap.set("n", "<leader>d", vim.lsp.buf.definition, {})
+			vim.keymap.set("n", "<leader>d", function()
+				vim.cmd("leftabove vsplit")
+				vim.lsp.buf.definition()
+			end, {})
 		end,
 	},
 	{
