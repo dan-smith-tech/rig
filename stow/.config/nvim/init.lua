@@ -14,14 +14,12 @@ vim.opt.tabstop = 3
 vim.opt.softtabstop = 3
 vim.opt.shiftwidth = 3
 
--- Move left and right between windows using `Ctrl + h` and `Ctrl + l`
+-- Move left and right between windows using Ctrl + h and Ctrl + l
 vim.api.nvim_set_keymap("n", "<C-h>", "<C-w>h", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("n", "<C-l>", "<C-w>l", { noremap = true, silent = true })
-
--- Open a terminal to the left of the current window using `Ctrl + t`
-vim.keymap.set("n", "<C-t>", ":leftabove vsplit term://$SHELL | startinsert<CR>", { noremap = true })
--- Exit terminal mode using `Esc`
-vim.keymap.set("t", "<Esc>", "<C-\\><C-n>")
+-- Move up and down between windows using Ctrl + j and Ctrl + k
+vim.api.nvim_set_keymap("n", "<C-j>", "<C-w>j", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("n", "<C-k>", "<C-w>k", { noremap = true, silent = true })
 
 -- Disable settings in terminal windows
 vim.api.nvim_create_autocmd("TermOpen", {
