@@ -3,7 +3,10 @@ return {
 	version = "*",
 	opts = {
 		direction = "vertical",
-		size = 100,
+		size = function(term)
+			local win_count = #vim.api.nvim_tabpage_list_wins(0)
+			return math.floor(vim.o.columns / win_count)
+		end,
 		open_mapping = [[<C-t>]],
 		shade_terminals = false,
 		persist_size = false,
