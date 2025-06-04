@@ -31,6 +31,14 @@ vim.api.nvim_create_autocmd("TermOpen", {
 	end,
 })
 
+-- Automatically equalize all window widths and heights on resize
+vim.api.nvim_create_autocmd("VimResized", {
+   pattern = "*",
+   callback = function()
+      vim.cmd("wincmd =")
+   end,
+})
+
 -- If Lazy (package manager) has not been cloned, clone it
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
