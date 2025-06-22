@@ -721,6 +721,12 @@ Add the following to `~/.Xdefaults` in order to scale the UI:
 Xft.dpi: 192
 ```
 
+Make the window managers boot Kitty with a specific font-size:
+
+```bash
+"kitty -o font_size=38"
+```
+
 In order to auto-login as a specific user, open the `getty tty1` service config file:
 
 ```bash
