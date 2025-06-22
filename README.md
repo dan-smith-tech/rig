@@ -713,7 +713,7 @@ Refresh the package databses:
 sudo pacman -Syy
 ```
 
-### Laptop-specific configuration
+### Per-device scaling config
 
 Add the following to `~/.Xdefaults` in order to scale the UI:
 
@@ -726,6 +726,15 @@ Make the window managers boot Kitty with a specific font-size:
 ```bash
 "kitty -o font_size=38"
 ```
+
+Make XFWM4 boot with better DPI size by adding the following to `.xinit` (before the WM loads):
+
+```bash
+xfconf-query -c xsettings -p /Xft/DPI -s 315
+```
+
+### Laptop-specific configuration
+
 
 In order to auto-login as a specific user, open the `getty tty1` service config file:
 
