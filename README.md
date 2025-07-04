@@ -191,7 +191,7 @@ Format the boot (first) partition as FAT32:
 mkfs.fat -F32 /dev/<device>1
 ```
 
-Format the EFI (second) partition as FAT32:
+Format the EFI (second) partition as EXT4:
 
 ```bash
 mkfs.ext4 /dev/<device>2
@@ -233,22 +233,30 @@ Create the logical volume for the system:
 lvcreate -L 30GB vg_system -n lv_root
 ```
 
-[Optional] Create the logical volume for the swap partition:
+> **[Optional]**
+>
+> Create the logical volume for the swap partition:
+>
+> ```bash
+> lvcreate -L <RAM-size>GB vg_system -n lv_swap
+> ```
+>
+> Configure the swap partition:
+>
+> ```bash
+> mkswap /dev/vg_system/lv_swap
+> ```
+>
+> Enable the swap partition:
+>
+> ```bash
+> swapon /dev/vg_system/lv_swap
+> ```
+
+Create the logical volume for the home directory:
 
 ```bash
-lvcreate -L <RAM-size>GB vg_system -n lv_swap
-```
-
-[Optional] Configure the swap partition:
-
-```bash
-mkswap /dev/vg_system/lv_swap
-```
-
-[Optional] Enable the swap partition:
-
-```bash
-swapon /dev/vg_system/lv_swap
+lvcreate -l 100%FREE vg_system -n lv_home
 ```
 
 > **Note**: We can run `vgdisplay` to see the volume group information, and `lvdisplay` to see the logical volume information.
@@ -272,7 +280,13 @@ vgchange -ay
 Format the LVM partition as ext4:
 
 ```bash
-mkfs.ext4 /dev/vg_system/lv_system
+mkfs.ext4 /dev/vg_system/lv_root
+```
+
+Format the home partition as ext4:
+
+```bash
+mkfs.ext4 /dev/vg_system/lv_home
 ```
 
 ## Partition mounting
@@ -280,7 +294,7 @@ mkfs.ext4 /dev/vg_system/lv_system
 Mount the root partition:
 
 ```bash
-mount /dev/vg_system/lv_system /mnt
+mount /dev/vg_system/lv_root /mnt
 ```
 
 Create the boot directory:
@@ -295,7 +309,19 @@ Mount the EFI (second) partition:
 mount /dev/<device>2 /mnt/boot
 ```
 
-> **Note**: We are not mounting the boot (first) partition...
+> **Note**: We are NOT mounting the boot (first) partition...
+
+Create the home directory:
+
+```bash
+mkdir /mnt/home
+```
+
+Mount the home partition:
+
+```bash
+mount /dev/vg_system/lv_home /mnt/home
+```
 
 ## Configure base system
 
@@ -311,7 +337,7 @@ Generate the `fstab` file (the file that automatically mounts volumes/partitions
 genfstab -U /mnt >> /mnt/etc/fstab
 ```
 
-> This will append the UUIDs of the partitions to the `fstab` file: root, boot, home, and swap.
+> This will append the UUIDs of the partitions to the `fstab` file: root, boot, and home (and optionally swap).
 
 Chroot into the new system:
 
@@ -327,30 +353,16 @@ passwd
 
 Enter and confirm the root password.
 
-Create productivity user:
+Create user:
 
 ```bash
-useradd -m -G tty,input,video,audio,optical,storage,wheel p
+useradd -m -g users -G tty,input,video,audio,optical,storage,wheel dan
 ```
 
 Set productivity user password:
 
 ```bash
-passwd p
-```
-
-Enter and confirm the password.
-
-Create entertainment user:
-
-```bash
-useradd -m -G tty,input,video,audio,optical,storage,wheel e
-```
-
-Set entertainment user password:
-
-```bash
-passwd e
+passwd dan
 ```
 
 Enter and confirm the password.
@@ -358,12 +370,16 @@ Enter and confirm the password.
 Install system packages:
 
 ```bash
+pacman -S efibootmgr git grub linux linux-firmware linux-headers lvm2 neovim networkmanager sudo xorg xorg-server xorg-xinit
+```
+
+```bash
 pacman -S alsa-tools alsa-utils base base-devel clang docker docker-compose efibootmgr fd feh fzf git github-cli grub kitty linux linux-firmware linux-headers lvm2 neovim networkmanager nodejs npm nvidia nvidia-utils pipewire pipewire-alsa pipewire-audio pipewire-pulse ripgrep stow sudo sysstat ttf-dejavu ttf-jetbrains-mono-nerd ttf-liberation ttf-nerd-fonts-symbols-mono unzip wget xclip xdg-utils xfwm4 xorg xorg-server xorg-xinit zoxide zsh
 ```
 
 > **Note**: If any packages ask which version to install, select the default version by pressing `Enter`.
 
-> **Note**: If using Intel or AMD graphics, instead of installing the Nvidia packages, install `mesa intel-media-driver` instead.
+> **Note**: If using Intel or AMD graphics, instead of installing the NVIDIA packages, install `mesa intel-media-driver` instead.
 
 Uncomment the `multilib` section in `/etc/pacman.conf` to enable 32-bit packages to be installed:
 
@@ -734,7 +750,6 @@ xfconf-query -c xsettings -p /Xft/DPI -s 315
 ```
 
 ### Laptop-specific configuration
-
 
 In order to auto-login as a specific user, open the `getty tty1` service config file:
 
