@@ -70,28 +70,6 @@ prompt_yn() {
     done
 }
 
-# Function to prompt for password
-prompt_password() {
-    local prompt="$1"
-    local var_name="$2"
-    local password1
-    local password2
-    
-    while true; do
-        read -s -p "$prompt: " password1
-        echo
-        read -s -p "Confirm password: " password2
-        echo
-        
-        if [ "$password1" = "$password2" ]; then
-            eval "$var_name=\"$password1\""
-            break
-        else
-            print_error "Passwords do not match. Please try again."
-        fi
-    done
-}
-
 print_section "Arch Linux Installation Script"
 print_warning "This script will completely wipe the selected disk!"
 print_warning "Make sure you have backed up any important data."
@@ -121,18 +99,11 @@ fi
 print_warning "Selected device: /dev/$TARGET_DEVICE"
 lsblk "/dev/$TARGET_DEVICE"
 
-if ! prompt_yn "Are you sure you want to use /dev/$TARGET_DEVICE?" "n"; then
-    print_status "Installation cancelled."
-    exit 0
-fi
-
-# Check if device needs to be wiped
-if prompt_yn "Do you want to completely wipe the device first?" "y"; then
-    print_status "Wiping device..."
-    sgdisk --zap-all "/dev/$TARGET_DEVICE"
-    partprobe "/dev/$TARGET_DEVICE"
-    sleep 2
-fi
+# Wipe device 
+print_status "Wiping device..."
+sgdisk --zap-all "/dev/$TARGET_DEVICE"
+partprobe "/dev/$TARGET_DEVICE"
+sleep 2
 
 print_section "Disk Partitioning"
 print_status "Creating partition table and partitions..."
@@ -157,7 +128,7 @@ echo t      # Change partition type
 echo 3      # Select partition 3
 echo 44     # LVM type
 echo w      # Write changes
-) | fdisk "/dev/$TARGET_DEVICE"
+) | fdisk --wipe-partitions always "/dev/$TARGET_DEVICE"
 
 # Wait for partitions to be recognized
 sleep 2
@@ -202,12 +173,9 @@ pvcreate /dev/mapper/lvm
 print_status "Creating volume group..."
 vgcreate vg_system /dev/mapper/lvm
 
-# Get root partition size
-prompt_user "Enter root partition size in GB" "ROOT_SIZE" "30"
-
 # Create root logical volume
-print_status "Creating root logical volume (${ROOT_SIZE}GB)..."
-lvcreate -L "${ROOT_SIZE}GB" vg_system -n lv_root
+print_status "Creating root logical volume (30GB)..."
+lvcreate -L 30GB vg_system -n lv_root
 
 # Ask about swap
 ENABLE_SWAP=false
@@ -320,9 +288,9 @@ useradd -m -g users -G tty,input,video,audio,optical,storage,wheel "$USERNAME"
 echo "Setting password for $USERNAME..."
 passwd "$USERNAME"
 
-# Install essential packages
+# Install  packages
 echo "Installing essential packages..."
-pacman -S --noconfirm efibootmgr git grub linux linux-firmware linux-headers lvm2 neovim networkmanager sudo
+pacman -S --noconfirm alsa-tools alsa-utils base base-devel clang docker docker-compose efibootmgr fd feh fzf git github-cli grub kitty linux linux-firmware linux-headers lvm2 neovim networkmanager nodejs npm nvidia nvidia-utils pipewire pipewire-alsa pipewire-audio pipewire-pulse ripgrep stow sudo sysstat ttf-dejavu ttf-jetbrains-mono-nerd ttf-liberation ttf-nerd-fonts-symbols-mono unzip wget xclip xdg-utils xfwm4 xorg xorg-server xorg-xinit zoxide zsh
 
 # Install additional packages based on graphics driver
 if [ "$GRAPHICS_DRIVER" = "nvidia" ]; then
@@ -332,10 +300,6 @@ else
     echo "Installing Intel/AMD graphics packages..."
     pacman -S --noconfirm mesa intel-media-driver
 fi
-
-# Install full package set
-echo "Installing full package set..."
-pacman -S --noconfirm alsa-tools alsa-utils base base-devel clang docker docker-compose fd feh fzf github-cli kitty nodejs npm pipewire pipewire-alsa pipewire-audio pipewire-pulse ripgrep stow sysstat ttf-dejavu ttf-jetbrains-mono-nerd ttf-liberation ttf-nerd-fonts-symbols-mono unzip wget xclip xdg-utils xfwm4 xorg xorg-server xorg-xinit zoxide zsh
 
 # Enable multilib repository
 sed -i '/^#\[multilib\]/,/^#Include = \/etc\/pacman.d\/mirrorlist/ { s/^#//; }' /etc/pacman.conf
@@ -421,7 +385,7 @@ print_status "Installation complete!"
 print_warning "System will reboot in 10 seconds..."
 print_warning "Remove the installation media when the system restarts."
 
-for i in {10..1}; do
+for i in {3..1}; do
     echo -ne "\rRebooting in $i seconds... "
     sleep 1
 done
