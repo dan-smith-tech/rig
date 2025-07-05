@@ -255,7 +255,7 @@ else
 fi
 
 # Prompt for laptop/desktop status bar config
-if prompt_yn "Is this a laptop? (Use laptop status bar script)" "n"; then
+if prompt_yn "Use laptop status bar" "n"; then
     sudo cp ~/rig/build/status-laptop.sh /usr/local/src/dwm/status.sh
 else
     sudo cp ~/rig/build/status-pc.sh /usr/local/src/dwm/status.sh
