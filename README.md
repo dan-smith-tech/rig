@@ -526,17 +526,25 @@ reboot
 
 ### Post-installation
 
-Name the device:
-
-```bash
-sudo hostnamectl hostname <name>
-```
-
 Connect to the network (if using wireless):
 
 ```bash
 nmcli device wifi connect <SSID> password <password>
 ```
+
+Clone this repo into the root directory:
+
+```bash
+git clone https://github.com/dan-smith-tech/rig.git
+```
+
+Set ZHS as the default shell:
+
+```bash
+chsh -s /usr/bin/zsh
+```
+
+> **Note:** The configuration for ZHS can be found in the `~/.zshrc` and `~/.zprofile` files (stored in the `stow` subdirectory of this repo).
 
 Install the AUR:
 
@@ -552,54 +560,40 @@ Install Brave (browser):
 yay -Sy brave-bin
 ```
 
-## Global user configuration
-
-Enable auto-login by adding the following to the top of `/etc/pam.d/login`:
+Install Xone:
 
 ```bash
-auth sufficient pam_permit.so
+yay -Sy xone-dkms
 ```
 
-**Perform the following for each user individually...**
-
-List installed shells:
+In order to auto-login as a specific user, open the `getty tty1` service config file:
 
 ```bash
-chsh -l
+sudo systemctl edit getty@tty1
 ```
 
-Set ZHS as the default shell:
+Between the comments that don't get overriden (towards the top of the file)m add:
 
 ```bash
-chsh -s /usr/bin/zsh
+[Service]
+ExecStart=
+ExecStart=-/usr/bin/agetty --autologin dan --noclear %I $TERM
 ```
 
-> **Note:** The configuration for ZHS can be found in the `~/.zshrc` and `~/.zprofile` files (stored in the `stow` subdirectory of this repo).
-
-Clone this repo into the root directory:
+Enabled the modified service:
 
 ```bash
-git clone https://github.com/dan-smith-tech/rig.git
+sudo systemctl daemon-reload
+sudo systemctl enable getty@tty1
 ```
 
-For each of the users, run the `stow` command to symlink the configuration files:
+Run `stow` to symlink the configuration files:
 
 ```bash
-stow --adopt -t ~ -d rig/stow .
+stow --adopt -t ~ -d rig/dotfiles .
 ```
 
 > Note: The `--adopt` flag overrides the dotfiles stored in this repo with the ones already configured on the system. This can be used to override all files dotfiles on the system easily without having to delete them first, and then after the symlinks are created, `git restore .` can be applied to this repo to revert all configs to how they are here.
-
-### Git
-
-Configure Kitty to be the diff tool:
-
-```bash
-git config --global diff.tool kitty
-git config --global difftool.kitty.cmd 'kitten diff $LOCAL $REMOTE'
-```
-
-## Productivity (p) user configuration
 
 Clone the DWM repository:
 
@@ -613,14 +607,10 @@ Navigate to the cloned DWM directory:
 cd dwm
 ```
 
-Copy the configruation from the `p/dwm` subdirectory of this repo:
+Copy the configuration from the `p/dwm` subdirectory of this repo:
 
 ```bash
-sudo cp ~/rig/p/dwm/config.def.h config.def.h
-```
-
-```bash
-sudo cp ~/rig/p/dwm/dwm.c dwm.c
+sudo cp ~/rig/build/config.def.h config.def.h
 ```
 
 Build and install DWM:
@@ -630,88 +620,6 @@ sudo make clean install
 ```
 
 > **Note:** If rebuilding DWM after making edits to any of the config, make sure to remove the generated `config.h` beforehand.
-
-Clone the DWM blocks repository:
-
-```bash
-sudo git clone https://github.com/torrinfail/dwmblocks.git
-```
-
-Navigate into the cloned DWM blocks directory:
-
-```bash
-cd dwmblocks
-```
-
-Copy the DWM blocks configuration from the `p/dwm` subdirectory of this repo:
-
-```bash
-sudo cp ~/rig/p/dwm/blocks.def.h blocks.def.h
-```
-
-Build and install DWM blocks:
-
-```bash
-sudo make clean install
-```
-
-> **Note:** If rebuilding DWM blocks after making edits to any of the config, make sure to remove the generated `config.h` beforehand.
-
-Copy the Xorg startup configuration from the `p` subdirectory of this repo:
-
-```bash
-sudo cp ~/rig/p/.xinitrc ~/.xinitrc
-```
-
-## Entertainment (e) user configuration
-
-Add the configuration for the XFCE window manager:
-
-```
-cp -rf rig/e/.config/xfce4 .config/.
-```
-
-Download Fluent XFCE theme:
-
-```bash
-git clone https://github.com/vinceliuice/Fluent-gtk-theme.git
-```
-
-Install Fluent XFCE theme:
-
-```bash
-Fluent-gtk-theme/install.sh -n Fluent -c dark -s standard -i arch --tweaks solid round noborder
-```
-
-> Note: XFCE themes are stored in `~/.local/share/themes`.
-
-Give permissions to the `/g` mountpoint where games are stored:
-
-```bash
-sudo chown -R e /g
-```
-
-#### Setup controller dongle with `xone`
-
-Clone the repo:
-
-```bash
-git clone https://github.com/medusalix/xone
-```
-
-> Note: At the time of writing this documentation [this](https://github.com/tskaar/xone/tree/fix-6.12) fork and branch are required to fix compatibility issue with new kernel.
-
-Install `xone`:
-
-```bash
-cd xone && sudo ./install.sh --release
-```
-
-Download dongle firmware:
-
-```bash
-sudo xone-get-firmware.sh
-```
 
 ## Miscellaneous configuration
 
@@ -723,13 +631,13 @@ Delete the mirror sync:
 sudo rm -rf /var/lib/pacman/sync/*
 ```
 
-Refresh the package databses:
+Refresh the package databases:
 
 ```bash
 sudo pacman -Syy
 ```
 
-### Per-device scaling config
+## Per-device UI scaling
 
 Add the following to `~/.Xdefaults` in order to scale the UI:
 
@@ -743,31 +651,10 @@ Make the window managers boot Kitty with a specific font-size:
 "kitty -o font_size=38"
 ```
 
-Make XFWM4 boot with better DPI size by adding the following to `.xinit` (before the WM loads):
+## Laptop scrolling
+
+Add the following to a startup script to enable natural scrolling for the touchpad:
 
 ```bash
-xfconf-query -c xsettings -p /Xft/DPI -s 315
-```
-
-### Laptop-specific configuration
-
-In order to auto-login as a specific user, open the `getty tty1` service config file:
-
-```bash
-sudo systemctl edit getty@tty1
-```
-
-Between the comments that don't get overriden (towards the top of the file)m add:
-
-```bash
-[Service]
-ExecStart=
-ExecStart=-/usr/bin/agetty --autologin your_username --noclear %I $TERM
-```
-
-Enabled the modified service:
-
-```bash
-sudo systemctl daemon-reload
-sudo systemctl enable getty@tty1
+xinput set-prop 'SYNA8004:00 06CB:CD8B Touchpad' 'libinput Natural Scrolling Enabled' 1 &
 ```
