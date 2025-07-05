@@ -1,4 +1,4 @@
-/* See LICENSE file for copyright and license details. */
+#include <X11/XF86keysym.h>
 
 /* appearance */
 static const unsigned int borderpx  = 3;        /* border pixel of windows */
@@ -64,11 +64,11 @@ static const Key keys[] = {
 	/* modifier                     key        function        argument */
 	{ MODKEY,                       XK_Return, spawn,          {.v = termcmd } },
 	{ MODKEY,                       XK_w,      spawn,          {.v = browsecmd } },
-	{0, XF86XK_AudioRaiseVolume, spawn, {.v = volumeUp}},
-    	{0, XF86XK_AudioLowerVolume, spawn, {.v = volumeDown}},
+	{0, XF86XK_AudioRaiseVolume, spawn, {.v = volumeupcmd}},
+    	{0, XF86XK_AudioLowerVolume, spawn, {.v = volumedowncmd}},
 	{MODKEY, XK_q, quit, {0}},
-	{MODKEY | ShiftMask, XK_r, spawn, {.v = rebootMachine}},
-	{MODKEY | ShiftMask, XK_q, spawn, {.v = poweroffMachine}},
+	{MODKEY | ShiftMask, XK_r, spawn, {.v = rebootcmd}},
+	{MODKEY | ShiftMask, XK_q, spawn, {.v = poweroffcmd}},
 
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
