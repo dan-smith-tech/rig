@@ -230,7 +230,7 @@ print_section "Installing Base System"
 
 # Install base system
 print_status "Installing base system packages..."
-pacstrap -noconfirm /mnt base
+pacstrap --noconfirm /mnt base
 
 # Generate fstab
 print_status "Generating fstab..."
