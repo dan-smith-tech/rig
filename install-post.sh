@@ -163,7 +163,7 @@ print_status "Setting up dotfiles with stow..."
 if [ -d "$HOME/rig/dotfiles" ]; then
     # Run stow to symlink configuration files
     print_status "Running stow to symlink configuration files..."
-    stow --adopt -t ~ -d dotfiles .
+    stow --adopt -t ~ -d "$HOME/rig/dotfiles" .
     
     # Restore original configs from repository
     print_status "Restoring original configurations from repository..."
