@@ -152,7 +152,6 @@ sudo systemctl enable getty@tty1
 
 print_status "Auto-login configured for $CURRENT_USER"
 
-
 # ===========================================
 # SUDOERS CONFIGURATION
 # ===========================================
@@ -160,9 +159,20 @@ print_status "Auto-login configured for $CURRENT_USER"
 print_section "Sudoers Configuration"
 print_status "Configuring sudoers for $CURRENT_USER..."
 
-# Allow $CURRENT_USER to use sudo without a password
+# Remove any user-specific sudoers.d rules for $CURRENT_USER (except our target file)
+sudo find /etc/sudoers.d/ -type f ! -name "99-$CURRENT_USER-nopasswd" \
+    -exec sudo sed -i "/^$CURRENT_USER\s/d" {} +
+
+# Remove any $CURRENT_USER lines from /etc/sudoers (with backup)
+sudo cp /etc/sudoers /etc/sudoers.bak.$(date +%F-%H%M%S)
+sudo sed -i "/^$CURRENT_USER\s/d" /etc/sudoers
+
+# Write the NOPASSWD rule for $CURRENT_USER
 echo "$CURRENT_USER ALL=(ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/99-$CURRENT_USER-nopasswd > /dev/null
 sudo chmod 0440 /etc/sudoers.d/99-$CURRENT_USER-nopasswd
+
+# Validate sudoers syntax
+sudo visudo -c
 
 print_status "Sudoers configuration complete for $CURRENT_USER"
 
