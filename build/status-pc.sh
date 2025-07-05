@@ -21,7 +21,7 @@ while true; do
     datetime=" 󰥔 $(date '+%H:%M %-d %B %Y')"
     
     # Combine all segments
-    status="$cpu$cputemp$gpu$gputemp$mem$battery$datetime"
+    status="$cpu $cputemp $gpu $gputemp $mem $datetime"
     
     # Set the status bar
     xsetroot -name "$status"
