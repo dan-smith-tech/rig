@@ -167,16 +167,25 @@ sudo sed -i "/^$CURRENT_USER\s/d" /etc/sudoers
 SUDOERS_LINE="$CURRENT_USER ALL=(ALL) NOPASSWD: ALL"
 if ! sudo grep -Fxq "$SUDOERS_LINE" /etc/sudoers; then
     print_status "Adding NOPASSWD rule for $CURRENT_USER to /etc/sudoers..."
+    
     # Use a temp file to safely append via visudo
     TMP_SUDOERS=$(mktemp)
     sudo cp /etc/sudoers "$TMP_SUDOERS"
+    
+    # Fix permissions on temp file for visudo
+    sudo chown root:root "$TMP_SUDOERS"
+    sudo chmod 440 "$TMP_SUDOERS"
+    
+    # Add the new line
     echo "$SUDOERS_LINE" | sudo tee -a "$TMP_SUDOERS" > /dev/null
+    
+    # Validate syntax with visudo
     sudo visudo -c -f "$TMP_SUDOERS"
     if [ $? -eq 0 ]; then
         sudo cp "$TMP_SUDOERS" /etc/sudoers
         print_status "NOPASSWD rule added successfully."
     else
-        print_status "ERROR: Syntax error in sudoers! Aborting change."
+        print_error "ERROR: Syntax error in sudoers! Aborting change."
     fi
     sudo rm "$TMP_SUDOERS"
 else
