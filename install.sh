@@ -258,7 +258,7 @@ fi
 
 # Ask about multilib/Steam installation
 ENABLE_MULTILIB=false
-if prompt_yn "Enable 32-bit multilib repository and install Steam?" "n"; then
+if prompt_yn "Enable 32-bit multilib repository and install Steam?" "y"; then
     ENABLE_MULTILIB=true
 fi
 
