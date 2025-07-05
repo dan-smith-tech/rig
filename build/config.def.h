@@ -61,6 +61,7 @@ static char dmenumon[2] =
 static const char *dmenucmd[] = {NULL};
 static const char *termcmd[] = {"kitty", NULL};
 static const char *browsecmd[] = {"brave", NULL};
+static const char *steamcmd[] = {"steam", NULL};
 static const char *volumeupcmd[] = {"amixer", "sset", "Master", "5%+", NULL};
 static const char *volumedowncmd[] = {"amixer", "sset", "Master", "5%-", NULL};
 static const char *rebootcmd[] = {"reboot", NULL};
@@ -70,6 +71,7 @@ static const Key keys[] = {
     /* modifier                     key        function        argument */
     {MODKEY, XK_Return, spawn, {.v = termcmd}},
     {MODKEY, XK_w, spawn, {.v = browsecmd}},
+    {MODKEY, XK_s, spawn, {.v = steamcmd}},
     {0, XF86XK_AudioRaiseVolume, spawn, {.v = volumeupcmd}},
     {0, XF86XK_AudioLowerVolume, spawn, {.v = volumedowncmd}},
     {MODKEY, XK_q, quit, {0}},
