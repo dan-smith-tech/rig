@@ -160,7 +160,7 @@ print_section "Dotfiles Configuration"
 print_status "Setting up dotfiles with stow..."
 
 # Check if dotfiles directory exists
-if [ -d "dotfiles" ]; then
+if [ -d "$HOME/rig/dotfiles" ]; then
     # Run stow to symlink configuration files
     print_status "Running stow to symlink configuration files..."
     stow --adopt -t ~ -d dotfiles .
