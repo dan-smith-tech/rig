@@ -152,6 +152,20 @@ sudo systemctl enable getty@tty1
 
 print_status "Auto-login configured for $CURRENT_USER"
 
+
+# ===========================================
+# SUDOERS CONFIGURATION
+# ===========================================
+
+print_section "Sudoers Configuration"
+print_status "Configuring sudoers for $CURRENT_USER..."
+
+# Allow $CURRENT_USER to use sudo without a password
+echo "$CURRENT_USER ALL=(ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/99-$CURRENT_USER-nopasswd > /dev/null
+sudo chmod 0440 /etc/sudoers.d/99-$CURRENT_USER-nopasswd
+
+print_status "Sudoers configuration complete for $CURRENT_USER"
+
 # ===========================================
 # DOTFILES CONFIGURATION
 # ===========================================
