@@ -9,7 +9,4 @@ font_family JetBrainsMono Nerd Font
 cursor_shape underline
 cursor_blink yes
 
-# BEGIN_KITTY_THEME
-# Catppuccin-Mocha
 include current-theme.conf
-# END_KITTY_THEME
