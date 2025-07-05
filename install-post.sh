@@ -159,17 +159,29 @@ print_status "Auto-login configured for $CURRENT_USER"
 print_section "Sudoers Configuration"
 print_status "Configuring sudoers for $CURRENT_USER..."
 
-# Remove any user-specific sudoers.d rules for $CURRENT_USER (except our target file)
-sudo find /etc/sudoers.d/ -type f ! -name "99-$CURRENT_USER-nopasswd" \
-    -exec sudo sed -i "/^$CURRENT_USER\s/d" {} +
-
 # Remove any $CURRENT_USER lines from /etc/sudoers (with backup)
 sudo cp /etc/sudoers /etc/sudoers.bak.$(date +%F-%H%M%S)
 sudo sed -i "/^$CURRENT_USER\s/d" /etc/sudoers
 
-# Write the NOPASSWD rule for $CURRENT_USER
-echo "$CURRENT_USER ALL=(ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/99-$CURRENT_USER-nopasswd > /dev/null
-sudo chmod 0440 /etc/sudoers.d/99-$CURRENT_USER-nopasswd
+# Add NOPASSWD rule for $CURRENT_USER to /etc/sudoers using visudo
+SUDOERS_LINE="$CURRENT_USER ALL=(ALL) NOPASSWD: ALL"
+if ! sudo grep -Fxq "$SUDOERS_LINE" /etc/sudoers; then
+    print_status "Adding NOPASSWD rule for $CURRENT_USER to /etc/sudoers..."
+    # Use a temp file to safely append via visudo
+    TMP_SUDOERS=$(mktemp)
+    sudo cp /etc/sudoers "$TMP_SUDOERS"
+    echo "$SUDOERS_LINE" | sudo tee -a "$TMP_SUDOERS" > /dev/null
+    sudo visudo -c -f "$TMP_SUDOERS"
+    if [ $? -eq 0 ]; then
+        sudo cp "$TMP_SUDOERS" /etc/sudoers
+        print_status "NOPASSWD rule added successfully."
+    else
+        print_status "ERROR: Syntax error in sudoers! Aborting change."
+    fi
+    sudo rm "$TMP_SUDOERS"
+else
+    print_status "NOPASSWD rule for $CURRENT_USER already present in /etc/sudoers."
+fi
 
 # Validate sudoers syntax
 sudo visudo -c
