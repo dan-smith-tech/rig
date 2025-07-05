@@ -167,7 +167,7 @@ if [ -d "$HOME/rig/dotfiles" ]; then
     
     # Restore original configs from repository
     print_status "Restoring original configurations from repository..."
-    cd dotfiles
+    cd "$HOME/rig/dotfiles"
     git restore .
     cd ..
     
