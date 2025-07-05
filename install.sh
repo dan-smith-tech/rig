@@ -72,12 +72,6 @@ prompt_yn() {
 
 print_section "Arch Linux Installation Script"
 print_warning "This script will completely wipe the selected disk!"
-print_warning "Make sure you have backed up any important data."
-
-if ! prompt_yn "Do you want to continue?" "n"; then
-    print_status "Installation cancelled."
-    exit 0
-fi
 
 # ===========================================
 # DISK SELECTION AND PARTITIONING
@@ -179,7 +173,7 @@ lvcreate -L 30GB vg_system -n lv_root
 
 # Ask about swap
 ENABLE_SWAP=false
-if prompt_yn "Do you want to create a swap partition?" "y"; then
+if prompt_yn "Do you want to create a swap partition?" "n"; then
     ENABLE_SWAP=true
     prompt_user "Enter swap size in GB (recommend same as RAM)" "SWAP_SIZE" "8"
     print_status "Creating swap logical volume (${SWAP_SIZE}GB)..."
@@ -236,7 +230,7 @@ print_section "Installing Base System"
 
 # Install base system
 print_status "Installing base system packages..."
-pacstrap -i /mnt base
+pacstrap -noconfirm /mnt base
 
 # Generate fstab
 print_status "Generating fstab..."
