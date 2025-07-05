@@ -10,7 +10,7 @@ static const char dmenufont[] = "monospace:size=10";
 static const char *colors[][3] = {
     /*               text       container  border    */
     [SchemeNorm] = {"#cdd6f4", "#1e1e2e", "#313244"},
-    [SchemeSel] = {"#cba6f7", "#1e1e2e", "#89b4fa"},
+    [SchemeSel] = {"#cdd6f4", "#45475a", "#89b4fa"},
 };
 
 /* tagging */
