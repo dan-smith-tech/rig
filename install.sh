@@ -302,7 +302,7 @@ else
 fi
 
 # Conditional multilib setup
-if [ "\$ENABLE_MULTILIB" = "true" ]; then
+if [ "$ENABLE_MULTILIB" = "true" ]; then
     echo "Setting up multilib repository and Steam..."
     
     # Enable multilib repository
@@ -312,7 +312,7 @@ if [ "\$ENABLE_MULTILIB" = "true" ]; then
     pacman -Syu --noconfirm
     
     # Install 32-bit packages based on graphics driver
-    if [ "\$GRAPHICS_DRIVER" = "nvidia" ]; then
+    if [ "$GRAPHICS_DRIVER" = "nvidia" ]; then
         pacman -S --noconfirm lib32-nvidia-utils steam
     else
         pacman -S --noconfirm lib32-mesa steam
