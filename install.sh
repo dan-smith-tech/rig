@@ -1,0 +1,430 @@
+#!/bin/bash
+
+# Arch Linux Installation Script
+# Interactive script for installing Arch Linux with LVM on LUKS encryption
+# Run this directly from the Arch Linux ISO
+
+set -e  # Exit on any error
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# Function to print colored output
+print_status() {
+    echo -e "${GREEN}[INFO]${NC} $1"
+}
+
+print_warning() {
+    echo -e "${YELLOW}[WARNING]${NC} $1"
+}
+
+print_error() {
+    echo -e "${RED}[ERROR]${NC} $1"
+}
+
+print_section() {
+    echo -e "\n${BLUE}=== $1 ===${NC}\n"
+}
+
+# Function to prompt for user input
+prompt_user() {
+    local prompt="$1"
+    local var_name="$2"
+    local default="$3"
+    
+    if [ -n "$default" ]; then
+        read -p "$prompt [$default]: " input
+        eval "$var_name=\"\${input:-$default}\""
+    else
+        read -p "$prompt: " input
+        eval "$var_name=\"$input\""
+    fi
+}
+
+# Function to prompt for yes/no
+prompt_yn() {
+    local prompt="$1"
+    local default="$2"
+    local response
+    
+    while true; do
+        if [ "$default" = "y" ]; then
+            read -p "$prompt [Y/n]: " response
+            response=${response:-y}
+        elif [ "$default" = "n" ]; then
+            read -p "$prompt [y/N]: " response
+            response=${response:-n}
+        else
+            read -p "$prompt [y/n]: " response
+        fi
+        
+        case $response in
+            [Yy]* ) return 0;;
+            [Nn]* ) return 1;;
+            * ) echo "Please answer yes or no.";;
+        esac
+    done
+}
+
+# Function to prompt for password
+prompt_password() {
+    local prompt="$1"
+    local var_name="$2"
+    local password1
+    local password2
+    
+    while true; do
+        read -s -p "$prompt: " password1
+        echo
+        read -s -p "Confirm password: " password2
+        echo
+        
+        if [ "$password1" = "$password2" ]; then
+            eval "$var_name=\"$password1\""
+            break
+        else
+            print_error "Passwords do not match. Please try again."
+        fi
+    done
+}
+
+print_section "Arch Linux Installation Script"
+print_warning "This script will completely wipe the selected disk!"
+print_warning "Make sure you have backed up any important data."
+
+if ! prompt_yn "Do you want to continue?" "n"; then
+    print_status "Installation cancelled."
+    exit 0
+fi
+
+# ===========================================
+# DISK SELECTION AND PARTITIONING
+# ===========================================
+
+print_section "Disk Selection"
+print_status "Available disks:"
+lsblk
+
+echo
+prompt_user "Enter the target device (e.g., sda, nvme0n1)" "TARGET_DEVICE"
+
+# Validate device exists
+if [ ! -b "/dev/$TARGET_DEVICE" ]; then
+    print_error "Device /dev/$TARGET_DEVICE does not exist!"
+    exit 1
+fi
+
+print_warning "Selected device: /dev/$TARGET_DEVICE"
+lsblk "/dev/$TARGET_DEVICE"
+
+if ! prompt_yn "Are you sure you want to use /dev/$TARGET_DEVICE?" "n"; then
+    print_status "Installation cancelled."
+    exit 0
+fi
+
+# Check if device needs to be wiped
+if prompt_yn "Do you want to completely wipe the device first?" "y"; then
+    print_status "Wiping device..."
+    sgdisk --zap-all "/dev/$TARGET_DEVICE"
+    partprobe "/dev/$TARGET_DEVICE"
+    sleep 2
+fi
+
+print_section "Disk Partitioning"
+print_status "Creating partition table and partitions..."
+
+# Create partition table and partitions using fdisk
+print_status "Creating GPT partition table..."
+(
+echo g      # Create GPT partition table
+echo n      # New partition (boot)
+echo        # Default partition number
+echo        # Default first sector
+echo +1G    # Size: 1GB
+echo n      # New partition (EFI)
+echo        # Default partition number
+echo        # Default first sector
+echo +1G    # Size: 1GB
+echo n      # New partition (LVM)
+echo        # Default partition number
+echo        # Default first sector
+echo        # Default last sector (use remaining space)
+echo t      # Change partition type
+echo 3      # Select partition 3
+echo 44     # LVM type
+echo w      # Write changes
+) | fdisk "/dev/$TARGET_DEVICE"
+
+# Wait for partitions to be recognized
+sleep 2
+partprobe "/dev/$TARGET_DEVICE"
+
+print_status "Partitions created successfully!"
+
+# ===========================================
+# DISK FORMATTING
+# ===========================================
+
+print_section "Disk Formatting"
+
+# Format boot partition (FAT32)
+print_status "Formatting boot partition as FAT32..."
+mkfs.fat -F32 "/dev/${TARGET_DEVICE}1"
+
+# Format EFI partition (EXT4)
+print_status "Formatting EFI partition as EXT4..."
+mkfs.ext4 "/dev/${TARGET_DEVICE}2"
+
+# Encrypt LVM partition
+print_status "Setting up LUKS encryption on LVM partition..."
+print_warning "You will need to enter a passphrase for disk encryption."
+print_warning "This passphrase will be required every time you boot your system."
+cryptsetup luksFormat "/dev/${TARGET_DEVICE}3"
+
+print_status "Opening encrypted partition..."
+cryptsetup open --type luks "/dev/${TARGET_DEVICE}3" lvm
+
+# ===========================================
+# LVM SETUP
+# ===========================================
+
+print_section "LVM Setup"
+
+# Create physical volume
+print_status "Creating physical volume..."
+pvcreate /dev/mapper/lvm
+
+# Create volume group
+print_status "Creating volume group..."
+vgcreate vg_system /dev/mapper/lvm
+
+# Get root partition size
+prompt_user "Enter root partition size in GB" "ROOT_SIZE" "30"
+
+# Create root logical volume
+print_status "Creating root logical volume (${ROOT_SIZE}GB)..."
+lvcreate -L "${ROOT_SIZE}GB" vg_system -n lv_root
+
+# Ask about swap
+ENABLE_SWAP=false
+if prompt_yn "Do you want to create a swap partition?" "y"; then
+    ENABLE_SWAP=true
+    prompt_user "Enter swap size in GB (recommend same as RAM)" "SWAP_SIZE" "8"
+    print_status "Creating swap logical volume (${SWAP_SIZE}GB)..."
+    lvcreate -L "${SWAP_SIZE}GB" vg_system -n lv_swap
+fi
+
+# Create home logical volume (use remaining space)
+print_status "Creating home logical volume (remaining space)..."
+lvcreate -l 100%FREE vg_system -n lv_home
+
+# Load device mapper module and scan for LVM volumes
+print_status "Loading device mapper and scanning for LVM volumes..."
+modprobe dm_mod
+vgscan
+vgchange -ay
+
+# Format logical volumes
+print_status "Formatting logical volumes..."
+mkfs.ext4 /dev/vg_system/lv_root
+mkfs.ext4 /dev/vg_system/lv_home
+
+# Setup swap if enabled
+if [ "$ENABLE_SWAP" = true ]; then
+    print_status "Setting up swap..."
+    mkswap /dev/vg_system/lv_swap
+    swapon /dev/vg_system/lv_swap
+fi
+
+# ===========================================
+# PARTITION MOUNTING
+# ===========================================
+
+print_section "Mounting Partitions"
+
+# Mount root partition
+print_status "Mounting root partition..."
+mount /dev/vg_system/lv_root /mnt
+
+# Create and mount boot directory
+print_status "Creating and mounting boot directory..."
+mkdir /mnt/boot
+mount "/dev/${TARGET_DEVICE}2" /mnt/boot
+
+# Create and mount home directory
+print_status "Creating and mounting home directory..."
+mkdir /mnt/home
+mount /dev/vg_system/lv_home /mnt/home
+
+# ===========================================
+# BASE SYSTEM INSTALLATION
+# ===========================================
+
+print_section "Installing Base System"
+
+# Install base system
+print_status "Installing base system packages..."
+pacstrap -i /mnt base
+
+# Generate fstab
+print_status "Generating fstab..."
+genfstab -U /mnt >> /mnt/etc/fstab
+
+print_status "Base system installed successfully!"
+
+# ===========================================
+# SYSTEM CONFIGURATION
+# ===========================================
+
+print_section "System Configuration"
+
+# Get user information
+prompt_user "Enter username for the main user" "USERNAME" "user"
+prompt_user "Enter hostname for the system" "HOSTNAME" "archlinux"
+
+# Ask about graphics drivers
+GRAPHICS_DRIVER="nvidia"
+if prompt_yn "Are you using NVIDIA graphics?" "y"; then
+    GRAPHICS_DRIVER="nvidia"
+else
+    GRAPHICS_DRIVER="intel"
+fi
+
+# Create chroot configuration script
+cat > /mnt/setup_chroot.sh << EOF
+#!/bin/bash
+
+# Set hostname
+echo "$HOSTNAME" > /etc/hostname
+
+# Set up hosts file
+cat > /etc/hosts << HOSTS_EOF
+127.0.0.1   localhost
+::1         localhost
+127.0.1.1   $HOSTNAME.localdomain $HOSTNAME
+HOSTS_EOF
+
+# Set root password
+echo "Setting root password..."
+passwd
+
+# Create user
+echo "Creating user $USERNAME..."
+useradd -m -g users -G tty,input,video,audio,optical,storage,wheel "$USERNAME"
+
+# Set user password
+echo "Setting password for $USERNAME..."
+passwd "$USERNAME"
+
+# Install essential packages
+echo "Installing essential packages..."
+pacman -S --noconfirm efibootmgr git grub linux linux-firmware linux-headers lvm2 neovim networkmanager sudo
+
+# Install additional packages based on graphics driver
+if [ "$GRAPHICS_DRIVER" = "nvidia" ]; then
+    echo "Installing NVIDIA packages..."
+    pacman -S --noconfirm nvidia nvidia-utils
+else
+    echo "Installing Intel/AMD graphics packages..."
+    pacman -S --noconfirm mesa intel-media-driver
+fi
+
+# Install full package set
+echo "Installing full package set..."
+pacman -S --noconfirm alsa-tools alsa-utils base base-devel clang docker docker-compose fd feh fzf github-cli kitty nodejs npm pipewire pipewire-alsa pipewire-audio pipewire-pulse ripgrep stow sysstat ttf-dejavu ttf-jetbrains-mono-nerd ttf-liberation ttf-nerd-fonts-symbols-mono unzip wget xclip xdg-utils xfwm4 xorg xorg-server xorg-xinit zoxide zsh
+
+# Enable multilib repository
+sed -i '/^#\[multilib\]/,/^#Include = \/etc\/pacman.d\/mirrorlist/ { s/^#//; }' /etc/pacman.conf
+
+# Update package database
+pacman -Syu --noconfirm
+
+# Install 32-bit packages
+if [ "$GRAPHICS_DRIVER" = "nvidia" ]; then
+    pacman -S --noconfirm lib32-nvidia-utils steam
+else
+    pacman -S --noconfirm lib32-mesa steam
+fi
+
+# Configure sudo
+echo "Configuring sudo..."
+echo '%wheel ALL=(ALL:ALL) ALL' >> /etc/sudoers
+
+# Configure mkinitcpio for encryption
+echo "Configuring initramfs for encryption..."
+sed -i 's/^HOOKS=.*/HOOKS=(base udev autodetect microcode modconf kms keyboard keymap consolefont block encrypt lvm2 filesystems fsck)/' /etc/mkinitcpio.conf
+
+# Generate initramfs
+mkinitcpio -p linux
+
+# Configure locale
+echo "Configuring locale..."
+sed -i 's/^#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen
+sed -i 's/^#en_GB.UTF-8 UTF-8/en_GB.UTF-8 UTF-8/' /etc/locale.gen
+locale-gen
+
+echo "LANG=en_US.UTF-8" > /etc/locale.conf
+
+# Configure timezone
+ln -sf /usr/share/zoneinfo/Europe/London /etc/localtime
+hwclock --systohc
+
+# Configure GRUB
+echo "Configuring GRUB..."
+sed -i "s|^GRUB_CMDLINE_LINUX_DEFAULT=.*|GRUB_CMDLINE_LINUX_DEFAULT=\"loglevel=3 quiet cryptdevice=/dev/$TARGET_DEVICE"3":vg_system\"|" /etc/default/grub
+
+# Setup EFI partition
+mkdir -p /boot/EFI
+mount "/dev/$TARGET_DEVICE"1 /boot/EFI
+
+# Install GRUB
+grub-install --target=x86_64-efi --bootloader-id=grub_uefi --recheck
+
+# Generate GRUB configuration
+mkdir -p /boot/grub/locale
+cp /usr/share/locale/en\@quot/LC_MESSAGES/grub.mo /boot/grub/locale/en.mo 2>/dev/null || true
+grub-mkconfig -o /boot/grub/grub.cfg
+
+# Enable NetworkManager
+systemctl enable NetworkManager
+
+# Enable Docker (if user wants it)
+systemctl enable docker
+
+echo "Configuration complete!"
+EOF
+
+# Make the script executable
+chmod +x /mnt/setup_chroot.sh
+
+# Run the configuration script in chroot
+print_status "Running system configuration (you will be prompted for passwords)..."
+arch-chroot /mnt /setup_chroot.sh
+
+# Clean up
+rm /mnt/setup_chroot.sh
+
+# ===========================================
+# FINALIZATION
+# ===========================================
+
+print_section "Finalizing Installation"
+
+print_status "Unmounting partitions..."
+umount -R /mnt
+
+print_status "Installation complete!"
+print_warning "System will reboot in 10 seconds..."
+print_warning "Remove the installation media when the system restarts."
+
+for i in {10..1}; do
+    echo -ne "\rRebooting in $i seconds... "
+    sleep 1
+done
+
+echo -e "\nRebooting now..."
+reboot
