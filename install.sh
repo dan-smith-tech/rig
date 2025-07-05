@@ -256,6 +256,12 @@ else
     GRAPHICS_DRIVER="intel"
 fi
 
+# Ask about multilib/Steam installation
+ENABLE_MULTILIB=false
+if prompt_yn "Enable 32-bit multilib repository and install Steam?" "n"; then
+    ENABLE_MULTILIB=true
+fi
+
 # Create chroot configuration script
 cat > /mnt/setup_chroot.sh << EOF
 #!/bin/bash
@@ -295,17 +301,26 @@ else
     pacman -S --noconfirm mesa intel-media-driver
 fi
 
-# Enable multilib repository
-sed -i '/^#\[multilib\]/,/^#Include = \/etc\/pacman.d\/mirrorlist/ { s/^#//; }' /etc/pacman.conf
-
-# Update package database
-pacman -Syu --noconfirm
-
-# Install 32-bit packages
-if [ "$GRAPHICS_DRIVER" = "nvidia" ]; then
-    pacman -S --noconfirm lib32-nvidia-utils steam
+# Conditional multilib setup
+if [ "\$ENABLE_MULTILIB" = "true" ]; then
+    echo "Setting up multilib repository and Steam..."
+    
+    # Enable multilib repository
+    sed -i '/^#\[multilib\]/,/^#Include = \/etc\/pacman.d\/mirrorlist/ { s/^#//; }' /etc/pacman.conf
+    
+    # Update package database
+    pacman -Syu --noconfirm
+    
+    # Install 32-bit packages based on graphics driver
+    if [ "\$GRAPHICS_DRIVER" = "nvidia" ]; then
+        pacman -S --noconfirm lib32-nvidia-utils steam
+    else
+        pacman -S --noconfirm lib32-mesa steam
+    fi
+    
+    echo "Multilib setup completed!"
 else
-    pacman -S --noconfirm lib32-mesa steam
+    echo "Skipping multilib setup..."
 fi
 
 # Configure sudo
