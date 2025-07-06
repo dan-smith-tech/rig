@@ -113,18 +113,9 @@ print_section "Package Installation"
 
 # Check if yay is available
 if command -v yay &> /dev/null; then
-    
     print_status "Installing Brave..."
     yay -S --noconfirm brave-bin
     print_status "Brave installed"
-    
-    # Install Xone
-    if prompt_yn "Install Xone (Xbox controller driver)?" "y"; then
-        print_status "Installing Xone..."
-        yay -S --noconfirm xone-dkms
-        print_status "Xone installed"
-    fi
-    
 else
     print_warning "yay not available - skipping AUR package installation"
 fi
