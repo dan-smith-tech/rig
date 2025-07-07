@@ -70,6 +70,17 @@ prompt_yn() {
     done
 }
 
+# Function to get correct partition name (handles nvme and mmcblk devices)
+get_partition() {
+    local dev="$1"
+    local part="$2"
+    if [[ "$dev" =~ ^(nvme|mmcblk) ]]; then
+        echo "${dev}p${part}"
+    else
+        echo "${dev}${part}"
+    fi
+}
+
 print_section "Arch Linux Installation Script"
 print_warning "This script will completely wipe the selected disk!"
 
@@ -138,20 +149,20 @@ print_section "Disk Formatting"
 
 # Format boot partition (FAT32)
 print_status "Formatting boot partition as FAT32..."
-mkfs.fat -F32 "/dev/${TARGET_DEVICE}1"
+mkfs.fat -F32 "/dev/$(get_partition "$TARGET_DEVICE" 1)"
 
 # Format EFI partition (EXT4)
 print_status "Formatting EFI partition as EXT4..."
-mkfs.ext4 "/dev/${TARGET_DEVICE}2"
+mkfs.ext4 "/dev/$(get_partition "$TARGET_DEVICE" 2)"
 
 # Encrypt LVM partition
 print_status "Setting up LUKS encryption on LVM partition..."
 print_warning "You will need to enter a passphrase for disk encryption."
 print_warning "This passphrase will be required every time you boot your system."
-cryptsetup luksFormat "/dev/${TARGET_DEVICE}3"
+cryptsetup luksFormat "/dev/$(get_partition "$TARGET_DEVICE" 3)"
 
 print_status "Opening encrypted partition..."
-cryptsetup open --type luks "/dev/${TARGET_DEVICE}3" lvm
+cryptsetup open --type luks "/dev/$(get_partition "$TARGET_DEVICE" 3)" lvm
 
 # ===========================================
 # LVM SETUP
@@ -215,7 +226,7 @@ mount /dev/vg_system/lv_root /mnt
 # Create and mount boot directory
 print_status "Creating and mounting boot directory..."
 mkdir /mnt/boot
-mount "/dev/${TARGET_DEVICE}2" /mnt/boot
+mount "/dev/$(get_partition "$TARGET_DEVICE" 2)" /mnt/boot
 
 # Create and mount home directory
 print_status "Creating and mounting home directory..."
@@ -265,6 +276,17 @@ fi
 # Create chroot configuration script
 cat > /mnt/setup_chroot.sh << EOF
 #!/bin/bash
+
+# Helper for partition naming (copied logic)
+get_partition() {
+    local dev="$TARGET_DEVICE"
+    local part="\$1"
+    if [[ "\$dev" =~ ^(nvme|mmcblk) ]]; then
+        echo "\${dev}p\${part}"
+    else
+        echo "\${dev}\${part}"
+    fi
+}
 
 # Set hostname
 echo "$HOSTNAME" > /etc/hostname
@@ -348,11 +370,11 @@ hwclock --systohc
 
 # Configure GRUB
 echo "Configuring GRUB..."
-sed -i "s|^GRUB_CMDLINE_LINUX_DEFAULT=.*|GRUB_CMDLINE_LINUX_DEFAULT=\"loglevel=3 quiet cryptdevice=/dev/$TARGET_DEVICE"3":vg_system\"|" /etc/default/grub
+sed -i "s|^GRUB_CMDLINE_LINUX_DEFAULT=.*|GRUB_CMDLINE_LINUX_DEFAULT=\\"loglevel=3 quiet cryptdevice=/dev/\$(get_partition 3):vg_system\\"\|" /etc/default/grub
 
 # Setup EFI partition
 mkdir -p /boot/EFI
-mount "/dev/$TARGET_DEVICE"1 /boot/EFI
+mount "/dev/\$(get_partition 1)" /boot/EFI
 
 # Install GRUB
 grub-install --target=x86_64-efi --bootloader-id=grub_uefi --recheck
