@@ -189,6 +189,28 @@ sudo visudo -c
 print_status "Sudoers configuration complete for $CURRENT_USER"
 
 # ===========================================
+# DOCKER CONFIGURATION
+# ===========================================
+
+# Add user to docker group
+if ! groups "$CURRENT_USER" | grep -q "\bdocker\b"; then
+    print_status "Adding $CURRENT_USER to docker group..."
+    sudo usermod -aG docker "$CURRENT_USER"
+else
+    print_status "$CURRENT_USER is already in the docker group."
+fi
+
+# Enable Docker service
+if systemctl is-active --quiet docker; then
+    print_status "Docker service is already running."
+else
+    print_status "Enabling and starting Docker service..."
+    sudo systemctl enable docker
+    sudo systemctl start docker
+    print_status "Docker service started successfully."
+fi
+
+# ===========================================
 # DOTFILES CONFIGURATION
 # ===========================================
 
