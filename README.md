@@ -1,85 +1,78 @@
 # My Arch Linux Setup
 
-The [Arch Linux wiki](https://wiki.archlinux.org/) contains a comprehensive, up-to-date guide on how to install Arch Linux. And the [Arch Linux Installation Guide](https://wiki.archlinux.org/index.php/Installation_guide) is a good starting point. The [Arch Linux website](https://www.archlinux.org/) provides the latest news on the distro which is important to keep up with.
-
-## Overview
-
-- I use Arch Linux on all of my personal devices (PC and Laptop).
-
-  - On my PC I configure two users: a 'productivity' user running DWM for development work, and an 'entertainment' user running XFCE for playing video games (a traditional floating window manager really helps run Steam/games, which is why I don't use DWM for everything).
-  - On my laptop, I run only DWM.
-
-- I like my systems to be as lightweight as possible, so run the smallest/simplest versions of the tools I need, and don't use tools that aren't necessary (such as display managers).
-
-- I use the terminal for everything other than browsing the web and playing video games, as I am a massive advocate of FOSS and simplicity.
-
-- I like to configure everything in dotfiles (no GUIs if they can be avoided), and use Stow to sync the settings that are not specific to a user type (i.e., window manager dotfiles are not synced, but shell, terminal, file editor, etc. are).
+I value simplicity and minimalism. Even as a computer scientist, I use as little software as possible. I want my operating system to be lightweight and performant, free from bloatware, spyware, or unnecessary features. Full configurability and complete control over my system are essential to me. For these reasons, I exclusively use [Arch Linux](https://archlinux.org/).
 
 ## Pre-installation
 
-### Install Ventoy
+1. Flash the [Arch Linux ISO](https://www.archlinux.org/download/) to a USB drive.
 
-[Ventoy](https://www.ventoy.net/en/index.html) is a tool to create bootable USB drives. It is a great tool to have as it allows you to boot multiple ISOs from a single USB drive and not have to format the drive each time you want to try a different distro.
+2. Insert the USB drive into the computer and boot into it via the BIOS boot menu, and enter the live environment.
 
-### Download the ISO
+3. If using a wireless network connect, connect to the network over WiFi:
 
-[Download the Arch Linux ISO from the bottom of the page](https://www.archlinux.org/download/) and place it inside the root of the Ventoy USB drive.
+   List available devices:
 
-### Boot into the USB
+   ```bash
+   iwctl device list
+   ```
 
-Insert the Ventoy USB drive into the computer and boot into it by selecting it from the boot menu. You may need to change the boot order in the BIOS settings, or your BIOS may have a boot menu key that you can press at startup to select the USB drive.
+   Scan for available networks:
 
-Once Ventoy boots, you will see a list of ISOs that you can boot from. Select the Arch Linux ISO and press enter.
+   ```bash
+   iwctl station <device> scan
+   ```
 
-> **Note**: Disable Secure Boot in your BIOS settings if you have trouble booting into the USB drive.
+   List available networks:
 
-When the Arch Linux ISO boots, you will be presented with a GRUB2 menu. Select the first option to boot into the live environment (if you are using UEFI mode). Arch Linux will boot into the live environment and you can start the installation process when it finishes copying the image to RAM.
+   ```bash
+   iwctl station <device> get-networks
+   ```
 
-> **Note**: If Arch Linux does not boot into the live environment because it cannot find a device or path, then you may need to enter GRUB2 mode in Ventoy by pressing `ctrl + r` before booting into the Arch Linux ISO.
+   Connect to the network:
 
-Ensure the system is working by setting the system timezone:
+   ```bash
+   iwctl --passphrase <password> station <device> connect <network>
+   ```
 
-```bash
-timedatectl set-timezone <Region>/<City>
-```
+   Test the connection:
 
-## Initial network configuration
+   ```bash
+   ping archlinux.org
+   ```
 
-If you are using a wired connection, then you can skip this step. If you are using Wi-Fi, then you will need to connect to your network before proceeding with the installation.
+## Automated installation
 
-Using `iwctl` (iNet Wireless Control), you can scan for networks and connect to them. First, list the available devices:
+I have made two scripts that automate my entire installation and setup process:
 
-```bash
-iwctl device list
-```
+1. Fetch install script:
 
-Scan for available networks:
+   ```bash
+   curl -O https://raw.githubusercontent.com/dan-smith-tech/rig/main/install.sh
+   ```
 
-```bash
-iwctl station <device> scan
-```
+2. Run the install script, and follow the prompts:
 
-List the available networks:
+   ```bash
+   bash install.sh
+   ```
 
-```bash
-iwctl station <device> get-networks
-```
+3. Once the system has rebooted, login, and fetch the post-install setup script:
 
-Connect to your network:
+   ```bash
+   curl -O https://raw.githubusercontent.com/dan-smith-tech/rig/main/setup.sh
+   ```
 
-```bash
-iwctl --passphrase <password> station <device> connect <network>
-```
+4. Run the setup script, and follow the prompts:
 
-Test the connection:
+   ```bash
+   bash setup.sh
+   ```
 
-```bash
-ping archlinux.org
-```
+## Manual installation
 
-If the connection is successful, you should see output from the `ping` appearing every second. Press `Ctrl + C` to stop the `ping`.
+The following are the steps taken by the automated installation script, which can be followed manually if desired.
 
-## Disk partitioning
+### Disk partitioning
 
 List the available disks:
 
