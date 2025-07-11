@@ -1,0 +1,43 @@
+# Base packages are listed in the install script
+
+# Graphics
+kitty
+xorg-server
+xorg-xinit
+xorg-xsetroot
+
+# Development
+clang
+git
+github-cli
+neovim
+nodejs
+npm
+ripgrep
+base-devel
+
+# File Utilities
+fd
+unzip
+xclip
+fzf
+
+# System Utilities
+docker
+docker-compose
+stow
+sysstat
+zoxide
+zsh
+
+# Audio
+alsa-utils
+pipewire
+pipewire-alsa
+pipewire-pulse
+
+# Fonts
+ttf-dejavu
+ttf-jetbrains-mono-nerd
+ttf-liberation
+ttf-nerd-fonts-symbols-mono

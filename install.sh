@@ -1,7 +1,6 @@
 #!/bin/bash
 
 # Arch Linux Installation Script
-# Interactive script for installing Arch Linux with LVM on LUKS encryption
 # Run this directly from the Arch Linux ISO
 
 set -e  # Exit on any error
@@ -312,7 +311,7 @@ passwd "$USERNAME"
 
 # Install  packages
 echo "Installing essential packages..."
-pacman -S --noconfirm alsa-tools alsa-utils base base-devel clang docker docker-compose efibootmgr fd feh fzf git github-cli grub kitty linux linux-firmware linux-headers lvm2 neovim networkmanager nodejs npm nvidia nvidia-utils pipewire pipewire-alsa pipewire-audio pipewire-pulse ripgrep stow sudo sysstat ttf-dejavu ttf-jetbrains-mono-nerd ttf-liberation ttf-nerd-fonts-symbols-mono unzip wget xclip xdg-utils xfwm4 xorg xorg-server xorg-xinit zoxide zsh
+pacman -S --noconfirm base efibootmgr git grub linux linux-firmware linux-headers lvm2 neovim networkmanager sudo
 
 # Install additional packages based on graphics driver
 if [ "$GRAPHICS_DRIVER" = "nvidia" ]; then

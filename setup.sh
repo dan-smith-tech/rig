@@ -1,7 +1,6 @@
 #!/bin/bash
 
-# Automated Post-Installation Setup Script for Arch Linux
-# This script runs all post-installation steps without prompts
+# Arch Linux Post-Installation Setup Script
 # Run this from the rig repository directory
 
 set -e  # Exit on any error
@@ -70,13 +69,23 @@ CURRENT_USER=$(whoami)
 print_status "Current user: $CURRENT_USER"
 
 # ===========================================
-# SHELL CONFIGURATION
+# PACKAGE INSTALLATION
 # ===========================================
 
-print_section "Shell Configuration"
-print_status "Setting ZSH as default shell..."
-chsh -s /usr/bin/zsh
-print_status "ZSH set as default shell (will take effect on next login)"
+print_section "Package Installation"
+print_status "Installing user-defined package dependencies..."
+
+if [[ -f "packages.txt" ]]; then
+  mapfile -t packages < <(grep -vE '^\s*#|^\s*$' packages.txt)
+  if (( ${#packages[@]} )); then
+    sudo pacman -S --noconfirm "${packages[@]}"
+    print_status "All listed packages installed successfully."
+  else
+    print_status "No packages found to install in packages.txt."
+  fi
+else
+  print_status "packages.txt not found. Skipping package installation."
+fi
 
 # ===========================================
 # AUR HELPER INSTALLATION
@@ -106,7 +115,7 @@ else
 fi
 
 # ===========================================
-# PACKAGE INSTALLATION
+# AUR PACKAGE INSTALLATION
 # ===========================================
 
 print_section "Package Installation"
@@ -119,6 +128,15 @@ if command -v yay &> /dev/null; then
 else
     print_warning "yay not available - skipping AUR package installation"
 fi
+
+# ===========================================
+# SHELL CONFIGURATION
+# ===========================================
+
+print_section "Shell Configuration"
+print_status "Setting ZSH as default shell..."
+chsh -s /usr/bin/zsh
+print_status "ZSH set as default shell (will take effect on next login)"
 
 # ===========================================
 # AUTO-LOGIN CONFIGURATION

@@ -89,3 +89,22 @@ export PATH="$HOME/scripts:$PATH"
 # Aliases
 
 alias clip='xclip -selection clipboard'
+
+
+
+
+ipkgs() {
+  local pkgfile="$HOME/rig/packages.txt"
+  if [[ -f "$pkgfile" ]]; then
+    local pkgs
+    pkgs=("${(@f)$(grep -vE '^\s*#|^\s*$' "$pkgfile")}")
+    if (( ${#pkgs[@]} )); then
+      sudo pacman -S --noconfirm "${pkgs[@]}"
+      echo "All packages from rig/packages.txt installed"
+    else
+      echo "No packages found to install in rig/packages.txt"
+    fi
+  else
+    echo "rig/packages.txt not found."
+  fi
+}
