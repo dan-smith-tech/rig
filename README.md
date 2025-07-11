@@ -50,26 +50,32 @@ I have created two scripts that automate my entire installation and configuratio
    curl -O https://raw.githubusercontent.com/dan-smith-tech/rig/main/install.sh
    ```
 
-5. Run the `install` script:
+5. Make the script executable:
+
+   ```bash
+   chmod +x install.sh
+   ```
+
+6. Run the `install` script:
 
    ```bash
    bash install.sh
    ```
 
-6. Follow the prompts. The system will automatically reboot when the installation is complete.
+7. Follow the prompts. The system will automatically reboot when the installation is complete.
 
 ## Post-installation
 
-7. Login, and fetch the `configure` script:
+8. Login, and fetch the `configure` script:
 
    ```bash
    curl -O https://raw.githubusercontent.com/dan-smith-tech/rig/main/configure.sh
    ```
 
-8. Run the `configure` script:
+9. Run the `configure` script:
 
    ```bash
    bash setup.sh
    ```
 
-9. Follow the prompts. The system will automatically reboot when the configuration is complete.
+10. Follow the prompts. The system will automatically reboot when the configuration is complete.
