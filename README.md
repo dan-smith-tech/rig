@@ -2,7 +2,7 @@
 
 I value simplicity and minimalism. Even as a computer scientist, I use as little software as possible. I want my operating system to be lightweight and performant, free from bloatware, spyware, or unnecessary features. Full configurability and complete control over my system are essential to me. Therefore, I exclusively use [Arch Linux](https://archlinux.org/).
 
-I have made two scripts that automate my entire installation and configuration process, but have commented both to explain what the steps are doing so the process can be followed manually, and adapted accordingly.
+I have created two scripts that automate my entire installation and configuration process. Both scripts are commented to explain each step, enabling the process to be followed manually and adapted as needed.
 
 ## Pre-installation
 
@@ -50,7 +50,7 @@ I have made two scripts that automate my entire installation and configuration p
    curl -O https://raw.githubusercontent.com/dan-smith-tech/rig/main/install.sh
    ```
 
-5. Run the install script:
+5. Run the `install` script:
 
    ```bash
    bash install.sh
@@ -90,7 +90,7 @@ Make the window managers boot Kitty with a specific font-size:
 "kitty -o font_size=38"
 ```
 
-### Laptop scrolling
+### Laptop touchpad configuration
 
 Add the following to a startup script to enable natural scrolling for the touchpad:
 
