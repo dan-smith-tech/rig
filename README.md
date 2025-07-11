@@ -73,27 +73,3 @@ I have created two scripts that automate my entire installation and configuratio
    ```
 
 9. Follow the prompts. The system will automatically reboot when the configuration is complete.
-
-## Notes
-
-### Per-device UI scaling
-
-Add the following to `~/.Xdefaults` in order to scale the UI:
-
-```bash
-Xft.dpi: 192
-```
-
-Make the window managers boot Kitty with a specific font-size:
-
-```bash
-"kitty -o font_size=38"
-```
-
-### Laptop touchpad configuration
-
-Add the following to a startup script to enable natural scrolling for the touchpad:
-
-```bash
-xinput set-prop 'SYNA8004:00 06CB:CD8B Touchpad' 'libinput Natural Scrolling Enabled' 1 &
-```
