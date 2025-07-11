@@ -59,7 +59,7 @@ I have created two scripts that automate my entire installation and configuratio
 6. Run the `install` script:
 
    ```bash
-   bash install.sh
+   ./install.sh
    ```
 
 7. Follow the prompts. The system will automatically reboot when the installation is complete.
@@ -75,7 +75,7 @@ I have created two scripts that automate my entire installation and configuratio
 9. Run the `configure` script:
 
    ```bash
-   bash setup.sh
+   ./configure.sh
    ```
 
 10. Follow the prompts. The system will automatically reboot when the configuration is complete.
