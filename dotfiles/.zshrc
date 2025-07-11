@@ -1,6 +1,4 @@
-# Plugins
-
-## Directories where plugins will be cloned
+## Configure plugin directories
 ZSH_DIR="${ZSH:-$HOME/.zsh}"
 PURE_DIR="${ZSH_DIR}/pure"
 SYNTAX_HIGHLIGHTING_DIR="${ZSH_DIR}/zsh-syntax-highlighting"
@@ -42,10 +40,7 @@ compinit
 ## Load zoxide
 eval "$(zoxide init --cmd cd zsh)"
 
-
-
-# History
-
+# Configure history
 HISTFILE=~/.zsh/history
 HISTSIZE=5000
 SAVEHIST=$HISTSIZE
@@ -58,18 +53,11 @@ setopt hist_save_no_dups
 setopt hist_find_no_dups
 setopt hist_ignore_space
 
-
-
-# Colors
-
+# Set command colors 
 alias ls='ls --color=auto'
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 alias grep='grep --color=auto'
 alias diff='diff --color=auto'
-
-
-
-# Keybindings
 
 # Set kebindings to emacs mode
 bindkey -e
@@ -78,21 +66,7 @@ bindkey -e
 bindkey "^[[A" history-search-backward
 bindkey "^[[B" history-search-forward
 
-
-
-# Paths
-
-export PATH="$HOME/scripts:$PATH"
-
-
-
-# Aliases
-
-alias clip='xclip -selection clipboard'
-
-
-
-
+# Function to install packages from rig/packages.txt
 ipkgs() {
   local pkgfile="$HOME/rig/packages.txt"
   if [[ -f "$pkgfile" ]]; then
@@ -108,3 +82,6 @@ ipkgs() {
     echo "rig/packages.txt not found."
   fi
 }
+
+# Configure aliases
+alias clip='xclip -selection clipboard'
