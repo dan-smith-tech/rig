@@ -55,9 +55,9 @@ prompt_yn() {
 }
 
 # Check if running from correct directory
-if [ ! -f "$(pwd)/setup.sh" ]; then
+if [ ! -f "$(pwd)/configure.sh" ]; then
     print_error "This script must be run from the rig repository directory"
-    print_error "Make sure you're in the directory containing setup.sh"
+    print_error "Make sure you're in the directory containing configure.sh"
     exit 1
 fi
 

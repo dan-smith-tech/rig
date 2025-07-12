@@ -8,9 +8,11 @@ I have created two scripts that automate my entire installation and configuratio
 
 1. Flash the [Arch Linux ISO](https://www.archlinux.org/download/) to a USB drive.
 
-2. Insert the USB drive into the computer and boot into it via the BIOS boot menu, and enter the Arch Linux live environment.
+2. Insert the USB drive into the computer and boot into it via the BIOS boot menu.
 
-3. If using a wireless network, connect to it over WiFi:
+3. Enter the Arch Linux live environment.
+
+4. If using a wireless network, connect to it over WiFi:
 
    List available devices:
 
@@ -44,38 +46,45 @@ I have created two scripts that automate my entire installation and configuratio
 
 ## Installation
 
-4. Fetch the `install` script:
+5. Fetch the `install` script:
 
    ```bash
    curl -O https://raw.githubusercontent.com/dan-smith-tech/rig/main/install.sh
    ```
 
-5. Make the script executable:
+6. Make the script executable:
 
    ```bash
    chmod +x install.sh
    ```
 
-6. Run the `install` script:
+7. Run the `install` script:
 
    ```bash
    ./install.sh
    ```
 
-7. Follow the prompts. The system will automatically reboot when the installation is complete.
+8. Follow the prompts. The system will automatically reboot when the installation is complete.
 
 ## Post-installation
 
-8. Login, and fetch the `configure` script:
+9. Login and, if using a wireless network, connect to it over WiFi:
 
    ```bash
-   curl -O https://raw.githubusercontent.com/dan-smith-tech/rig/main/configure.sh
+   nmcli device wifi connect <network> --ask
+
    ```
 
-9. Run the `configure` script:
+10. Fetch the `configure` script:
 
-   ```bash
-   ./configure.sh
-   ```
+```bash
+curl -O https://raw.githubusercontent.com/dan-smith-tech/rig/main/configure.sh
+```
 
-10. Follow the prompts. The system will automatically reboot when the configuration is complete.
+11. Run the `configure` script:
+
+```bash
+./configure.sh
+```
+
+12. Follow the prompts. The system will automatically reboot when the configuration is complete.
