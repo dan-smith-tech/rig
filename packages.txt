@@ -27,6 +27,7 @@ docker
 docker-compose
 stow
 sysstat
+xdg-utils
 zoxide
 zsh
 
