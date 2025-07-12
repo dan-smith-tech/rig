@@ -370,6 +370,8 @@ hwclock --systohc
 # Configure GRUB
 echo "Configuring GRUB..."
 sed -i "s|^GRUB_CMDLINE_LINUX_DEFAULT=.*|GRUB_CMDLINE_LINUX_DEFAULT=\\"loglevel=3 quiet cryptdevice=/dev/\$(get_partition 3):vg_system\\"\|" /etc/default/grub
+# log the line written into the file
+echo "GRUB_CMDLINE_LINUX_DEFAULT=\"loglevel=3 quiet cryptdevice=/dev/\$(get_partition 3):vg_system\"" >> /etc/default/grub
 
 # Setup EFI partition
 mkdir -p /boot/EFI
@@ -387,8 +389,6 @@ grub-mkconfig -o /boot/grub/grub.cfg
 systemctl enable NetworkManager
 
 echo "Configuration complete!"
-# print out the mkinitcpio.conf file
-cat /etc/mkinitcpio.conf
 EOF
 
 # Make the script executable
