@@ -386,10 +386,9 @@ grub-mkconfig -o /boot/grub/grub.cfg
 # Enable NetworkManager
 systemctl enable NetworkManager
 
-# Enable Docker (if user wants it)
-systemctl enable docker
-
 echo "Configuration complete!"
+# print out the mkinitcpio.conf file
+cat /etc/mkinitcpio.conf
 EOF
 
 # Make the script executable
