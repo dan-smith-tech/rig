@@ -77,14 +77,14 @@ I have created two scripts that automate my entire installation and configuratio
 
 10. Fetch the `configure` script:
 
-```bash
-curl -O https://raw.githubusercontent.com/dan-smith-tech/rig/main/configure.sh
-```
+    ```bash
+    curl -O https://raw.githubusercontent.com/dan-smith-tech/rig/main/configure.sh
+    ```
 
 11. Run the `configure` script:
 
-```bash
-./configure.sh
-```
+    ```bash
+    ./configure.sh
+    ```
 
 12. Follow the prompts. The system will automatically reboot when the configuration is complete.
