@@ -412,12 +412,7 @@ print_status "Installation complete."
 print_warning "Remove the installation media when the system restarts."
 
 for i in {3..1}; do
-    echo -ne "\rRebooting in $i seconds... Press any key to cancel. "
-    read -t 1 -n 1 key
-    if [ $? -eq 0 ]; then
-        echo -e "\nReboot cancelled."
-        exit 0
-    fi
+    echo -ne "\rRebooting in $i seconds..."
 done
 
 echo -e "\nRebooting now..."
