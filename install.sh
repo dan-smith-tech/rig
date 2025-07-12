@@ -369,7 +369,7 @@ hwclock --systohc
 
 # Configure GRUB
 echo "Configuring GRUB..."
-sed -i "s|^GRUB_CMDLINE_LINUX_DEFAULT=.*|GRUB_CMDLINE_LINUX_DEFAULT=\\"loglevel=3 quiet cryptdevice=/dev/\$(get_partition 3):vg_system\\"\|" /etc/default/grub
+sed -i "s|^GRUB_CMDLINE_LINUX_DEFAULT=.*|GRUB_CMDLINE_LINUX_DEFAULT=\"loglevel=3 quiet cryptdevice=/dev/\$(get_partition 3):vg_system\"|" /etc/default/grub
 # log the line written into the file
 echo "GRUB_CMDLINE_LINUX_DEFAULT=\"loglevel=3 quiet cryptdevice=/dev/\$(get_partition 3):vg_system\"" >> /etc/default/grub
 
