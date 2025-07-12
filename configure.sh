@@ -306,15 +306,18 @@ sudo chmod +x /usr/local/src/dwm/status.sh
 cd "$HOME/rig"
 
 # ===========================================
-# COMPLETION
+# FINALIZATION
 # ===========================================
 
-print_section "Automated Post-Installation Setup Complete"
-print_warning "System will reboot in 3 seconds..."
+print_status "Configuration complete."
 
 for i in {3..1}; do
-    echo -ne "\rRebooting in $i seconds... "
-    sleep 1
+    echo -ne "\rRebooting in $i seconds... Press any key to cancel. "
+    read -t 1 -n 1 key
+    if [ $? -eq 0 ]; then
+        echo -e "\nReboot cancelled."
+        exit 0
+    fi
 done
 
 echo -e "\nRebooting now..."

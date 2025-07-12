@@ -406,18 +406,19 @@ rm /mnt/setup_chroot.sh
 # FINALIZATION
 # ===========================================
 
-print_section "Finalizing Installation"
-
 print_status "Unmounting partitions..."
 umount -R /mnt
 
-print_status "Installation complete!"
-print_warning "System will reboot in 10 seconds..."
+print_status "Installation complete."
 print_warning "Remove the installation media when the system restarts."
 
 for i in {3..1}; do
-    echo -ne "\rRebooting in $i seconds... "
-    sleep 1
+    echo -ne "\rRebooting in $i seconds... Press any key to cancel. "
+    read -t 1 -n 1 key
+    if [ $? -eq 0 ]; then
+        echo -e "\nReboot cancelled."
+        exit 0
+    fi
 done
 
 echo -e "\nRebooting now..."
