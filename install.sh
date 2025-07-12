@@ -255,8 +255,8 @@ print_status "Base system installed successfully!"
 print_section "System Configuration"
 
 # Get user information
-prompt_user "Enter username for the main user" "USERNAME" "user"
-prompt_user "Enter hostname for the system" "HOSTNAME" "archlinux"
+prompt_user "Enter hostname for the system" "HOSTNAME" "novigrad"
+USERNAME="dan"
 
 # Ask about graphics drivers
 GRAPHICS_DRIVER="nvidia"
