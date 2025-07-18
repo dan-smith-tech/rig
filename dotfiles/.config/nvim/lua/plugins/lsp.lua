@@ -10,9 +10,6 @@ return {
 		config = function()
 			require("mason-lspconfig").setup({
 				ensure_installed = {
-					-- Python
-					"pyright",
-
 					-- C/C++
 					"clangd",
 
@@ -62,8 +59,7 @@ return {
 						},
 					},
 				},
-				on_attach = function(client, bufnr)
-					-- Add format as we use `rust-analyzer` for formatting and not null-ls
+				on_attach = function()
 					vim.api.nvim_create_autocmd("BufWritePre", {
 						callback = function()
 							vim.lsp.buf.format({ async = false })
@@ -85,19 +81,17 @@ return {
 					Lua = {
 						runtime = { version = "LuaJIT" },
 						workspace = { library = vim.api.nvim_get_runtime_file("", true) },
+						diagnostics = { globals = { "vim" } },
 					},
 				},
 			})
 
-			-- JSON
+			-- JSON & Markup
 			lspconfig.jsonls.setup({ capabilities = capabilities })
-
-			-- YAML
 			lspconfig.yamlls.setup({ capabilities = capabilities })
+			lspconfig.taplo.setup({ capabilities = capabilities }) -- TOML
 
-			-- Rust / TOML
-			lspconfig.taplo.setup({ capabilities = capabilities })
-
+			-- Keybindings
 			vim.keymap.set("n", "<leader>h", vim.lsp.buf.hover, {})
 			vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, {})
 			vim.keymap.set("n", "<leader>g", function()
@@ -118,17 +112,11 @@ return {
 					-- C/C++
 					"clang-format",
 
-					-- Web
-					"eslint_d",
+					-- YAML
+					"yamllint",
 
 					-- Lua
 					"stylua",
-
-					-- JSON
-					"prettier",
-
-					-- YAML
-					"yamllint",
 
 					-- Web / Markdown / JSON / YAML
 					"prettier",
@@ -150,10 +138,15 @@ return {
 					-- Python
 					null_ls.builtins.diagnostics.pylint,
 					null_ls.builtins.diagnostics.mypy,
+					null_ls.builtins.diagnostics.flake8,
+					null_ls.builtins.diagnostics.ruff,
+					null_ls.builtins.diagnostics.pydocstyle,
+					null_ls.builtins.diagnostics.bandit,
 					null_ls.builtins.formatting.black,
 					null_ls.builtins.formatting.isort,
+					null_ls.builtins.code_actions.pytest,
 
-					-- C/C++
+					-- C++
 					null_ls.builtins.formatting.clang_format.with({
 						extra_args = {
 							"--style={ ContinuationIndentWidth: 3, IndentCaseLabels: true, IndentWidth: 3, IndentPPDirectives: AfterHash, PointerAlignment: Left, UseTab: Never }",
@@ -166,7 +159,7 @@ return {
 					-- YAML
 					null_ls.builtins.diagnostics.yamllint,
 
-					-- Web / Markdown / JSON / YAML
+					-- JSON, Markdown, YAML, HTML
 					null_ls.builtins.formatting.prettier,
 				},
 				on_attach = function(client, bufnr)
