@@ -1,166 +1,195 @@
 return {
-   {
-      "williamboman/mason.nvim",
-      config = function()
-         require("mason").setup()
-      end,
-   },
-   {
-      "williamboman/mason-lspconfig.nvim",
-      config = function()
-         require("mason-lspconfig").setup({
-            ensure_installed = {
-               -- C/C++
-               "clangd",
+	{
+		"williamboman/mason.nvim",
+		config = function()
+			require("mason").setup()
+		end,
+	},
+	{
+		"williamboman/mason-lspconfig.nvim",
+		config = function()
+			require("mason-lspconfig").setup({
+				ensure_installed = {
+					-- Python
+					"pyright",
 
-               -- Web
-               "html",
-               "cssls",
-               "ts_ls",
-               "eslint",
+					-- C/C++
+					"clangd",
 
-               -- Lua
-               "lua_ls",
+					-- Web
+					"html",
+					"cssls",
+					"ts_ls",
+					"eslint",
 
-               -- JSON
-               "jsonls",
+					-- Lua
+					"lua_ls",
 
-               -- YAML
-               "yamlls",
+					-- JSON
+					"jsonls",
 
-               -- TOML
-               "taplo",
-            },
-         })
-      end,
-   },
-   {
-      "neovim/nvim-lspconfig",
-      config = function()
-         local lspconfig = require("lspconfig")
-         local capabilities = require("cmp_nvim_lsp").default_capabilities()
+					-- YAML
+					"yamlls",
 
-         -- C/C++
-         lspconfig.clangd.setup({ capabilities = capabilities })
+					-- TOML
+					"taplo",
+				},
+			})
+		end,
+	},
+	{
+		"neovim/nvim-lspconfig",
+		config = function()
+			local lspconfig = require("lspconfig")
+			local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
-         -- Rust
-         lspconfig.rust_analyzer.setup({
-            capabilities = capabilities,
-            settings = {
-               ["rust-analyzer"] = {
-                  check = {
-                     command = "clippy",
-                  },
-                  diagnostics = {
-                     enable = true,
-                  },
-               },
-            },
-            on_attach = function()
-               vim.api.nvim_create_autocmd("BufWritePre", {
-                  callback = function()
-                     vim.lsp.buf.format({ async = false })
-                  end,
-               })
-            end,
-         })
+			-- Python
+			lspconfig.pyright.setup({ capabilities = capabilities })
 
-         -- Web
-         lspconfig.html.setup({ capabilities = capabilities })
-         lspconfig.cssls.setup({ capabilities = capabilities })
-         lspconfig.ts_ls.setup({ capabilities = capabilities })
-         lspconfig.eslint.setup({ capabilities = capabilities })
+			local orig_handler = vim.lsp.handlers["textDocument/publishDiagnostics"]
+			vim.lsp.handlers["textDocument/publishDiagnostics"] = function(err, result, ctx, config)
+				if result and result.diagnostics then
+					local filtered_diags = {}
+					for _, diag in ipairs(result.diagnostics) do
+						-- Filter out pyright hints to prevent duplicates
+						if not (diag.source == "Pyright" and diag.severity == vim.diagnostic.severity.HINT) then
+							table.insert(filtered_diags, diag)
+						end
+					end
+					result.diagnostics = filtered_diags
+				end
+				orig_handler(err, result, ctx, config)
+			end
 
-         -- Lua
-         lspconfig.lua_ls.setup({
-            capabilities = capabilities,
-            settings = {
-               Lua = {
-                  runtime = { version = "LuaJIT" },
-                  workspace = { library = vim.api.nvim_get_runtime_file("", true) },
-                  diagnostics = { globals = { "vim" } },
-               },
-            },
-         })
+			-- C/C++
+			lspconfig.clangd.setup({ capabilities = capabilities })
 
-         -- JSON & Markup
-         lspconfig.jsonls.setup({ capabilities = capabilities })
-         lspconfig.yamlls.setup({ capabilities = capabilities })
-         lspconfig.taplo.setup({ capabilities = capabilities }) -- TOML
+			-- Rust
+			lspconfig.rust_analyzer.setup({
+				capabilities = capabilities,
+				settings = {
+					["rust-analyzer"] = {
+						check = {
+							command = "clippy",
+						},
+						diagnostics = {
+							enable = true,
+						},
+					},
+				},
+				on_attach = function()
+					vim.api.nvim_create_autocmd("BufWritePre", {
+						callback = function()
+							vim.lsp.buf.format({ async = false })
+						end,
+					})
+				end,
+			})
 
-         -- Keybindings
-         vim.keymap.set("n", "<leader>h", vim.lsp.buf.hover, {})
-         vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, {})
-         vim.keymap.set("n", "<leader>g", function()
-            require("telescope.builtin").diagnostics()
-         end, { desc = "Telescope workspace diagnostics" })
-         vim.keymap.set("n", "<leader>a", vim.lsp.buf.code_action, {})
-         vim.keymap.set("n", "<leader>d", function()
-            vim.cmd("leftabove vsplit")
-            vim.lsp.buf.definition()
-         end, {})
-      end,
-   },
-   {
-      "jay-babu/mason-null-ls.nvim",
-      config = function()
-         require("mason-null-ls").setup({
-            ensure_installed = {
-               -- C/C++
-               "clang-format",
+			-- Web
+			lspconfig.html.setup({ capabilities = capabilities })
+			lspconfig.cssls.setup({ capabilities = capabilities })
+			lspconfig.ts_ls.setup({ capabilities = capabilities })
+			lspconfig.eslint.setup({ capabilities = capabilities })
 
-               -- YAML
-               "yamllint",
+			-- Lua
+			lspconfig.lua_ls.setup({
+				capabilities = capabilities,
+				settings = {
+					Lua = {
+						runtime = { version = "LuaJIT" },
+						workspace = { library = vim.api.nvim_get_runtime_file("", true) },
+						diagnostics = { globals = { "vim" } },
+					},
+				},
+			})
 
-               -- Lua
-               "stylua",
+			-- JSON & Markup
+			lspconfig.jsonls.setup({ capabilities = capabilities })
+			lspconfig.yamlls.setup({ capabilities = capabilities })
+			lspconfig.taplo.setup({ capabilities = capabilities }) -- TOML
 
-               -- Web / Markdown / JSON / YAML
-               "prettier",
-            },
-         })
-      end,
-   },
-   {
-      "nvimtools/none-ls.nvim",
-      dependencies = {
-         "nvimtools/none-ls-extras.nvim",
-      },
-      config = function()
-         local null_ls = require("null-ls")
-         local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
+			-- Keybindings
+			vim.keymap.set("n", "<leader>h", vim.lsp.buf.hover, {})
+			vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, {})
+			vim.keymap.set("n", "<leader>g", function()
+				require("telescope.builtin").diagnostics()
+			end, { desc = "Telescope workspace diagnostics" })
+			vim.keymap.set("n", "<leader>a", vim.lsp.buf.code_action, {})
+			vim.keymap.set("n", "<leader>d", function()
+				vim.cmd("leftabove vsplit")
+				vim.lsp.buf.definition()
+			end, {})
+		end,
+	},
+	{
+		"jay-babu/mason-null-ls.nvim",
+		config = function()
+			require("mason-null-ls").setup({
+				ensure_installed = {
+					-- Python
+					"black",
+					"isort",
 
-         null_ls.setup({
-            sources = {
-               -- C++
-               null_ls.builtins.formatting.clang_format.with({
-                  extra_args = {
-                     "--style={ ContinuationIndentWidth: 3, IndentCaseLabels: true, IndentWidth: 3, IndentPPDirectives: AfterHash, PointerAlignment: Left, UseTab: Never }",
-                  },
-               }),
+					-- C/C++
+					"clang-format",
 
-               -- Lua
-               null_ls.builtins.formatting.stylua,
+					-- YAML
+					"yamllint",
 
-               -- YAML
-               null_ls.builtins.diagnostics.yamllint,
+					-- Lua
+					"stylua",
 
-               -- JSON, Markdown, YAML, HTML
-               null_ls.builtins.formatting.prettier,
-            },
-            on_attach = function(client, bufnr)
-               if client.supports_method("textDocument/formatting") then
-                  vim.api.nvim_clear_autocmds({ group = augroup, buffer = bufnr })
-                  vim.api.nvim_create_autocmd("BufWritePre", {
-                     group = augroup,
-                     buffer = bufnr,
-                     callback = function()
-                        vim.lsp.buf.format()
-                     end,
-                  })
-               end
-            end,
-         })
-      end,
-   },
+					-- Web / Markdown / JSON / YAML
+					"prettier",
+				},
+			})
+		end,
+	},
+	{
+		"nvimtools/none-ls.nvim",
+		dependencies = {
+			"nvimtools/none-ls-extras.nvim",
+		},
+		config = function()
+			local null_ls = require("null-ls")
+			local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
+
+			null_ls.setup({
+				sources = {
+					-- Python
+					null_ls.builtins.formatting.black,
+					null_ls.builtins.formatting.isort,
+
+					-- C++
+					null_ls.builtins.formatting.clang_format.with({
+						extra_args = {
+							"--style={ ContinuationIndentWidth: 3, IndentCaseLabels: true, IndentWidth: 3, IndentPPDirectives: AfterHash, PointerAlignment: Left, UseTab: Never }",
+						},
+					}),
+
+					-- Lua
+					null_ls.builtins.formatting.stylua,
+
+					-- YAML
+					null_ls.builtins.diagnostics.yamllint,
+
+					-- JSON, Markdown, YAML, HTML
+					null_ls.builtins.formatting.prettier,
+				},
+				on_attach = function(client, bufnr)
+					if client.supports_method("textDocument/formatting") then
+						vim.api.nvim_clear_autocmds({ group = augroup, buffer = bufnr })
+						vim.api.nvim_create_autocmd("BufWritePre", {
+							group = augroup,
+							buffer = bufnr,
+							callback = function()
+								vim.lsp.buf.format()
+							end,
+						})
+					end
+				end,
+			})
+		end,
+	},
 }
