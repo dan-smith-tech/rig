@@ -11,7 +11,6 @@ return {
 			require("mason-lspconfig").setup({
 				ensure_installed = {
 					-- Python
-					"pyright",
 
 					-- C/C++
 					"clangd",
@@ -44,22 +43,7 @@ return {
 			local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
 			-- Python
-			lspconfig.pyright.setup({ capabilities = capabilities })
-
-			local orig_handler = vim.lsp.handlers["textDocument/publishDiagnostics"]
-			vim.lsp.handlers["textDocument/publishDiagnostics"] = function(err, result, ctx, config)
-				if result and result.diagnostics then
-					local filtered_diags = {}
-					for _, diag in ipairs(result.diagnostics) do
-						-- Filter out pyright hints to prevent duplicates
-						if not (diag.source == "Pyright" and diag.severity == vim.diagnostic.severity.HINT) then
-							table.insert(filtered_diags, diag)
-						end
-					end
-					result.diagnostics = filtered_diags
-				end
-				orig_handler(err, result, ctx, config)
-			end
+			lspconfig.ruff.setup({ capabilities = capabilities })
 
 			-- C/C++
 			lspconfig.clangd.setup({ capabilities = capabilities })
@@ -123,73 +107,81 @@ return {
 		end,
 	},
 	{
-		"jay-babu/mason-null-ls.nvim",
+		"WhoIsSethDaniel/mason-tool-installer.nvim",
 		config = function()
-			require("mason-null-ls").setup({
+			require("mason-tool-installer").setup({
 				ensure_installed = {
-					-- Python
-					"black",
-					"isort",
-
-					-- C/C++
+					"ruff",
+					"mypy",
 					"clang-format",
-
-					-- YAML
-					"yamllint",
-
-					-- Lua
 					"stylua",
-
-					-- Web / Markdown / JSON / YAML
 					"prettier",
+					"yamllint",
 				},
 			})
 		end,
 	},
 	{
-		"nvimtools/none-ls.nvim",
-		dependencies = {
-			"nvimtools/none-ls-extras.nvim",
-		},
+		"mfussenegger/nvim-lint",
 		config = function()
-			local null_ls = require("null-ls")
-			local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
+			local lint = require("lint")
 
-			null_ls.setup({
-				sources = {
-					-- Python
-					null_ls.builtins.formatting.black,
-					null_ls.builtins.formatting.isort,
+			lint.linters_by_ft = {
+				python = { "ruff", "mypy" },
+				yaml = { "yamllint" },
+			}
 
-					-- C++
-					null_ls.builtins.formatting.clang_format.with({
-						extra_args = {
-							"--style={ ContinuationIndentWidth: 3, IndentCaseLabels: true, IndentWidth: 3, IndentPPDirectives: AfterHash, PointerAlignment: Left, UseTab: Never }",
-						},
-					}),
-
-					-- Lua
-					null_ls.builtins.formatting.stylua,
-
-					-- YAML
-					null_ls.builtins.diagnostics.yamllint,
-
-					-- JSON, Markdown, YAML, HTML
-					null_ls.builtins.formatting.prettier,
-				},
-				on_attach = function(client, bufnr)
-					if client.supports_method("textDocument/formatting") then
-						vim.api.nvim_clear_autocmds({ group = augroup, buffer = bufnr })
-						vim.api.nvim_create_autocmd("BufWritePre", {
-							group = augroup,
-							buffer = bufnr,
-							callback = function()
-								vim.lsp.buf.format()
-							end,
-						})
-					end
+			-- Create autocommand for linting
+			local lint_augroup = vim.api.nvim_create_augroup("lint", { clear = true })
+			vim.api.nvim_create_autocmd({ "BufEnter", "BufWritePost", "InsertLeave" }, {
+				group = lint_augroup,
+				callback = function()
+					lint.try_lint()
 				end,
 			})
+
+			vim.keymap.set("n", "<leader>l", function()
+				lint.try_lint()
+			end, { desc = "Trigger linting for current file" })
+		end,
+	},
+	{
+		"stevearc/conform.nvim",
+		config = function()
+			require("conform").setup({
+				formatters_by_ft = {
+					python = { "ruff_format", "ruff_organize_imports" },
+					cpp = { "clang-format" },
+					c = { "clang-format" },
+					lua = { "stylua" },
+					javascript = { "prettier" },
+					typescript = { "prettier" },
+					json = { "prettier" },
+					yaml = { "prettier" },
+					markdown = { "prettier" },
+					html = { "prettier" },
+					css = { "prettier" },
+				},
+				formatters = {
+					["clang-format"] = {
+						prepend_args = {
+							"--style={ ContinuationIndentWidth: 3, IndentCaseLabels: true, IndentWidth: 3, IndentPPDirectives: AfterHash, PointerAlignment: Left, UseTab: Never }",
+						},
+					},
+				},
+				format_on_save = {
+					timeout_ms = 500,
+					lsp_fallback = true,
+				},
+			})
+
+			vim.keymap.set({ "n", "v" }, "<leader>f", function()
+				require("conform").format({
+					lsp_fallback = true,
+					async = false,
+					timeout_ms = 500,
+				})
+			end, { desc = "Format file or range (in visual mode)" })
 		end,
 	},
 }
