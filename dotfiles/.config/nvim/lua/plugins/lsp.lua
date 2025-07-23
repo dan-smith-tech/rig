@@ -11,6 +11,7 @@ return {
 			require("mason-lspconfig").setup({
 				ensure_installed = {
 					-- Python
+					"pyright",
 
 					-- C/C++
 					"clangd",
@@ -43,7 +44,7 @@ return {
 			local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
 			-- Python
-			lspconfig.ruff.setup({ capabilities = capabilities })
+			lspconfig.pyright.setup({ capabilities = capabilities })
 
 			-- C/C++
 			lspconfig.clangd.setup({ capabilities = capabilities })
@@ -111,11 +112,20 @@ return {
 		config = function()
 			require("mason-tool-installer").setup({
 				ensure_installed = {
+					-- Python
 					"ruff",
 					"mypy",
+
+					-- C/C++
 					"clang-format",
-					"stylua",
+
+					-- Web
 					"prettier",
+
+					-- Lua
+					"stylua",
+
+					-- YAML
 					"yamllint",
 				},
 			})
