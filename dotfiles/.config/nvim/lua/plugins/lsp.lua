@@ -13,6 +13,9 @@ return {
 					-- Python
 					"pyright",
 
+					-- Rust
+					"rust_analyzer",
+
 					-- C/C++
 					"clangd",
 

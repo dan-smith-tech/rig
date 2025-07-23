@@ -11,6 +11,7 @@ clang
 git
 github-cli
 neovim
+rustup
 nodejs
 npm
 ripgrep
