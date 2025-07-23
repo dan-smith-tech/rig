@@ -18,6 +18,7 @@ base-devel
 
 # File Utilities
 fd
+less
 unzip
 xclip
 fzf

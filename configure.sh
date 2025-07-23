@@ -306,6 +306,18 @@ sudo chmod +x /usr/local/src/dwm/status.sh
 cd "$HOME/rig"
 
 # ===========================================
+# GIT DIFFTOOL CONFIGURATION (KITTY)
+# ===========================================
+
+print_section "Git Diff Tool Configuration"
+print_status "Configuring Kitty as the default git diff tool..."
+
+git config --global diff.tool kitty
+git config --global difftool.kitty.cmd 'kitten diff $LOCAL $REMOTE'
+
+print_status "Kitty diff tool successfully configured for git"
+
+# ===========================================
 # FINALIZATION
 # ===========================================
 
