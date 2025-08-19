@@ -317,6 +317,15 @@ git config --global difftool.kitty.cmd 'kitten diff $LOCAL $REMOTE'
 
 print_status "Kitty diff tool successfully configured for git"
 
+
+# ===========================================
+# TIME-DATE CONFIGURATION
+# ===========================================
+
+print_section "Time-Date Configuration"
+print_status "Enabling NTP..."
+sudo timedatectl set-ntp true
+
 # ===========================================
 # FINALIZATION
 # ===========================================
