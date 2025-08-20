@@ -26,6 +26,7 @@ fzf
 
 # System Utilities
 docker
+docker-buildx
 docker-compose
 stow
 sysstat
