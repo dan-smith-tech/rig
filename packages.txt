@@ -5,6 +5,7 @@ hyprland
 kitty
 
 # Development
+base-devel
 clang
 git
 github-cli
