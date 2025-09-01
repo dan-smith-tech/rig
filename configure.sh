@@ -29,6 +29,20 @@ print_section() {
     echo -e "\n${BLUE}=== $1 ===${NC}\n"
 }
 
+prompt_user() {
+    local prompt="$1"
+    local var_name="$2"
+    local default="$3"
+    
+    if [ -n "$default" ]; then
+        read -p "$prompt [$default]: " input
+        eval "$var_name=\"\${input:-$default}\""
+    else
+        read -p "$prompt: " input
+        eval "$var_name=\"$input\""
+    fi
+}
+
 # Function to prompt for yes/no
 prompt_yn() {
     local prompt="$1"
