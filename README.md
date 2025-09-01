@@ -75,10 +75,10 @@ I have created two scripts that automate my entire installation and configuratio
 
    ```
 
-10. Fetch the `configure` script:
+10. Clone this repo:
 
     ```bash
-    curl -O https://raw.githubusercontent.com/dan-smith-tech/rig/main/configure.sh
+    git clone https://github.com/dan-smith-tech/rig.git
     ```
 
 11. Run the `configure` script:
