@@ -125,10 +125,10 @@ fi
 # Install additional packages based on graphics driver
 if [ "$GRAPHICS_DRIVER" = "nvidia" ]; then
     echo "Installing NVIDIA packages..."
-    pacman -S --noconfirm nvidia-dkms nvidia-utils egl-wayland
+    sudo pacman -S --noconfirm nvidia-dkms nvidia-utils egl-wayland
 else
     echo "Installing Intel/AMD graphics packages..."
-    pacman -S --noconfirm mesa intel-media-driver
+    sudo pacman -S --noconfirm mesa intel-media-driver
 fi
 
 # Conditional multilib setup
@@ -139,13 +139,13 @@ if [ "$ENABLE_MULTILIB" = "true" ]; then
     sed -i '/^#\[multilib\]/,/^#Include = \/etc\/pacman.d\/mirrorlist/ { s/^#//; }' /etc/pacman.conf
     
     # Update package database
-    pacman -Syu --noconfirm
+    sudo pacman -Syu --noconfirm
     
     # Install 32-bit packages based on graphics driver
     if [ "$GRAPHICS_DRIVER" = "nvidia" ]; then
-        pacman -S --noconfirm lib32-nvidia-utils steam
+        sudo pacman -S --noconfirm lib32-nvidia-utils steam
     else
-        pacman -S --noconfirm lib32-mesa steam
+        sudo pacman -S --noconfirm lib32-mesa steam
     fi
     
     echo "Multilib setup completed!"
