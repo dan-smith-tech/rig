@@ -85,14 +85,8 @@ print_status "Current user: $CURRENT_USER"
 # Get user information
 prompt_user "Enter hostname for the system" "HOSTNAME" "novigrad"
 # Set hostname
-echo "$HOSTNAME" > /etc/hostname
-
-# Set up hosts file
-cat > /etc/hosts << HOSTS_EOF
-127.0.0.1   localhost
-::1         localhost
-127.0.1.1   $HOSTNAME.localdomain $HOSTNAME
-HOSTS_EOF
+sudo hostnamectl set-hostname "$HOSTNAME" 
+sudo sed -i 's/OLD_HOSTNAME/NEW_HOSTNAME/g' /etc/hosts
 
 # Configure timezone
 ln -sf /usr/share/zoneinfo/Europe/London /etc/localtime
