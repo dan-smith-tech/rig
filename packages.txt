@@ -1,10 +1,8 @@
 # Base packages are listed in the install script
 
 # Graphics
+hyprland
 kitty
-xorg-server
-xorg-xinit
-xorg-xsetroot
 
 # Development
 clang
@@ -15,7 +13,6 @@ rustup
 nodejs
 npm
 ripgrep
-base-devel
 
 # File Utilities
 fd

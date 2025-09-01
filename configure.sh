@@ -120,7 +120,7 @@ fi
 # Install additional packages based on graphics driver
 if [ "$GRAPHICS_DRIVER" = "nvidia" ]; then
     echo "Installing NVIDIA packages..."
-    pacman -S --noconfirm nvidia nvidia-utils
+    pacman -S --noconfirm nvidia-dkms nvidia-utils egl-wayland
 else
     echo "Installing Intel/AMD graphics packages..."
     pacman -S --noconfirm mesa intel-media-driver
