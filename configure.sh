@@ -1,5 +1,4 @@
 #!/bin/bash
-
 # Arch Linux Post-Installation Setup Script
 # Run this from the rig repository directory
 
@@ -16,19 +15,15 @@ NC='\033[0m' # No Color
 print_status() {
     echo -e "${GREEN}[INFO]${NC} $1"
 }
-
 print_warning() {
     echo -e "${YELLOW}[WARNING]${NC} $1"
 }
-
 print_error() {
     echo -e "${RED}[ERROR]${NC} $1"
 }
-
 print_section() {
     echo -e "\n${BLUE}=== $1 ===${NC}\n"
 }
-
 prompt_user() {
     local prompt="$1"
     local var_name="$2"
@@ -42,7 +37,6 @@ prompt_user() {
         eval "$var_name=\"$input\""
     fi
 }
-
 # Function to prompt for yes/no
 prompt_yn() {
     local prompt="$1"
@@ -67,7 +61,6 @@ prompt_yn() {
         esac
     done
 }
-
 # Check if running from correct directory
 if [ ! -f "$(pwd)/configure.sh" ]; then
     print_error "This script must be run from the rig repository directory"
@@ -84,10 +77,9 @@ print_status "Current user: $CURRENT_USER"
 
 # Get user information
 prompt_user "Enter hostname for the system" "HOSTNAME" "novigrad"
-# Set hostname
-sudo hostnamectl set-hostname "$HOSTNAME" 
-sudo sed -i 's/OLD_HOSTNAME/NEW_HOSTNAME/g' /etc/hosts
 
+# Set hostname
+sudo hostnamectl set-hostname "$HOSTNAME"
 
 # ===========================================
 # PACKAGE INSTALLATION
@@ -111,15 +103,15 @@ print_section "Package Installation"
 print_status "Installing user-defined package dependencies..."
 
 if [[ -f "packages.txt" ]]; then
-  mapfile -t packages < <(grep -vE '^\s*#|^\s*$' packages.txt)
-  if (( ${#packages[@]} )); then
-    sudo pacman -S --noconfirm "${packages[@]}"
-    print_status "All listed packages installed successfully."
-  else
-    print_status "No packages found to install in packages.txt."
-  fi
+    mapfile -t packages < <(grep -vE '^\s*#|^\s*$' packages.txt)
+    if (( ${#packages[@]} )); then
+        sudo pacman -S --noconfirm "${packages[@]}"
+        print_status "All listed packages installed successfully."
+    else
+        print_status "No packages found to install in packages.txt."
+    fi
 else
-  print_status "packages.txt not found. Skipping package installation."
+    print_status "packages.txt not found. Skipping package installation."
 fi
 
 # Install additional packages based on graphics driver
@@ -134,20 +126,20 @@ fi
 # Conditional multilib setup
 if [ "$ENABLE_MULTILIB" = "true" ]; then
     echo "Setting up multilib repository and Steam..."
-    
+
     # Enable multilib repository
-    sed -i '/^#\[multilib\]/,/^#Include = \/etc\/pacman.d\/mirrorlist/ { s/^#//; }' /etc/pacman.conf
-    
+    sudo sed -i '/^#\[multilib\]/,/^#Include = \/etc\/pacman.d\/mirrorlist/ { s/^#//; }' /etc/pacman.conf
+
     # Update package database
     sudo pacman -Syu --noconfirm
-    
+
     # Install 32-bit packages based on graphics driver
     if [ "$GRAPHICS_DRIVER" = "nvidia" ]; then
         sudo pacman -S --noconfirm lib32-nvidia-utils steam
     else
         sudo pacman -S --noconfirm lib32-mesa steam
     fi
-    
+
     echo "Multilib setup completed!"
 else
     echo "Skipping multilib setup..."
@@ -158,25 +150,24 @@ fi
 # ===========================================
 
 print_section "AUR Helper Installation"
-
 if command -v yay &> /dev/null; then
     print_status "yay is already installed"
 else
     print_status "Installing yay AUR helper..."
-    
+
     # Create temporary directory
     TEMP_DIR=$(mktemp -d)
     cd "$TEMP_DIR"
-    
+
     # Clone and build yay
     git clone https://aur.archlinux.org/yay.git
     cd yay
     makepkg -si --noconfirm
-    
+
     # Clean up
     cd "$HOME"
     rm -rf "$TEMP_DIR"
-    
+
     print_status "yay installed successfully"
 fi
 
@@ -185,7 +176,6 @@ fi
 # ===========================================
 
 print_section "Package Installation"
-
 # Check if yay is available
 if command -v yay &> /dev/null; then
     print_status "Installing Brave..."
@@ -201,7 +191,7 @@ fi
 
 print_section "Shell Configuration"
 print_status "Setting ZSH as default shell..."
-chsh -s /usr/bin/zsh
+sudo chsh -s /usr/bin/zsh "$CURRENT_USER"
 print_status "ZSH set as default shell (will take effect on next login)"
 
 # ===========================================
@@ -210,21 +200,17 @@ print_status "ZSH set as default shell (will take effect on next login)"
 
 print_section "Auto-login Configuration"
 print_status "Configuring auto-login for $CURRENT_USER..."
-
 # Create systemd override directory
 sudo mkdir -p /etc/systemd/system/getty@tty1.service.d
-
 # Create override configuration
 sudo tee /etc/systemd/system/getty@tty1.service.d/override.conf > /dev/null << EOF
 [Service]
 ExecStart=
 ExecStart=-/usr/bin/agetty --autologin $CURRENT_USER --noclear %I \$TERM
 EOF
-
 # Reload systemd and enable the service
 sudo systemctl daemon-reload
 sudo systemctl enable getty@tty1
-
 print_status "Auto-login configured for $CURRENT_USER"
 
 # ===========================================
@@ -233,27 +219,25 @@ print_status "Auto-login configured for $CURRENT_USER"
 
 print_section "Sudoers Configuration"
 print_status "Configuring sudoers for $CURRENT_USER..."
-
 # Remove any $CURRENT_USER lines from /etc/sudoers (with backup)
 sudo cp /etc/sudoers /etc/sudoers.bak.$(date +%F-%H%M%S)
 sudo sed -i "/^$CURRENT_USER\s/d" /etc/sudoers
-
 # Add NOPASSWD rule for $CURRENT_USER to /etc/sudoers using visudo
 SUDOERS_LINE="$CURRENT_USER ALL=(ALL) NOPASSWD: ALL"
 if ! sudo grep -Fxq "$SUDOERS_LINE" /etc/sudoers; then
     print_status "Adding NOPASSWD rule for $CURRENT_USER to /etc/sudoers..."
-    
+
     # Use a temp file to safely append via visudo
     TMP_SUDOERS=$(mktemp)
     sudo cp /etc/sudoers "$TMP_SUDOERS"
-    
+
     # Fix permissions on temp file for visudo
     sudo chown root:root "$TMP_SUDOERS"
     sudo chmod 440 "$TMP_SUDOERS"
-    
+
     # Add the new line
     echo "$SUDOERS_LINE" | sudo tee -a "$TMP_SUDOERS" > /dev/null
-    
+
     # Validate syntax with visudo
     sudo visudo -c -f "$TMP_SUDOERS"
     if [ $? -eq 0 ]; then
@@ -266,10 +250,8 @@ if ! sudo grep -Fxq "$SUDOERS_LINE" /etc/sudoers; then
 else
     print_status "NOPASSWD rule for $CURRENT_USER already present in /etc/sudoers."
 fi
-
 # Validate sudoers syntax
 sudo visudo -c
-
 print_status "Sudoers configuration complete for $CURRENT_USER"
 
 # ===========================================
@@ -300,19 +282,18 @@ fi
 
 print_section "Dotfiles Configuration"
 print_status "Setting up dotfiles with stow..."
-
 # Check if dotfiles directory exists
 if [ -d "$HOME/rig/dotfiles" ]; then
     # Run stow to symlink configuration files
     print_status "Running stow to symlink configuration files..."
     stow --adopt -t ~ -d "$HOME/rig/dotfiles" .
-    
+
     # Restore original configs from repository
     print_status "Restoring original configurations from repository..."
     cd "$HOME/rig/dotfiles"
     git restore .
     cd ..
-    
+
     print_status "Dotfiles configuration complete"
 else
     print_error "dotfiles directory not found in $(pwd)"
@@ -326,12 +307,9 @@ fi
 
 print_section "Git Diff Tool Configuration"
 print_status "Configuring Kitty as the default git diff tool..."
-
 git config --global diff.tool kitty
 git config --global difftool.kitty.cmd 'kitten diff $LOCAL $REMOTE'
-
 print_status "Kitty diff tool successfully configured for git"
-
 
 # ===========================================
 # TIME-DATE CONFIGURATION
@@ -347,10 +325,9 @@ sudo timedatectl set-ntp true
 # ===========================================
 
 print_status "Configuration complete."
-
 for i in {3..1}; do
     echo -ne "\rRebooting in $i seconds..."
+    sleep 1
 done
-
 echo -e "\nRebooting now..."
-reboot
+sudo reboot
