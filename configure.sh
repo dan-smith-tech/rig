@@ -88,9 +88,6 @@ prompt_user "Enter hostname for the system" "HOSTNAME" "novigrad"
 sudo hostnamectl set-hostname "$HOSTNAME" 
 sudo sed -i 's/OLD_HOSTNAME/NEW_HOSTNAME/g' /etc/hosts
 
-# Configure timezone
-ln -sf /usr/share/zoneinfo/Europe/London /etc/localtime
-hwclock --systohc
 
 # ===========================================
 # PACKAGE INSTALLATION
@@ -341,6 +338,7 @@ print_status "Kitty diff tool successfully configured for git"
 # ===========================================
 
 print_section "Time-Date Configuration"
+sudo timedatectl set-timezone "Europe/London"
 print_status "Enabling NTP..."
 sudo timedatectl set-ntp true
 
