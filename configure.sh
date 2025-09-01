@@ -68,9 +68,39 @@ print_status "Running all post-installation steps automatically..."
 CURRENT_USER=$(whoami)
 print_status "Current user: $CURRENT_USER"
 
+# Get user information
+prompt_user "Enter hostname for the system" "HOSTNAME" "novigrad"
+# Set hostname
+echo "$HOSTNAME" > /etc/hostname
+
+# Set up hosts file
+cat > /etc/hosts << HOSTS_EOF
+127.0.0.1   localhost
+::1         localhost
+127.0.1.1   $HOSTNAME.localdomain $HOSTNAME
+HOSTS_EOF
+
+# Configure timezone
+ln -sf /usr/share/zoneinfo/Europe/London /etc/localtime
+hwclock --systohc
+
 # ===========================================
 # PACKAGE INSTALLATION
 # ===========================================
+
+# Ask about graphics drivers
+GRAPHICS_DRIVER="nvidia"
+if prompt_yn "Are you using NVIDIA graphics?" "y"; then
+    GRAPHICS_DRIVER="nvidia"
+else
+    GRAPHICS_DRIVER="intel"
+fi
+
+# Ask about multilib/Steam installation
+ENABLE_MULTILIB=false
+if prompt_yn "Enable 32-bit multilib repository and install Steam?" "y"; then
+    ENABLE_MULTILIB=true
+fi
 
 print_section "Package Installation"
 print_status "Installing user-defined package dependencies..."
@@ -85,6 +115,37 @@ if [[ -f "packages.txt" ]]; then
   fi
 else
   print_status "packages.txt not found. Skipping package installation."
+fi
+
+# Install additional packages based on graphics driver
+if [ "$GRAPHICS_DRIVER" = "nvidia" ]; then
+    echo "Installing NVIDIA packages..."
+    pacman -S --noconfirm nvidia nvidia-utils
+else
+    echo "Installing Intel/AMD graphics packages..."
+    pacman -S --noconfirm mesa intel-media-driver
+fi
+
+# Conditional multilib setup
+if [ "$ENABLE_MULTILIB" = "true" ]; then
+    echo "Setting up multilib repository and Steam..."
+    
+    # Enable multilib repository
+    sed -i '/^#\[multilib\]/,/^#Include = \/etc\/pacman.d\/mirrorlist/ { s/^#//; }' /etc/pacman.conf
+    
+    # Update package database
+    pacman -Syu --noconfirm
+    
+    # Install 32-bit packages based on graphics driver
+    if [ "$GRAPHICS_DRIVER" = "nvidia" ]; then
+        pacman -S --noconfirm lib32-nvidia-utils steam
+    else
+        pacman -S --noconfirm lib32-mesa steam
+    fi
+    
+    echo "Multilib setup completed!"
+else
+    echo "Skipping multilib setup..."
 fi
 
 # ===========================================
@@ -253,57 +314,6 @@ else
     print_error "Make sure you're running this script from the rig repository root"
     exit 1
 fi
-
-# ===========================================
-# DWM INSTALLATION
-# ===========================================
-
-print_section "DWM Window Manager Installation"
-print_status "Installing and configuring DWM..."
-
-# Clone DWM repository
-if [ -d "/usr/local/src/dwm" ]; then
-    print_status "DWM already exists, removing old version..."
-    sudo rm -rf /usr/local/src/dwm
-fi
-
-print_status "Cloning DWM repository..."
-sudo mkdir -p /usr/local/src
-cd /usr/local/src
-sudo git clone https://git.suckless.org/dwm
-cd dwm
-
-# Copy custom configuration
-if [ -f "$HOME/rig/build/config.def.h" ]; then
-    print_status "Copying custom DWM configuration..."
-    sudo cp "$HOME/rig/build/config.def.h" config.def.h
-    
-    # Remove existing config.h if it exists
-    if [ -f "config.h" ]; then
-        print_status "Removing existing config.h..."
-        sudo rm -f config.h
-    fi
-    
-    print_status "Building and installing DWM..."
-    sudo make clean install
-    
-    print_status "DWM installed successfully"
-else
-    print_error "DWM configuration file not found at $HOME/rig/build/config.def.h"
-    print_error "Installing DWM with default configuration..."
-    sudo make clean install
-fi
-
-# Prompt for laptop/desktop status bar config
-if prompt_yn "Use laptop status bar" "n"; then
-    sudo cp ~/rig/build/status-laptop.sh /usr/local/src/dwm/status.sh
-else
-    sudo cp ~/rig/build/status-pc.sh /usr/local/src/dwm/status.sh
-fi
-sudo chmod +x /usr/local/src/dwm/status.sh
-
-# Return to original directory
-cd "$HOME/rig"
 
 # ===========================================
 # GIT DIFFTOOL CONFIGURATION (KITTY)

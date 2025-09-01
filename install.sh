@@ -254,23 +254,7 @@ print_status "Base system installed successfully!"
 
 print_section "System Configuration"
 
-# Get user information
-prompt_user "Enter hostname for the system" "HOSTNAME" "novigrad"
 USERNAME="dan"
-
-# Ask about graphics drivers
-GRAPHICS_DRIVER="nvidia"
-if prompt_yn "Are you using NVIDIA graphics?" "y"; then
-    GRAPHICS_DRIVER="nvidia"
-else
-    GRAPHICS_DRIVER="intel"
-fi
-
-# Ask about multilib/Steam installation
-ENABLE_MULTILIB=false
-if prompt_yn "Enable 32-bit multilib repository and install Steam?" "y"; then
-    ENABLE_MULTILIB=true
-fi
 
 # Create chroot configuration script
 cat > /mnt/setup_chroot.sh << EOF
@@ -287,16 +271,6 @@ get_partition() {
     fi
 }
 
-# Set hostname
-echo "$HOSTNAME" > /etc/hostname
-
-# Set up hosts file
-cat > /etc/hosts << HOSTS_EOF
-127.0.0.1   localhost
-::1         localhost
-127.0.1.1   $HOSTNAME.localdomain $HOSTNAME
-HOSTS_EOF
-
 # Set root password
 echo "Setting root password..."
 passwd
@@ -312,37 +286,6 @@ passwd "$USERNAME"
 # Install  packages
 echo "Installing essential packages..."
 pacman -S --noconfirm base efibootmgr git grub linux linux-firmware linux-headers lvm2 neovim networkmanager sudo
-
-# Install additional packages based on graphics driver
-if [ "$GRAPHICS_DRIVER" = "nvidia" ]; then
-    echo "Installing NVIDIA packages..."
-    pacman -S --noconfirm nvidia nvidia-utils
-else
-    echo "Installing Intel/AMD graphics packages..."
-    pacman -S --noconfirm mesa intel-media-driver
-fi
-
-# Conditional multilib setup
-if [ "$ENABLE_MULTILIB" = "true" ]; then
-    echo "Setting up multilib repository and Steam..."
-    
-    # Enable multilib repository
-    sed -i '/^#\[multilib\]/,/^#Include = \/etc\/pacman.d\/mirrorlist/ { s/^#//; }' /etc/pacman.conf
-    
-    # Update package database
-    pacman -Syu --noconfirm
-    
-    # Install 32-bit packages based on graphics driver
-    if [ "$GRAPHICS_DRIVER" = "nvidia" ]; then
-        pacman -S --noconfirm lib32-nvidia-utils steam
-    else
-        pacman -S --noconfirm lib32-mesa steam
-    fi
-    
-    echo "Multilib setup completed!"
-else
-    echo "Skipping multilib setup..."
-fi
 
 # Configure sudo
 echo "Configuring sudo..."
@@ -362,10 +305,6 @@ sed -i 's/^#en_GB.UTF-8 UTF-8/en_GB.UTF-8 UTF-8/' /etc/locale.gen
 locale-gen
 
 echo "LANG=en_US.UTF-8" > /etc/locale.conf
-
-# Configure timezone
-ln -sf /usr/share/zoneinfo/Europe/London /etc/localtime
-hwclock --systohc
 
 # Configure GRUB
 echo "Configuring GRUB..."
