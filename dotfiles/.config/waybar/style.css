@@ -37,11 +37,12 @@ button {
 
 button.active {
   background-color: @base;
+  color: @text;
 }
 
 button:hover {
   box-shadow: none;
-  background-color: @base;
+  background: @base;
   text-shadow: none;
   transition: none;
 }
