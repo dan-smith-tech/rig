@@ -2,6 +2,7 @@
 
 # Graphics
 hyprland
+waybar
 kitty
 
 # Development
