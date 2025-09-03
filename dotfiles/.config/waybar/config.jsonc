@@ -16,8 +16,7 @@
    "modules-right": [
       "custom/music",
       "pulseaudio",
-      "battery",
-      "tray"
+      "battery"
    ],
    "hyprland/workspaces": {
       "on-click": "activate",
