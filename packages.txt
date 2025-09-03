@@ -3,6 +3,7 @@
 # Graphics
 hyprland
 waybar
+wofi
 kitty
 
 # Development
