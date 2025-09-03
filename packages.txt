@@ -4,6 +4,7 @@
 hyprland
 waybar
 wofi
+mako
 kitty
 
 # Development
