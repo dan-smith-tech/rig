@@ -255,6 +255,13 @@ sudo visudo -c
 print_status "Sudoers configuration complete for $CURRENT_USER"
 
 # ===========================================
+# USER GROUPS CONFIGURATION
+# ==========================================
+
+print_section "User Groups Configuration"
+sudo usermod -aG uucp,tty $USER
+
+# ===========================================
 # DOCKER CONFIGURATION
 # ===========================================
 
