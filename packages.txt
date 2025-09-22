@@ -22,7 +22,7 @@ ripgrep
 fd
 less
 unzip
-xclip
+wl-clipboard
 fzf
 
 # System Utilities
