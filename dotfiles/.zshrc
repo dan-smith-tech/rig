@@ -65,23 +65,3 @@ bindkey -e
 # After typing the beginning of a command, the up and down arrow keys will search through the history of commands that match the beginning
 bindkey "^[[A" history-search-backward
 bindkey "^[[B" history-search-forward
-
-# Function to install packages from rig/packages.txt
-ipkgs() {
-  local pkgfile="$HOME/rig/packages.txt"
-  if [[ -f "$pkgfile" ]]; then
-    local pkgs
-    pkgs=("${(@f)$(grep -vE '^\s*#|^\s*$' "$pkgfile")}")
-    if (( ${#pkgs[@]} )); then
-      sudo pacman -S --noconfirm "${pkgs[@]}"
-      echo "All packages from rig/packages.txt installed"
-    else
-      echo "No packages found to install in rig/packages.txt"
-    fi
-  else
-    echo "rig/packages.txt not found."
-  fi
-}
-
-# Configure aliases
-alias clip='xclip -selection clipboard'

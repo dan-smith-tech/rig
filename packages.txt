@@ -31,6 +31,7 @@ docker-buildx
 docker-compose
 stow
 sysstat
+wget
 xdg-utils
 zoxide
 zsh
