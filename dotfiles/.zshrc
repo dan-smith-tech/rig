@@ -65,3 +65,5 @@ bindkey -e
 # After typing the beginning of a command, the up and down arrow keys will search through the history of commands that match the beginning
 bindkey "^[[A" history-search-backward
 bindkey "^[[B" history-search-forward
+
+export PATH="$HOME/.anaconda/bin:$PATH"
