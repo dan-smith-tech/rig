@@ -177,9 +177,9 @@ pvcreate /dev/mapper/lvm
 print_status "Creating volume group..."
 vgcreate vg_system /dev/mapper/lvm
 
-# Create root logical volume
-print_status "Creating root logical volume (30GB)..."
-lvcreate -L 30GB vg_system -n lv_root
+# Create root logical volume (use all space)
+print_status "Creating root logical volume (use all space)..."
+lvcreate -l 100%FREE vg_system -n lv_root
 
 # Ask about swap
 ENABLE_SWAP=false
@@ -190,10 +190,6 @@ if prompt_yn "Do you want to create a swap partition?" "n"; then
     lvcreate -L "${SWAP_SIZE}GB" vg_system -n lv_swap
 fi
 
-# Create home logical volume (use remaining space)
-print_status "Creating home logical volume (remaining space)..."
-lvcreate -l 100%FREE vg_system -n lv_home
-
 # Load device mapper module and scan for LVM volumes
 print_status "Loading device mapper and scanning for LVM volumes..."
 modprobe dm_mod
@@ -203,7 +199,6 @@ vgchange -ay
 # Format logical volumes
 print_status "Formatting logical volumes..."
 mkfs.ext4 /dev/vg_system/lv_root
-mkfs.ext4 /dev/vg_system/lv_home
 
 # Setup swap if enabled
 if [ "$ENABLE_SWAP" = true ]; then
@@ -226,11 +221,6 @@ mount /dev/vg_system/lv_root /mnt
 print_status "Creating and mounting boot directory..."
 mkdir /mnt/boot
 mount "/dev/$(get_partition "$TARGET_DEVICE" 2)" /mnt/boot
-
-# Create and mount home directory
-print_status "Creating and mounting home directory..."
-mkdir /mnt/home
-mount /dev/vg_system/lv_home /mnt/home
 
 # ===========================================
 # BASE SYSTEM INSTALLATION
