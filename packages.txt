@@ -1,10 +1,7 @@
 # Base packages are listed in the install script
 
 # Graphics
-hyprland
-waybar
-wofi
-mako
+sway
 kitty
 
 # Development
@@ -20,7 +17,6 @@ ripgrep
 
 # File Utilities
 fd
-less
 unzip
 wl-clipboard
 fzf
