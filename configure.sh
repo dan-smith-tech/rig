@@ -198,20 +198,20 @@ print_status "ZSH set as default shell (will take effect on next login)"
 # AUTO-LOGIN CONFIGURATION
 # ===========================================
 
-# print_section "Auto-login Configuration"
-# print_status "Configuring auto-login for $CURRENT_USER..."
-# # Create systemd override directory
-# sudo mkdir -p /etc/systemd/system/getty@tty1.service.d
-# # Create override configuration
-# sudo tee /etc/systemd/system/getty@tty1.service.d/override.conf > /dev/null << EOF
-# [Service]
-# ExecStart=
-# ExecStart=-/usr/bin/agetty --autologin $CURRENT_USER --noclear %I \$TERM
-# EOF
-# # Reload systemd and enable the service
-# sudo systemctl daemon-reload
-# sudo systemctl enable getty@tty1
-# print_status "Auto-login configured for $CURRENT_USER"
+print_section "Auto-login Configuration"
+print_status "Configuring auto-login for $CURRENT_USER..."
+# Create systemd override directory
+sudo mkdir -p /etc/systemd/system/getty@tty1.service.d
+# Create override configuration
+sudo tee /etc/systemd/system/getty@tty1.service.d/override.conf > /dev/null << EOF
+[Service]
+ExecStart=
+ExecStart=-/usr/bin/agetty --autologin $CURRENT_USER --noclear %I \$TERM
+EOF
+# Reload systemd and enable the service
+sudo systemctl daemon-reload
+sudo systemctl enable getty@tty1
+print_status "Auto-login configured for $CURRENT_USER"
 
 # ===========================================
 # SUDOERS CONFIGURATION
