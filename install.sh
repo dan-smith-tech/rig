@@ -191,7 +191,7 @@ sed -i '/^#\\[multilib\\]/,/^#Include = \\/etc\\/pacman.d\\/mirrorlist/ { s/^#//
 pacman -Syu --noconfirm
 
 echo "Installing NVIDIA drivers and 32-bit libraries..."
-pacman -S --noconfirm nvidia nvidia-utils egl-wayland lib32-nvidia-utils
+pacman -S --noconfirm nvidia nvidia-utils egl-wayland lib32-nvidia-utils steam
 EOF
 fi
 
@@ -201,19 +201,21 @@ if [ "$SKIP_OPTIONAL" -eq 0 ]; then
     echo "Installing optional packages..."
     pacman -S base-devel --noconfirm docker docker-buildx docker-compose fd fzf git github-cli kitty nodejs npm openssh ripgrep rustup stow ttf-dejavu ttf-jetbrains-mono-nerd ttf-liberation ttf-nerd-fonts-symbols-mono wget zoxide zsh
 
-    echo "Installing AUR helper (yay)..."
-    if command -v yay &> /dev/null; then
-        echo "yay is already installed"
-    else
-        TEMP_DIR=\$(mktemp -d)
-        cd "\$TEMP_DIR"
-        git clone https://aur.archlinux.org/yay.git
-        cd yay
-        makepkg -si --noconfirm
-        cd /
-        rm -rf "\$TEMP_DIR"
-        echo "yay installed successfully"
-    fi
+    echo "Installing yay as user $USERNAME..."
+    sudo -u "$USERNAME" -H bash -c '
+        if command -v yay &> /dev/null; then
+            echo "yay is already installed"
+        else
+            TEMP_DIR=$(mktemp -d)
+            cd "$TEMP_DIR"
+            git clone https://aur.archlinux.org/yay.git
+            cd yay
+            makepkg -si --noconfirm
+            cd /
+            rm -rf "$TEMP_DIR"
+            echo "yay installed successfully"
+        fi
+    '
 
     echo "AUR package installation"
     if command -v yay &> /dev/null; then
@@ -224,23 +226,20 @@ if [ "$SKIP_OPTIONAL" -eq 0 ]; then
         echo "yay not available - skipping AUR package installation"
     fi
 
-    echo "Generating SSH key for $USERNAME..."
-    sudo -u "$USERNAME" ssh-keygen -t rsa -b 4096 -f "/home/$USERNAME/.ssh/id_rsa" -N "" -q
+    echo "Running other user commands as $USERNAME..."
+    sudo -u "$USERNAME" -H bash -c '
+        ssh-keygen -t rsa -b 4096 -f "/home/'"$USERNAME"'/.ssh/id_rsa" -N "" -q
 
-    echo "Cloning rig..."
-    git clone https://github.com/dan-smith-tech/rig
-    echo "Running stow for dotfiles..."
-    stow --adopt -t ~ -d "$HOME/rig/dotfiles" .
-    echo "Restoring original configurations from repository..."
-    cd "$HOME/rig/dotfiles"
-    git restore .
-    cd ..
+        cd /home/'"$USERNAME"'
+        git clone https://github.com/dan-smith-tech/rig rig
+        cd rig/dotfiles
+        stow --adopt -t /home/'"$USERNAME"' .
+        git restore .
 
-    echo "Setting zsh as default shell for $USERNAME..."
-    chsh -s /bin/zsh "$USERNAME"
+        chsh -s /bin/zsh
 
-    echo "Installing Rust toolchain..."
-    rustup default stable
+        rustup default stable
+    '
 fi
 
 echo "Configuring sudo..."
