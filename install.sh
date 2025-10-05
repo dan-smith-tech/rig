@@ -14,41 +14,7 @@ print_warning() { echo -e "${YELLOW}[WARNING]${NC} $1"; }
 print_error() { echo -e "${RED}[ERROR]${NC} $1"; }
 print_section() { echo -e "\n${BLUE}=== $1 ===${NC}\n"; }
 
-prompt_user() {
-    local prompt="$1"
-    local var_name="$2"
-    local default="$3"
-    if [ -n "$default" ]; then
-        read -p "$prompt [$default]: " input
-        eval "$var_name=\"\${input:-$default}\""
-    else
-        read -p "$prompt: " input
-        eval "$var_name=\"$input\""
-    fi
-}
-
-prompt_yn() {
-    local prompt="$1"
-    local default="$2"
-    local response
-    while true; do
-        if [ "$default" = "y" ]; then
-            read -p "$prompt [Y/n]: " response
-            response=${response:-y}
-        elif [ "$default" = "n" ]; then
-            read -p "$prompt [y/N]: " response
-            response=${response:-n}
-        else
-            read -p "$prompt [y/n]: " response
-        fi
-        case $response in
-            [Yy]*) return 0 ;;
-            [Nn]*) return 1 ;;
-            *) echo "Please answer yes or no." ;;
-        esac
-    done
-}
-
+# Helper function to handle partition naming
 get_partition() {
     local dev="$1"
     local part="$2"
@@ -59,6 +25,32 @@ get_partition() {
     fi
 }
 
+SKIP_OPTIONAL=0
+LAPTOP=0
+
+for arg in "$@"; do
+    case $arg in
+        --laptop)
+            LAPTOP=1
+            shift
+            ;;
+        --skip-optional)
+            SKIP_OPTIONAL=1
+            shift
+            ;;
+    esac
+done
+
+# Default settings
+ENABLE_SWAP=false
+SWAP_SIZE=8
+INSTALL_NVIDIA=false
+
+if [ "$LAPTOP" -eq 1 ]; then
+    ENABLE_SWAP=true
+    INSTALL_NVIDIA=true
+fi
+
 print_section "Arch Linux Installation Script"
 print_warning "This script will completely wipe the selected disk!"
 
@@ -68,7 +60,7 @@ print_status "Available disks:"
 lsblk
 
 echo
-prompt_user "Enter the target device (e.g., sda, nvme0n1)" "TARGET_DEVICE"
+read -p "Enter the target device to wipe (e.g., sda, nvme0n1): " TARGET_DEVICE
 
 if [ ! -b "/dev/$TARGET_DEVICE" ]; then
     print_error "Device /dev/$TARGET_DEVICE does not exist!"
@@ -122,10 +114,7 @@ print_status "Formatting LVM partition..."
 pvcreate "/dev/$(get_partition "$TARGET_DEVICE" 3)"
 vgcreate vg_system "/dev/$(get_partition "$TARGET_DEVICE" 3)"
 
-ENABLE_SWAP=false
-if prompt_yn "Do you want to create a swap partition?" "n"; then
-    ENABLE_SWAP=true
-    prompt_user "Enter swap size in GB (recommend same as RAM)" "SWAP_SIZE" "8"
+if [ "$ENABLE_SWAP" = true ]; then
     print_status "Creating swap logical volume (${SWAP_SIZE}GB)..."
     lvcreate -L "${SWAP_SIZE}GB" vg_system -n lv_swap
 fi
@@ -179,9 +168,59 @@ passwd "$USERNAME"
 
 echo "Installing essential packages..."
 pacman -S --noconfirm base efibootmgr git grub linux linux-firmware linux-headers lvm2 neovim networkmanager sudo
+EOF
 
-echo "Installing optional packages..."
-pacman -S base-devel docker docker-buildx docker-compose fd fzf git github-cli kitty nodejs npm ripgrep rustup stow ttf-dejavu ttf-jetbrains-mono-nerd ttf-liberation ttf-nerd-fonts-symbols-mono wget zoxide zsh
+if [ "$INSTALL_NVIDIA" = true ]; then
+cat >> /mnt/setup_chroot.sh << EOF
+
+echo "Enabling multilib repository..."
+sed -i '/^#\\[multilib\\]/,/^#Include = \\/etc\\/pacman.d\\/mirrorlist/ { s/^#//; }' /etc/pacman.conf
+pacman -Syu --noconfirm
+
+echo "Installing NVIDIA drivers and 32-bit libraries..."
+pacman -S --noconfirm nvidia nvidia-utils egl-wayland lib32-nvidia-utils
+EOF
+fi
+
+cat >> /mnt/setup_chroot.sh << EOF
+
+if [ "$SKIP_OPTIONAL" -eq 0 ]; then
+    echo "Installing optional packages..."
+    pacman -S base-devel docker docker-buildx docker-compose fd fzf git github-cli kitty nodejs npm ripgrep rustup stow ttf-dejavu ttf-jetbrains-mono-nerd ttf-liberation ttf-nerd-fonts-symbols-mono wget zoxide zsh
+
+    echo "Installing AUR helper (yay)..."
+    if command -v yay &> /dev/null; then
+        echo "yay is already installed"
+    else
+        TEMP_DIR=\$(mktemp -d)
+        cd "\$TEMP_DIR"
+        git clone https://aur.archlinux.org/yay.git
+        cd yay
+        makepkg -si --noconfirm
+        cd /
+        rm -rf "\$TEMP_DIR"
+        echo "yay installed successfully"
+    fi
+
+    echo "AUR package installation"
+    if command -v yay &> /dev/null; then
+        echo "Installing Brave..."
+        yay -S --noconfirm brave-bin
+        echo "Brave installed"
+    else
+        echo "yay not available - skipping AUR package installation"
+    fi
+
+    echo "Setting zsh as default shell for $USERNAME..."
+    chsh -s /bin/zsh "$USERNAME"
+
+    echo "Git configuration..."
+    git config --global diff.tool kitty
+    git config --global difftool.kitty.cmd 'kitten diff $LOCAL $REMOTE'
+
+    echo "Installing Rust toolchain..."
+    rustup default stable
+fi
 
 echo "Configuring sudo..."
 echo '%wheel ALL=(ALL:ALL) ALL' >> /etc/sudoers
