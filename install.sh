@@ -203,44 +203,6 @@ if [ "$SKIP_OPTIONAL" -eq 0 ]; then
     echo "Installing optional packages..."
     pacman -S base-devel --noconfirm docker docker-buildx docker-compose fd fzf git github-cli kitty nodejs npm openssh ripgrep rustup stow ttf-dejavu ttf-jetbrains-mono-nerd ttf-liberation ttf-nerd-fonts-symbols-mono wget zoxide zsh
 
-    echo "Installing yay as user $USERNAME..."
-    sudo -u "$USERNAME" -H bash -c '
-        if command -v yay &> /dev/null; then
-            echo "yay is already installed"
-        else
-            TEMP_DIR=$(mktemp -d)
-            cd "$TEMP_DIR"
-            git clone https://aur.archlinux.org/yay.git
-            cd yay
-            makepkg -si --noconfirm
-            cd /
-            rm -rf "$TEMP_DIR"
-            echo "yay installed successfully"
-        fi
-
-        # Add yay to PATH in .bashrc and .zshrc if not already there
-        if ! grep -q "/home/'"$USERNAME"'/.local/bin" /home/'"$USERNAME"'/.bashrc; then
-            echo "export PATH=\$PATH:/home/'"$USERNAME"'/.local/bin" >> /home/'"$USERNAME"'/.bashrc
-        fi
-        if ! grep -q "/home/'"$USERNAME"'/.local/bin" /home/'"$USERNAME"'/.zshrc; then
-            echo "export PATH=\$PATH:/home/'"$USERNAME"'/.local/bin" >> /home/'"$USERNAME"'/.zshrc
-        fi
-    '
-
-    echo "AUR package installation"
-    sudo -u "$USERNAME" -H bash -c '
-        export PATH=\$PATH:/home/'"$USERNAME"'/.local/bin
-
-        if command -v yay &> /dev/null; then
-            echo "Installing Brave..."
-            yay -S --noconfirm brave-bin
-            echo "Brave installed"
-        else
-            echo "yay not available - skipping AUR package installation"
-        fi
-    '
-
-    echo "Running other user commands as $USERNAME..."
     sudo -u "$USERNAME" -H bash -c '
         ssh-keygen -t rsa -b 4096 -f "/home/'"$USERNAME"'/.ssh/id_rsa" -N "" -q
 
