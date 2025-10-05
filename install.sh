@@ -181,7 +181,7 @@ if [ "$LAPTOP" -eq 0 ]; then
 '
 
     echo "Installing Plasma Desktop environment..."
-    pacman -S --noconfirm plasma-desktop dolphin
+    pacman -S --noconfirm plasma dolphin
 fi
 EOF
 
