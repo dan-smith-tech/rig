@@ -44,11 +44,11 @@ done
 # Default settings
 ENABLE_SWAP=false
 SWAP_SIZE=8
-INSTALL_NVIDIA=false
+INSTALL_NVIDIA=true
 
 if [ "$LAPTOP" -eq 1 ]; then
     ENABLE_SWAP=true
-    INSTALL_NVIDIA=true
+    INSTALL_NVIDIA=false
 fi
 
 print_section "Arch Linux Installation Script"
@@ -199,7 +199,7 @@ cat >> /mnt/setup_chroot.sh << EOF
 
 if [ "$SKIP_OPTIONAL" -eq 0 ]; then
     echo "Installing optional packages..."
-    pacman -S base-devel docker docker-buildx docker-compose fd fzf git github-cli kitty nodejs npm ripgrep rustup stow ttf-dejavu ttf-jetbrains-mono-nerd ttf-liberation ttf-nerd-fonts-symbols-mono wget zoxide zsh
+    pacman -S base-devel --noconfirm docker docker-buildx docker-compose fd fzf git github-cli kitty nodejs npm openssh ripgrep rustup stow ttf-dejavu ttf-jetbrains-mono-nerd ttf-liberation ttf-nerd-fonts-symbols-mono wget zoxide zsh
 
     echo "Installing AUR helper (yay)..."
     if command -v yay &> /dev/null; then
@@ -223,6 +223,18 @@ if [ "$SKIP_OPTIONAL" -eq 0 ]; then
     else
         echo "yay not available - skipping AUR package installation"
     fi
+
+    echo "Generating SSH key for $USERNAME..."
+    sudo -u "$USERNAME" ssh-keygen -t rsa -b 4096 -f "/home/$USERNAME/.ssh/id_rsa" -N "" -q
+
+    echo "Cloning rig..."
+    git clone https://github.com/dan-smith-tech/rig
+    echo "Running stow for dotfiles..."
+    stow --adopt -t ~ -d "$HOME/rig/dotfiles" .
+    echo "Restoring original configurations from repository..."
+    cd "$HOME/rig/dotfiles"
+    git restore .
+    cd ..
 
     echo "Setting zsh as default shell for $USERNAME..."
     chsh -s /bin/zsh "$USERNAME"
