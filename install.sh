@@ -180,6 +180,9 @@ passwd "$USERNAME"
 echo "Installing essential packages..."
 pacman -S --noconfirm base efibootmgr git grub linux linux-firmware linux-headers lvm2 neovim networkmanager sudo
 
+echo "Installing optional packages..."
+pacman -S base-devel docker docker-buildx docker-compose fd fzf git github-cli kitty nodejs npm ripgrep rustup stow ttf-dejavu ttf-jetbrains-mono-nerd ttf-liberation ttf-nerd-fonts-symbols-mono wget zoxide zsh
+
 echo "Configuring sudo..."
 echo '%wheel ALL=(ALL:ALL) ALL' >> /etc/sudoers
 
