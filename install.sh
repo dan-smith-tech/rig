@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# Arch Linux Installation Script - Simplified Partitioning
-
 set -e  # Exit on error
 
 # Colors for output
@@ -9,7 +7,7 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
-NC='\033[0m' # No Color
+NC='\033[0m'
 
 print_status() { echo -e "${GREEN}[INFO]${NC} $1"; }
 print_warning() { echo -e "${YELLOW}[WARNING]${NC} $1"; }
@@ -120,19 +118,10 @@ print_status "Formatting boot partition (FAT32)..."
 mkfs.fat -F32 "/dev/$(get_partition "$TARGET_DEVICE" 1)"
 print_status "Formatting EFI partition (EXT4)..."
 mkfs.ext4 "/dev/$(get_partition "$TARGET_DEVICE" 2)"
+print_status "Formatting LVM partition..."
+pvcreate "/dev/$(get_partition "$TARGET_DEVICE" 3)"
+vgcreate vg_system "/dev/$(get_partition "$TARGET_DEVICE" 3)"
 
-print_status "Setting up LUKS encryption on LVM partition..."
-cryptsetup luksFormat "/dev/$(get_partition "$TARGET_DEVICE" 3)"
-cryptsetup open --type luks "/dev/$(get_partition "$TARGET_DEVICE" 3)" lvm
-
-# LVM Setup
-print_section "LVM Setup"
-print_status "Creating physical volume..."
-pvcreate /dev/mapper/lvm
-print_status "Creating volume group..."
-vgcreate vg_system /dev/mapper/lvm
-
-# Swap first if requested then root with rest
 ENABLE_SWAP=false
 if prompt_yn "Do you want to create a swap partition?" "n"; then
     ENABLE_SWAP=true
@@ -157,7 +146,6 @@ if [ "$ENABLE_SWAP" = true ]; then
     swapon /dev/vg_system/lv_swap
 fi
 
-# Mounting
 print_section "Mounting Partitions"
 print_status "Mounting root partition..."
 mount /dev/vg_system/lv_root /mnt
@@ -166,7 +154,6 @@ print_status "Mounting boot partition..."
 mkdir -p /mnt/boot
 mount "/dev/$(get_partition "$TARGET_DEVICE" 2)" /mnt/boot
 
-# Base install
 print_section "Installing Base System"
 print_status "Installing base packages..."
 pacstrap /mnt base
@@ -176,22 +163,11 @@ genfstab -U /mnt >> /mnt/etc/fstab
 
 print_status "Base system installed."
 
-# System configuration
 print_section "System Configuration"
 USERNAME="dan"
 
 cat > /mnt/setup_chroot.sh << EOF
 #!/bin/bash
-
-get_partition() {
-    local dev="$TARGET_DEVICE"
-    local part="\$1"
-    if [[ "\$dev" =~ ^(nvme|mmcblk) ]]; then
-        echo "\${dev}p\${part}"
-    else
-        echo "\${dev}\${part}"
-    fi
-}
 
 echo "Set root password..."
 passwd
@@ -207,25 +183,15 @@ pacman -S --noconfirm base efibootmgr git grub linux linux-firmware linux-header
 echo "Configuring sudo..."
 echo '%wheel ALL=(ALL:ALL) ALL' >> /etc/sudoers
 
-echo "Configuring initramfs for encryption..."
-sed -i 's/^HOOKS=.*/HOOKS=(base udev autodetect microcode modconf kms keyboard keymap consolefont block encrypt lvm2 filesystems fsck)/' /etc/mkinitcpio.conf
-
-mkinitcpio -p linux
-
 echo "Configuring locale..."
 sed -i 's/^#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen
 sed -i 's/^#en_GB.UTF-8 UTF-8/en_GB.UTF-8 UTF-8/' /etc/locale.gen
 locale-gen
-
 echo "LANG=en_US.UTF-8" > /etc/locale.conf
 
 echo "Configuring GRUB..."
-sed -i "s|^GRUB_CMDLINE_LINUX_DEFAULT=.*|GRUB_CMDLINE_LINUX_DEFAULT=\"loglevel=3 quiet cryptdevice=/dev/\$(get_partition 3):vg_system\"|" /etc/default/grub
-echo "GRUB_CMDLINE_LINUX_DEFAULT=\"loglevel=3 quiet cryptdevice=/dev/\$(get_partition 3):vg_system\"" >> /etc/default/grub
-
 mkdir -p /boot/EFI
-mount "/dev/\$(get_partition 1)" /boot/EFI
-
+mount "/dev/$(get_partition "$TARGET_DEVICE" 1)" /boot/EFI
 grub-install --target=x86_64-efi --bootloader-id=grub_uefi --recheck
 
 mkdir -p /boot/grub/locale
@@ -245,7 +211,6 @@ arch-chroot /mnt /setup_chroot.sh
 
 rm /mnt/setup_chroot.sh
 
-# Final
 print_status "Unmounting partitions..."
 umount -R /mnt
 
