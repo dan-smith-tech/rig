@@ -234,6 +234,11 @@ fi
 echo "Configuring sudo..."
 echo '%wheel ALL=(ALL:ALL) ALL' >> /etc/sudoers
 
+echo "Configuring initramfs for encryption..."
+sed -i 's/^HOOKS=.*/HOOKS=(base udev autodetect microcode modconf kms keyboard keymap consolefont block lvm2 filesystems fsck)/' /etc/mkinitcpio.conf
+
+mkinitcpio -p linux
+
 echo "Configuring locale..."
 sed -i 's/^#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen
 sed -i 's/^#en_GB.UTF-8 UTF-8/en_GB.UTF-8 UTF-8/' /etc/locale.gen
