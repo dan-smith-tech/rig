@@ -177,7 +177,7 @@ if [ "$LAPTOP" -eq 0 ]; then
     git config --global user.name "$GIT_USERNAME"
     git config --global user.email "$GIT_EMAIL"
     git config --global diff.tool kitty
-    git config --global difftool.kitty.cmd '\''kitten diff $LOCAL $REMOTE'\''
+    git config --global difftool.kitty.cmd '\''kitten diff $LOCAL $REMOTE'\''    
 '
 
     echo "Installing Plasma Desktop environment..."
@@ -189,7 +189,7 @@ if [ "$INSTALL_NVIDIA" = true ]; then
 cat >> /mnt/setup_chroot.sh << EOF
 
 echo "Enabling multilib repository..."
-sed -i '/^#\\[multilib\\]/,/^#Include = \\/etc\\/pacman.d\\/mirrorlist/ { s/^#//; }' /etc/pacman.conf
+sed -i '/^#\[multilib\]/,/^#Include = \/etc\/pacman.d\/mirrorlist/ { s/^#//; }' /etc/pacman.conf
 pacman -Syu --noconfirm
 
 echo "Installing NVIDIA drivers and 32-bit libraries..."
@@ -217,16 +217,28 @@ if [ "$SKIP_OPTIONAL" -eq 0 ]; then
             rm -rf "$TEMP_DIR"
             echo "yay installed successfully"
         fi
+
+        # Add yay to PATH in .bashrc and .zshrc if not already there
+        if ! grep -q "/home/'"$USERNAME"'/.local/bin" /home/'"$USERNAME"'/.bashrc; then
+            echo "export PATH=\$PATH:/home/'"$USERNAME"'/.local/bin" >> /home/'"$USERNAME"'/.bashrc
+        fi
+        if ! grep -q "/home/'"$USERNAME"'/.local/bin" /home/'"$USERNAME"'/.zshrc; then
+            echo "export PATH=\$PATH:/home/'"$USERNAME"'/.local/bin" >> /home/'"$USERNAME"'/.zshrc
+        fi
     '
 
     echo "AUR package installation"
-    if command -v yay &> /dev/null; then
-        echo "Installing Brave..."
-        yay -S --noconfirm brave-bin
-        echo "Brave installed"
-    else
-        echo "yay not available - skipping AUR package installation"
-    fi
+    sudo -u "$USERNAME" -H bash -c '
+        export PATH=\$PATH:/home/'"$USERNAME"'/.local/bin
+
+        if command -v yay &> /dev/null; then
+            echo "Installing Brave..."
+            yay -S --noconfirm brave-bin
+            echo "Brave installed"
+        else
+            echo "yay not available - skipping AUR package installation"
+        fi
+    '
 
     echo "Running other user commands as $USERNAME..."
     sudo -u "$USERNAME" -H bash -c '
