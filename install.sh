@@ -168,6 +168,19 @@ passwd "$USERNAME"
 
 echo "Installing essential packages..."
 pacman -S --noconfirm base efibootmgr git grub linux linux-firmware linux-headers lvm2 neovim networkmanager sudo
+
+if [ "$LAPTOP" -eq 0 ]; then
+    echo "Configuring git username and email..."
+    read -p "Enter your Git username: " GIT_USERNAME
+    read -p "Enter your Git email: " GIT_EMAIL
+    git config --global user.name "\$GIT_USERNAME"
+    git config --global user.email "\$GIT_EMAIL"
+    git config --global diff.tool kitty
+    git config --global difftool.kitty.cmd 'kitten diff \$LOCAL \$REMOTE'
+
+    echo "Installing Plasma Desktop environment..."
+    pacman -S --noconfirm plasma-desktop dolphin
+fi
 EOF
 
 if [ "$INSTALL_NVIDIA" = true ]; then
@@ -214,10 +227,6 @@ if [ "$SKIP_OPTIONAL" -eq 0 ]; then
     echo "Setting zsh as default shell for $USERNAME..."
     chsh -s /bin/zsh "$USERNAME"
 
-    echo "Git configuration..."
-    git config --global diff.tool kitty
-    git config --global difftool.kitty.cmd 'kitten diff $LOCAL $REMOTE'
-
     echo "Installing Rust toolchain..."
     rustup default stable
 fi
@@ -248,7 +257,7 @@ EOF
 
 chmod +x /mnt/setup_chroot.sh
 
-print_status "Running system configuration (set passwords when prompted)..."
+print_status "Running system configuration..."
 arch-chroot /mnt /setup_chroot.sh
 
 rm /mnt/setup_chroot.sh
