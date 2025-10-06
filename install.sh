@@ -201,7 +201,7 @@ cat >> /mnt/setup_chroot.sh << EOF
 
 if [ "$SKIP_OPTIONAL" -eq 0 ]; then
     echo "Installing optional packages..."
-    pacman -S base-devel --noconfirm docker docker-buildx docker-compose fd fzf git github-cli kitty nodejs npm openssh ripgrep rustup stow ttf-dejavu ttf-jetbrains-mono-nerd ttf-liberation ttf-nerd-fonts-symbols-mono unzip wget zoxide zsh
+    pacman -S base-devel --noconfirm docker docker-buildx docker-compose fd fzf git github-cli kitty nodejs npm openssh ripgrep rustup stow ttf-dejavu ttf-jetbrains-mono-nerd ttf-liberation ttf-nerd-fonts-symbols-mono unzip wget wl-clipboard zoxide zsh
 
     sudo -u "$USERNAME" -H bash -c '
         ssh-keygen -t rsa -b 4096 -f "/home/'"$USERNAME"'/.ssh/id_rsa" -N "" -q
@@ -209,7 +209,7 @@ if [ "$SKIP_OPTIONAL" -eq 0 ]; then
         cd /home/'"$USERNAME"'
         git clone https://github.com/dan-smith-tech/rig rig
         cd rig/dotfiles
-        stow --adopt -t /home/'"$USERNAME"' .
+        stow --adopt -t /home/'"$USERNAME"'/rig/dotfiles .
         git restore .
 
         chsh -s /bin/zsh
