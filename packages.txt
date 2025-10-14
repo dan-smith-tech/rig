@@ -3,6 +3,7 @@
 # Graphics
 sway
 kitty
+imagemagick
 
 # Development
 base-devel
