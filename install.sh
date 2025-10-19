@@ -204,7 +204,10 @@ if [ "$SKIP_OPTIONAL" -eq 0 ]; then
         cd rig/dotfiles
         stow --adopt -t /home/'"$USERNAME"'/rig/dotfiles .
         if [ '"$LAPTOP"' -eq 1 ]; then
-            stow --adopt -t /home/'"$USERNAME"'/rig/sway .
+            mkdir -p /home/'"$USERNAME"'/.config/sway
+            ln -sf /home/'"$USERNAME"'/rig/sway/.config/sway/config /home/'"$USERNAME"'/.config/sway/config
+            ln -sf /home/'"$USERNAME"'/rig/sway/.config/sway/status.sh /home/'"$USERNAME"'/.config/sway/status.sh
+            ln -sf /home/'"$USERNAME"'/rig/sway/.zprofile /home/'"$USERNAME"'/.zprofile
         fi
         git restore .
 
