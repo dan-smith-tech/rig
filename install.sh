@@ -170,16 +170,6 @@ echo "Installing essential packages..."
 pacman -S --noconfirm base efibootmgr git grub linux linux-firmware linux-headers lvm2 neovim networkmanager sudo
 
 if [ "$LAPTOP" -eq 0 ]; then
-   sudo -u "$USERNAME" -H bash -c '
-    echo "Configuring git username and email..."
-    read -p "Enter your Git username: " GIT_USERNAME
-    read -p "Enter your Git email: " GIT_EMAIL
-    git config --global user.name "$GIT_USERNAME"
-    git config --global user.email "$GIT_EMAIL"
-    git config --global diff.tool kitty
-    git config --global difftool.kitty.cmd '\''kitten diff $LOCAL $REMOTE'\''    
-'
-
     echo "Installing Plasma Desktop environment..."
     pacman -S --noconfirm plasma dolphin
 fi
@@ -206,10 +196,16 @@ if [ "$SKIP_OPTIONAL" -eq 0 ]; then
     sudo -u "$USERNAME" -H bash -c '
         ssh-keygen -t rsa -b 4096 -f "/home/'"$USERNAME"'/.ssh/id_rsa" -N "" -q
 
+        git config --global diff.tool kitty
+        git config --global difftool.kitty.cmd '\''kitten diff $LOCAL $REMOTE'\''    
+
         cd /home/'"$USERNAME"'
         git clone https://github.com/dan-smith-tech/rig rig
         cd rig/dotfiles
         stow --adopt -t /home/'"$USERNAME"'/rig/dotfiles .
+        if [ '"$LAPTOP"' -eq 1 ]; then
+            stow --adopt -t /home/'"$USERNAME"'/rig/sway .
+        fi
         git restore .
 
         chsh -s /bin/zsh
