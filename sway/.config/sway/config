@@ -71,6 +71,9 @@ output * bg /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
     # Kill focused window
     bindsym $mod+c kill
 
+    bindsym $mod+Shift+q exec systemctl poweroff
+    bindsym $mod+Shift+r exec systemctl reboot
+
     # Drag floating windows by holding down $mod and left mouse button.
     # Resize them with right mouse button + $mod.
     # Despite the name, also works for non-floating windows.
