@@ -191,7 +191,7 @@ cat >> /mnt/setup_chroot.sh << EOF
 
 if [ "$SKIP_OPTIONAL" -eq 0 ]; then
     echo "Installing optional packages..."
-    pacman -S base-devel --noconfirm docker docker-buildx docker-compose fd fzf git github-cli kitty nodejs npm openssh ripgrep rustup stow sysstat ttf-dejavu ttf-jetbrains-mono-nerd ttf-liberation ttf-nerd-fonts-symbols-mono unzip wget wl-clipboard zoxide zsh
+    pacman -S base-devel --noconfirm docker docker-buildx docker-compose fd fzf git github-cli kitty nodejs npm openssh ripgrep rustup stow sysstat tree-sitter-cli ttf-dejavu ttf-jetbrains-mono-nerd ttf-liberation ttf-nerd-fonts-symbols-mono unzip wget wl-clipboard zoxide zsh
 
     sudo -u "$USERNAME" -H bash -c '
         ssh-keygen -t rsa -b 4096 -f "/home/'"$USERNAME"'/.ssh/id_rsa" -N "" -q
