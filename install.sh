@@ -183,7 +183,7 @@ sed -i '/^#\[multilib\]/,/^#Include = \/etc\/pacman.d\/mirrorlist/ { s/^#//; }' 
 pacman -Syu --noconfirm
 
 echo "Installing NVIDIA drivers and 32-bit libraries..."
-pacman -S --noconfirm nvidia nvidia-utils egl-wayland lib32-nvidia-utils steam
+pacman -S --noconfirm nvidia nvidia-utils nvidia-container-toolkit egl-wayland lib32-nvidia-utils steam
 EOF
 fi
 
