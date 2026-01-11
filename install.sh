@@ -202,7 +202,7 @@ if [ "$SKIP_OPTIONAL" -eq 0 ]; then
         cd /home/'"$USERNAME"'
         git clone https://github.com/dan-smith-tech/rig rig
         cd rig/dotfiles
-        stow --adopt -t /home/'"$USERNAME"'/rig/dotfiles .
+        stow --adopt -t /home/"$USERNAME" zshrc nvim kitty
         if [ '"$LAPTOP"' -eq 1 ]; then
             mkdir -p /home/'"$USERNAME"'/.config/sway
             ln -sf /home/'"$USERNAME"'/rig/sway/.config/sway/config /home/'"$USERNAME"'/.config/sway/config
