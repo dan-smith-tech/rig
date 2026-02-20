@@ -114,31 +114,6 @@ fi
 
 if [ "$SKIP_OPTIONAL" -eq 0 ]; then
     pacman -S --noconfirm base-devel git docker docker-buildx docker-compose fd fzf github-cli kitty nodejs npm openssh ripgrep rustup stow sysstat tree-sitter-cli ttf-dejavu ttf-jetbrains-mono-nerd ttf-liberation ttf-nerd-fonts-symbols-mono unzip wget wl-clipboard zoxide zsh
-
-    cd /tmp
-    git clone https://aur.archlinux.org/yay.git
-    cd yay
-    makepkg -si --noconfirm
-    yay -S --noconfirm brave-bin
-
-    curl -f https://zed.dev/install.sh | sh
-
-    sudo -u "$USERNAME" -H bash -c '
-        ssh-keygen -t rsa -b 4096 -f "/home/'"$USERNAME"'/.ssh/id_rsa" -N "" -q
-
-        git config --global diff.tool kitty
-        git config --global difftool.kitty.cmd '\\''kitten diff $LOCAL $REMOTE'\\''    
-
-        cd /home/'"$USERNAME"'
-        git clone https://github.com/dan-smith-tech/rig rig
-        cd rig/dotfiles
-        stow --adopt -t /home/"$USERNAME" zshrc nvim kitty
-        git restore .
-
-        chsh -s /bin/zsh
-
-        rustup default stable
-    '
 fi
 
 echo '%wheel ALL=(ALL:ALL) ALL' >> /etc/sudoers
