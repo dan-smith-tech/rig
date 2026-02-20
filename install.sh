@@ -57,26 +57,13 @@ sgdisk --zap-all "/dev/$TARGET_DEVICE"
 partprobe "/dev/$TARGET_DEVICE"
 sleep 2
 
-echo "Creating partitions (GPT, boot + EFI + LVM)..."
-(
-echo g
-echo n
-echo
-echo
-echo +1G
-echo n
-echo
-echo
-echo +1G
-echo n
-echo
-echo
-echo
-echo t
-echo 3
-echo 8e00
-echo w
-) | fdisk --wipe-partitions always "/dev/$TARGET_DEVICE"
+echo "Creating partitions..."
+parted -s /dev/$TARGET_DEVICE \
+    mklabel gpt \
+    mkpart primary fat32 1MiB 1GiB \
+    mkpart primary ext4 1GiB 2GiB \
+    mkpart primary linux-lvm 2GiB 100% \
+    set 3 lvm on
 sleep 2
 partprobe "/dev/$TARGET_DEVICE"
 
