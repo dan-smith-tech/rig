@@ -120,7 +120,7 @@ pacman -S --noconfirm base efibootmgr git grub linux linux-firmware linux-header
 pacman -S --noconfirm plasma dolphin
 
 if [ "$INSTALL_NVIDIA" = true ]; then
-    sed -i '/^#\\\\[multilib\\\\]/,/^#Include = \\\\/etc\\\\/pacman.d\\\\/mirrorlist/ { s/^#//; }' /etc/pacman.conf
+    sed -i '/^#\\[multilib\\]/,/^#Include = \\/etc\\/pacman.d\\/mirrorlist/ { s/^#//; }' /etc/pacman.conf
     pacman -Syu --noconfirm
     pacman -S --noconfirm nvidia nvidia-utils nvidia-container-toolkit egl-wayland lib32-nvidia-utils steam
 fi
@@ -140,7 +140,7 @@ if [ "$SKIP_OPTIONAL" -eq 0 ]; then
         ssh-keygen -t rsa -b 4096 -f "/home/'"$USERNAME"'/.ssh/id_rsa" -N "" -q
 
         git config --global diff.tool kitty
-        git config --global difftool.kitty.cmd '\\\\''kitten diff $LOCAL $REMOTE'\\\\''    
+        git config --global difftool.kitty.cmd '\\''kitten diff $LOCAL $REMOTE'\\''    
 
         cd /home/'"$USERNAME"'
         git clone https://github.com/dan-smith-tech/rig rig
@@ -169,7 +169,7 @@ mount "/dev/$(get_partition "$TARGET_DEVICE" 1)" /boot/EFI
 grub-install --target=x86_64-efi --bootloader-id=grub_uefi --recheck
 
 mkdir -p /boot/grub/locale
-cp /usr/share/locale/en\\\\@quot/LC_MESSAGES/grub.mo /boot/grub/locale/en.mo 2>/dev/null || true
+cp /usr/share/locale/en\\@quot/LC_MESSAGES/grub.mo /boot/grub/locale/en.mo 2>/dev/null || true
 grub-mkconfig -o /boot/grub/grub.cfg
 
 systemctl enable sddm.service
@@ -189,7 +189,7 @@ echo "Installation complete."
 echo "Remove installation media and reboot."
 
 for i in {3..1}; do
-    echo -ne "Rebooting in $i seconds...\\r"
+    echo -ne "Rebooting in $i seconds...\r"
     sleep 1
 done
 echo
