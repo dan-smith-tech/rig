@@ -33,8 +33,8 @@ ssh-keygen -t rsa -b 4096 -f "$HOME/.ssh/id_rsa" -N ""
 
 sudo usermod -aG docker "$CURRENT_USER"
 
-stow --adopt -t ~ nvim kitty zshrc
 cd "$HOME/rig/dotfiles"
+stow --adopt -t ~ nvim kitty zshrc
 git restore .
 cd ..
 
