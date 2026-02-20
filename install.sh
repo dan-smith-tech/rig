@@ -69,6 +69,13 @@ partprobe "/dev/$TARGET_DEVICE"
 sleep 5
 
 echo "Formatting partitions..."
+umount -l "/dev/$(get_partition "$TARGET_DEVICE" 1)" 2>/dev/null || true
+umount -l "/dev/$(get_partition "$TARGET_DEVICE" 2)" 2>/dev/null || true
+umount -l "/dev/$(get_partition "$TARGET_DEVICE" 3)" 2>/dev/null || true
+for part in 1 2 3; do
+    blockdev --rereadpt "/dev/$TARGET_DEVICE"
+    wipefs -a "/dev/$(get_partition "$TARGET_DEVICE" $part)" || true
+done
 mkfs.fat -F32 "/dev/$(get_partition "$TARGET_DEVICE" 1)"
 mkfs.ext4 "/dev/$(get_partition "$TARGET_DEVICE" 2)"
 LVM_PART="/dev/$(get_partition "$TARGET_DEVICE" 3)"
