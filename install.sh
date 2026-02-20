@@ -62,7 +62,7 @@ parted -s /dev/$TARGET_DEVICE \
     mklabel gpt \
     mkpart primary fat32 1MiB 1GiB \
     mkpart primary ext4 1GiB 2GiB \
-    mkpart primary linux-lvm 2GiB 100% \
+    mkpart primary ext4 2GiB 100% \
     set 3 lvm on
 sleep 2
 partprobe "/dev/$TARGET_DEVICE"
