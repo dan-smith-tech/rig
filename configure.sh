@@ -25,11 +25,21 @@ else
 fi
 
 yay -S --noconfirm brave-bin
+yay -S --noconfirm catppuccin-plasma-colorscheme-mocha
+yay -S --noconfirm zoom
 curl -f https://zed.dev/install.sh | sh
 
 sudo chsh -s /usr/bin/zsh "$CURRENT_USER"
 
 ssh-keygen -t rsa -b 4096 -f "$HOME/.ssh/id_rsa" -N ""
+
+read -p "Git email: " git_email
+git config --global user.email "$git_email"
+
+read -p "Git name: " git_name
+git config --global user.name "$git_name"
+
+gh auth login
 
 sudo usermod -aG docker "$CURRENT_USER"
 
