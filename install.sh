@@ -71,8 +71,11 @@ sleep 5
 echo "Formatting partitions..."
 mkfs.fat -F32 "/dev/$(get_partition "$TARGET_DEVICE" 1)"
 mkfs.ext4 "/dev/$(get_partition "$TARGET_DEVICE" 2)"
-pvcreate "/dev/$(get_partition "$TARGET_DEVICE" 3)"
-vgcreate vg_system "/dev/$(get_partition "$TARGET_DEVICE" 3)"
+LVM_PART="/dev/$(get_partition "$TARGET_DEVICE" 3)"
+dd if=/dev/zero of="$LVM_PART" bs=1M count=100 status=none
+wipefs -a "$LVM_PART"
+pvcreate --yes --force "$LVM_PART"
+vgcreate vg_system "$LVM_PART"
 if [ "$ENABLE_SWAP" = true ]; then
     lvcreate -L "${SWAP_SIZE}GB" vg_system -n lv_swap
 fi
