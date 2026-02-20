@@ -2,6 +2,7 @@
 
 set -e
 
+USERNAME="dan"
 SKIP_OPTIONAL=0
 ENABLE_SWAP=false
 SWAP_SIZE=8
@@ -29,6 +30,16 @@ case "$install_nvidia" in
     [nN]|[nN][oO]) INSTALL_NVIDIA=false ;;
     *) INSTALL_NVIDIA=true ;;
 esac
+
+get_partition() {
+    local dev="$1"
+    local part="$2"
+    if [[ "$dev" =~ ^(nvme|mmcblk) ]]; then
+        echo "${dev}p${part}"
+    else
+        echo "${dev}${part}"
+    fi
+}
 
 echo
 echo "Available disks:"
@@ -95,18 +106,6 @@ mount "/dev/$(get_partition "$TARGET_DEVICE" 2)" /mnt/boot
 echo "Installing base system..."
 pacstrap /mnt base
 genfstab -U /mnt >> /mnt/etc/fstab
-
-get_partition() {
-    local dev="$1"
-    local part="$2"
-    if [[ "$dev" =~ ^(nvme|mmcblk) ]]; then
-        echo "${dev}p${part}"
-    else
-        echo "${dev}${part}"
-    fi
-}
-
-USERNAME="dan"
 
 cat > /mnt/setup_chroot.sh << EOF
 #!/bin/bash
