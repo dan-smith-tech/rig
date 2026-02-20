@@ -66,6 +66,7 @@ parted -s /dev/$TARGET_DEVICE \
     set 3 lvm on
 sleep 2
 partprobe "/dev/$TARGET_DEVICE"
+sleep 5
 
 echo "Formatting partitions..."
 mkfs.fat -F32 "/dev/$(get_partition "$TARGET_DEVICE" 1)"
