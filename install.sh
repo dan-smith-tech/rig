@@ -94,6 +94,7 @@ echo "Installing base system..."
 pacstrap /mnt base
 genfstab -U /mnt >> /mnt/etc/fstab
 
+echo "About to run chroot setup (set password for root and then the user)..."
 cat > /mnt/setup_chroot.sh << EOF
 #!/bin/bash
 
