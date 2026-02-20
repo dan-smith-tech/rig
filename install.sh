@@ -104,7 +104,7 @@ passwd
 useradd -m -g users -G tty,input,video,audio,optical,storage,wheel "$USERNAME"
 passwd "$USERNAME"
 
-pacman -S --noconfirm base efibootmgr git grub linux linux-firmware linux-headers lvm2 neovim networkmanager sudo
+pacman -S --noconfirm base bluez bluez-utils bluedevil efibootmgr git grub linux linux-firmware linux-headers lvm2 neovim networkmanager sudo
 pacman -S --noconfirm plasma dolphin
 
 if [ "$INSTALL_NVIDIA" = true ]; then
@@ -137,6 +137,7 @@ grub-mkconfig -o /boot/grub/grub.cfg
 
 systemctl enable sddm.service
 systemctl enable NetworkManager
+systemctl enable bluetooth.service
 
 echo "Setup complete."
 EOF
