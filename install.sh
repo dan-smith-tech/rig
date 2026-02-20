@@ -109,7 +109,7 @@ pacman -S --noconfirm plasma dolphin
 if [ "$INSTALL_NVIDIA" = true ]; then
     sed -i '/^#\\[multilib\\]/,/^#Include = \\/etc\\/pacman.d\\/mirrorlist/ { s/^#//; }' /etc/pacman.conf
     pacman -Syu --noconfirm
-    pacman -S --noconfirm nvidia nvidia-utils nvidia-container-toolkit egl-wayland lib32-nvidia-utils steam
+    pacman -S --noconfirm nvidia-open nvidia-utils nvidia-container-toolkit egl-wayland lib32-nvidia-utils steam
 fi
 
 if [ "$SKIP_OPTIONAL" -eq 0 ]; then
