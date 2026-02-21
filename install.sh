@@ -121,6 +121,8 @@ if [ "$INSTALL_NVIDIA" = true ]; then
     sed -i '/^#\\[multilib\\]/,/^#Include = \\/etc\\/pacman.d\\/mirrorlist/ { s/^#//; }' /etc/pacman.conf
     pacman -Syu --noconfirm
     pacman -S --noconfirm nvidia-open nvidia-utils nvidia-container-toolkit egl-wayland lib32-nvidia-utils steam
+else
+    pacman -S --noconfirm vulkan-intel vulkan-icd-loader vulkan-tools lib32-vulkan-intel lib32-vulkan-icd-loader
 fi
 
 if [ "$SKIP_OPTIONAL" -eq 0 ]; then
