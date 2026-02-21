@@ -27,6 +27,7 @@ fi
 yay -S --noconfirm brave-bin
 yay -S --noconfirm catppuccin-plasma-colorscheme-mocha
 yay -S --noconfirm zoom
+sudo pacman -S --noconfirm mattermost-desktop
 curl -f https://zed.dev/install.sh | sh
 
 sudo chsh -s /usr/bin/zsh "$CURRENT_USER"
