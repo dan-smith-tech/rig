@@ -45,7 +45,7 @@ gh auth login
 sudo usermod -aG docker "$CURRENT_USER"
 
 cd "$HOME/rig/dotfiles"
-stow --adopt -t ~ nvim kitty zshrc
+stow --adopt -t ~ nvim kitty zshrc zed
 git restore .
 cd ..
 
