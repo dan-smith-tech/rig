@@ -126,7 +126,7 @@ else
 fi
 
 if [ "$SKIP_OPTIONAL" -eq 0 ]; then
-    pacman -S --noconfirm base-devel git docker docker-buildx docker-compose fd fzf github-cli kitty nodejs npm openssh ripgrep rustup stow sysstat tree-sitter-cli ttf-dejavu ttf-jetbrains-mono-nerd ttf-liberation ttf-nerd-fonts-symbols-mono unzip wget wl-clipboard zoxide zsh
+    pacman -S --noconfirm base-devel git docker docker-buildx docker-compose fd fzf github-cli kitty less nodejs npm openssh ripgrep rustup stow sysstat tree-sitter-cli ttf-dejavu ttf-jetbrains-mono-nerd ttf-liberation ttf-nerd-fonts-symbols-mono unzip wget wl-clipboard zoxide zsh
 fi
 
 echo '%wheel ALL=(ALL:ALL) ALL' >> /etc/sudoers
