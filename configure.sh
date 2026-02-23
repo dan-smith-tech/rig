@@ -24,6 +24,8 @@ else
     rm -rf $(pwd)/../yay*
 fi
 
+pacman -S --noconfirm base-devel git docker docker-buildx docker-compose fd fzf github-cli kitty less nodejs npm openssh ripgrep rustup stow sysstat tree-sitter-cli unzip wget wl-clipboard zoxide zsh
+
 yay -S --noconfirm brave-bin
 yay -S --noconfirm catppuccin-plasma-colorscheme-mocha
 yay -S --noconfirm zoom

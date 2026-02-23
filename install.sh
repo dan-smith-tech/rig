@@ -3,7 +3,6 @@
 set -e
 
 USERNAME="dan"
-SKIP_OPTIONAL=0
 ENABLE_SWAP=false
 SWAP_SIZE=8
 INSTALL_NVIDIA=true
@@ -114,8 +113,7 @@ passwd
 useradd -m -g users -G tty,input,video,audio,optical,storage,wheel "$USERNAME"
 passwd "$USERNAME"
 
-pacman -S --noconfirm base bluez bluez-utils bluedevil efibootmgr git grub linux linux-firmware linux-headers lvm2 neovim networkmanager sudo
-pacman -S --noconfirm plasma dolphin ark okular
+pacman -S --noconfirm base bluez bluez-utils bluedevil efibootmgr git grub linux linux-firmware linux-headers lvm2 neovim networkmanager sudo plasma dolphin ark okular libreoffice-still
 
 if [ "$INSTALL_NVIDIA" = true ]; then
     sed -i '/^#\\[multilib\\]/,/^#Include = \\/etc\\/pacman.d\\/mirrorlist/ { s/^#//; }' /etc/pacman.conf
@@ -123,10 +121,6 @@ if [ "$INSTALL_NVIDIA" = true ]; then
     pacman -S --noconfirm nvidia-open nvidia-utils nvidia-container-toolkit egl-wayland lib32-nvidia-utils steam gamescope
 else
     pacman -S --noconfirm vulkan-intel vulkan-icd-loader vulkan-tools lib32-vulkan-intel lib32-vulkan-icd-loader
-fi
-
-if [ "$SKIP_OPTIONAL" -eq 0 ]; then
-    pacman -S --noconfirm base-devel git docker docker-buildx docker-compose fd fzf github-cli kitty less nodejs npm openssh ripgrep rustup stow sysstat tree-sitter-cli ttf-dejavu ttf-jetbrains-mono-nerd ttf-liberation ttf-nerd-fonts-symbols-mono unzip wget wl-clipboard zoxide zsh
 fi
 
 echo '%wheel ALL=(ALL:ALL) ALL' >> /etc/sudoers
