@@ -113,7 +113,7 @@ passwd
 useradd -m -g users -G tty,input,video,audio,optical,storage,wheel "$USERNAME"
 passwd "$USERNAME"
 
-pacman -S --noconfirm base bluez bluez-utils bluedevil efibootmgr git grub linux linux-firmware linux-headers lvm2 neovim networkmanager sudo plasma dolphin ark okular libreoffice-still
+pacman -S --noconfirm base bluez bluez-utils bluedevil efibootmgr git grub linux linux-firmware linux-headers lvm2 neovim networkmanager sudo plasma dolphin ark ristretto okular libreoffice-still
 
 if [ "$INSTALL_NVIDIA" = true ]; then
     sed -i '/^#\\[multilib\\]/,/^#Include = \\/etc\\/pacman.d\\/mirrorlist/ { s/^#//; }' /etc/pacman.conf
