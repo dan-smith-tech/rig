@@ -16,6 +16,11 @@
     "provider": "copilot"
   },
   "agent": {
+    "inline_assistant_model": {
+      "provider": "copilot_chat",
+      "model": "claude-sonnet-4.5",
+      "enable_thinking": false
+    },
     "default_model": {
       "provider": "openrouter",
       "model": "openrouter/free",
@@ -39,6 +44,6 @@
   "theme": {
     "mode": "system",
     "light": "One Light",
-    "dark": "Catppuccin Mocha",
-  },
+    "dark": "Catppuccin Mocha"
+  }
 }
