@@ -58,4 +58,7 @@ git config --global difftool.kitty.cmd 'kitten diff $LOCAL $REMOTE'
 sudo timedatectl set-timezone "Europe/London"
 sudo timedatectl set-ntp true
 
+yay -S xone-dkms-git xone-dongle-firmware linux-headers
+sudo mkinitcpio -P
+
 sudo reboot
