@@ -24,7 +24,7 @@ else
     rm -rf $(pwd)/../yay*
 fi
 
-pacman -S --noconfirm base-devel git docker docker-buildx docker-compose fd fzf github-cli kitty less nodejs npm openssh ripgrep rustup stow sysstat tree-sitter-cli ttf-dejavu ttf-jetbrains-mono-nerd ttf-liberation ttf-nerd-fonts-symbols-mono unzip wget wl-clipboard zoxide zsh
+sudo pacman -S --noconfirm base-devel git docker docker-buildx docker-compose fd fzf github-cli kitty less nodejs npm openssh ripgrep rustup stow sysstat tree-sitter-cli ttf-dejavu ttf-jetbrains-mono-nerd ttf-liberation ttf-nerd-fonts-symbols-mono unzip wget wl-clipboard zoxide zsh
 
 yay -S --noconfirm brave-bin
 yay -S --noconfirm catppuccin-plasma-colorscheme-mocha
