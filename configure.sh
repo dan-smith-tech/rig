@@ -44,6 +44,8 @@ git config --global user.name "$git_name"
 
 gh auth login
 
+rustup default stable
+
 sudo usermod -aG docker "$CURRENT_USER"
 
 cd "$HOME/rig/dotfiles"
