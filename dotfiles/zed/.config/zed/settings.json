@@ -7,7 +7,13 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "git_panel": {
+    "tree_view": false
+  },
   "agent_servers": {
+    "github-copilot-cli": {
+      "type": "registry"
+    },
     "github-copilot": {
       "type": "registry"
     }
