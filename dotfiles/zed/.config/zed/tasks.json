@@ -1,0 +1,11 @@
+[
+  {
+    "label": "sshuttle CERN tunnel",
+    "command": "python3 -m venv /tmp/sshuttle-venv && /tmp/sshuttle-venv/bin/pip install --upgrade pip && /tmp/sshuttle-venv/bin/pip install sshuttle==1.1.2 && /tmp/sshuttle-venv/bin/sshuttle --dns -v --remote smithda@lxtunnel.cern.ch 128.141.0.0/16 128.142.0.0/16 137.138.0.0/16 185.249.56.0/22 188.184.0.0/15 192.65.196.0/23 192.91.242.0/24 194.12.128.0/18 137.138.128.50 137.138.130.66 -x lxtunnel.cern.ch --python=python; rm -rf /tmp/sshuttle-venv",
+    "use_new_terminal": true,
+    "allow_concurrent_runs": false,
+    "reveal": "always",
+    "hide": "never",
+    "shell": "system",
+  },
+]
