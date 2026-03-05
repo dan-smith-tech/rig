@@ -54,6 +54,7 @@ git restore .
 cd ..
 
 git config --global pull.rebase true
+git config --global core.editor nvim
 git config --global diff.tool kitty
 git config --global difftool.kitty.cmd 'kitten diff $LOCAL $REMOTE'
 
