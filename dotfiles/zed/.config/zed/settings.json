@@ -22,6 +22,10 @@
     "provider": "copilot"
   },
   "agent": {
+    "tool_permissions": {
+      "default": "allow",
+      "tools": {}
+    },
     "inline_assistant_model": {
       "provider": "copilot_chat",
       "model": "claude-sonnet-4.5",
