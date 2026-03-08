@@ -61,6 +61,10 @@ git config --global difftool.kitty.cmd 'kitten diff $LOCAL $REMOTE'
 sudo timedatectl set-timezone "Europe/London"
 sudo timedatectl set-ntp true
 
+sudo pacman -S --noconfirm cups cups-pdf system-config-printer print-manager
+sudo systemctl enable --now cups.service
+sudo usermod -aG lp "$CURRENT_USER"
+
 yay -S --noconfirm xone-dkms-git xone-dongle-firmware linux-headers
 sudo mkinitcpio -P
 
