@@ -7,6 +7,7 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "soft_wrap": "editor_width",
   "git_panel": {
     "tree_view": false,
   },
@@ -22,7 +23,10 @@
     "provider": "copilot",
   },
   "agent": {
-    "single_file_review": true,
+    "expand_terminal_card": false,
+    "expand_edit_card": false,
+    "enable_feedback": false,
+    "single_file_review": false,
     "tool_permissions": {
       "default": "allow",
       "tools": {},
