@@ -49,11 +49,12 @@ rustup default stable
 sudo usermod -aG docker "$CURRENT_USER"
 
 cd "$HOME/rig/dotfiles"
-stow --adopt -t ~ nvim kitty zshrc zed
+stow --adopt -t ~ nvim kitty zshrc zed gitignore
 git restore .
 cd ..
 
 git config --global pull.rebase true
+git config --global core.excludesfile '~/.gitignore_global'
 git config --global core.editor nvim
 git config --global diff.tool kitty
 git config --global difftool.kitty.cmd 'kitten diff $LOCAL $REMOTE'
