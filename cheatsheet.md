@@ -12,7 +12,7 @@ sudo pacman -Syy
 ## 2. Run Steam game with Gamescope
 
 ```
-gamescope -W 3440 -H 1440 -w 3440 -h 1440 -r 144 --hdr-enabled --fullscreen --force-grab-cursor -- %command% --launcher-skip
+gamescope -W 3440 -H 1440 -w 3440 -h 1440 -r 144 --hdr-enabled --hdr-debug-force-output --fullscreen --force-grab-cursor -- env DXVK_HDR=1 ENABLE_HDR_WSI=1 %command% --launcher-skip
 ```
 
 ## 3. If speakers are not detected (ThinkPad X1 Carbon 7th Gen)
