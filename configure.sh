@@ -24,7 +24,7 @@ else
     rm -rf $(pwd)/../yay*
 fi
 
-sudo pacman -S --noconfirm base-devel biber git docker docker-buildx docker-compose kolourpaint fd fzf github-cli kitty less nodejs npm openssh ripgrep rustup stow sysstat tree-sitter-cli texlive-basic texlive-core texlive-latex texlive-latexrecommended texlive-latexextra texlive-bibtexextra texlive-fontsrecommended texlive-bin texlive-binextra ttf-dejavu ttf-jetbrains-mono-nerd ttf-liberation ttf-nerd-fonts-symbols-mono unzip wget wl-clipboard zoxide zsh
+sudo pacman -S --noconfirm base-devel biber git docker docker-buildx docker-compose kolourpaint fd fzf github-cli kitty less nodejs npm openssh ripgrep rustup stow sysstat tree-sitter-cli tesseract tesseract-data-eng texlive-basic texlive-core texlive-latex texlive-latexrecommended texlive-latexextra texlive-bibtexextra texlive-fontsrecommended texlive-bin texlive-binextra ttf-dejavu ttf-jetbrains-mono-nerd ttf-liberation ttf-nerd-fonts-symbols-mono unzip wget wl-clipboard zoxide zsh
 
 yay -S --noconfirm brave-bin
 yay -S --noconfirm catppuccin-plasma-colorscheme-mocha
