@@ -8,4 +8,14 @@
     "hide": "never",
     "shell": "system",
   },
+  {
+    "label": "Preview current Markdown",
+    "command": "sh",
+    "args": [
+      "-c",
+      "set -x; pandoc -s --mathjax --embed-resources \"$ZED_FILE\" -o \"/tmp/$ZED_STEM.html\"; echo OUTPUT=/tmp/$ZED_STEM.html; nohup xdg-open \"/tmp/$ZED_STEM.html\" >/tmp/zed-pandoc-preview.log 2>&1 &",
+    ],
+    "cwd": "$ZED_DIRNAME",
+    "hide": "on_success",
+  },
 ]

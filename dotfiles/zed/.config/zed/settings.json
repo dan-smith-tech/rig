@@ -7,17 +7,22 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "project_panel": {
+    "dock": "right"
+  },
+  "outline_panel": {
+    "dock": "right"
+  },
+  "collaboration_panel": {
+    "dock": "right"
+  },
   "soft_wrap": "editor_width",
   "git_panel": {
+    "dock": "right",
     "tree_view": false,
   },
   "agent_servers": {
     "github-copilot-cli": {
-      "favorite_config_option_values": {
-        "model": [
-          "claude-opus-4.6"
-        ]
-      },
       "type": "registry",
     },
     "github-copilot": {
@@ -25,9 +30,11 @@
     },
   },
   "edit_predictions": {
+    "mode": "subtle",
     "provider": "copilot",
   },
   "agent": {
+    "dock": "left",
     "expand_terminal_card": false,
     "expand_edit_card": false,
     "enable_feedback": false,
@@ -60,5 +67,23 @@
     "mode": "system",
     "light": "One Light",
     "dark": "Catppuccin Mocha",
+  },
+  "lsp": {
+    "texlab": {
+      "settings": {
+        "texlab": {
+          "build": {
+            "onSave": true,
+            "executable": "latexmk",
+            "args": [
+              "-pdf",
+              "-synctex=1",
+              "-interaction=nonstopmode",
+              "-recorder",
+            ],
+          },
+        },
+      },
+    },
   },
 }
