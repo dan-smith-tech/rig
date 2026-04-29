@@ -7,14 +7,15 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "cli_default_open_behavior": "existing_window",
   "project_panel": {
-    "dock": "right"
+    "dock": "right",
   },
   "outline_panel": {
-    "dock": "right"
+    "dock": "right",
   },
   "collaboration_panel": {
-    "dock": "right"
+    "dock": "right",
   },
   "soft_wrap": "editor_width",
   "git_panel": {
@@ -23,6 +24,9 @@
   },
   "agent_servers": {
     "github-copilot-cli": {
+      "default_config_options": {
+        "allow_all": "on",
+      },
       "type": "registry",
     },
     "github-copilot": {
@@ -41,15 +45,21 @@
     "single_file_review": false,
     "tool_permissions": {
       "default": "allow",
-      "tools": {},
+      "tools": {
+        "terminal": {
+          "always_deny": [
+            {
+              "pattern": "git\\s+(add|stage|commit|push|pull|fetch|rebase|merge|cherry-pick|revert|reset|stash|tag|rm|mv|clean|restore\\s+--staged)",
+            },
+          ],
+        },
+      },
     },
     "inline_assistant_model": {
       "provider": "copilot_chat",
       "model": "claude-sonnet-4.5",
       "enable_thinking": false,
     },
-    "favorite_models": [],
-    "model_parameters": [],
   },
   "vim_mode": true,
   "buffer_font_family": ".ZedMono",
