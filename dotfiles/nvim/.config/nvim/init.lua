@@ -9,10 +9,14 @@ vim.opt.expandtab = true
 vim.opt.spell = true
 vim.opt.spelllang = { "en_us", "en_gb" }
 
--- make a <Tab> counts as 3 spaces
-vim.opt.tabstop = 3
-vim.opt.softtabstop = 3
-vim.opt.shiftwidth = 3
+-- soft wrap at word boundaries (matches zed soft_wrap: "editor_width")
+vim.opt.wrap = true
+vim.opt.linebreak = true
+
+-- make a <Tab> count as 4 spaces (matches zed default tab_size: 4)
+vim.opt.tabstop = 4
+vim.opt.softtabstop = 4
+vim.opt.shiftwidth = 4
 
 -- download and set catppuccin mocha theme
 local catpath = vim.fn.stdpath("data") .. "/site/pack/plugins/start/catppuccin"
