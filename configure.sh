@@ -24,13 +24,8 @@ else
     rm -rf $(pwd)/../yay*
 fi
 
-sudo pacman -S --noconfirm base-devel biber git docker docker-buildx docker-compose kolourpaint fd fzf github-cli kitty less nodejs npm openssh ripgrep rustup stow sysstat tree-sitter-cli tesseract tesseract-data-eng texlive-basic texlive-core texlive-latex texlive-latexrecommended texlive-latexextra texlive-bibtexextra texlive-fontsrecommended texlive-bin texlive-binextra ttf-dejavu ttf-jetbrains-mono-nerd ttf-liberation ttf-nerd-fonts-symbols-mono unzip wget wl-clipboard zoxide zsh
-
-yay -S --noconfirm brave-bin
-yay -S --noconfirm catppuccin-plasma-colorscheme-mocha
-yay -S --noconfirm zoom
-sudo pacman -S --noconfirm mattermost-desktop
-curl -f https://zed.dev/install.sh | sh
+sudo pacman -S --noconfirm base-devel github-cli rustup stow zed zsh
+yay -S --noconfirm brave-bin catppuccin-plasma-colorscheme-mocha
 
 sudo chsh -s /usr/bin/zsh "$CURRENT_USER"
 
