@@ -14,11 +14,3 @@ sudo pacman -Syy
 ```
 gamescope -W 3440 -H 1440 -w 3440 -h 1440 -r 144 --hdr-enabled --hdr-debug-force-output --fullscreen --force-grab-cursor -- env DXVK_HDR=1 ENABLE_HDR_WSI=1 %command% --launcher-skip
 ```
-
-## 3. If speakers are not detected (ThinkPad X1 Carbon 7th Gen)
-
-Install SOF speaker firmware:
-
-```bash
-sudo pacman -S sof-firmware
-```

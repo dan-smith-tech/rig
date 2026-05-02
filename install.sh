@@ -120,7 +120,7 @@ if [ "$INSTALL_NVIDIA" = true ]; then
     pacman -Syu --noconfirm
     pacman -S --noconfirm nvidia-open nvidia-utils nvidia-container-toolkit egl-wayland lib32-nvidia-utils steam gamescope
 else
-    pacman -S --noconfirm vulkan-intel vulkan-icd-loader vulkan-tools lib32-vulkan-intel lib32-vulkan-icd-loader
+    pacman -S --noconfirm vulkan-intel vulkan-icd-loader vulkan-tools lib32-vulkan-intel lib32-vulkan-icd-loader sof-firmware
 fi
 
 echo '%wheel ALL=(ALL:ALL) ALL' >> /etc/sudoers
