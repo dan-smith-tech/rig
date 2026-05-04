@@ -38,6 +38,11 @@
     "provider": "copilot",
   },
   "agent": {
+    "default_model": {
+      "provider": "ollama",
+      "model": "qwen2.5-coder:32b",
+      "enable_thinking": false,
+    },
     "dock": "left",
     "expand_terminal_card": false,
     "expand_edit_card": false,
@@ -59,6 +64,25 @@
       "provider": "copilot_chat",
       "model": "claude-sonnet-4.5",
       "enable_thinking": false,
+    },
+  },
+  "language_models": {
+    "ollama": {
+      "api_url": "http://localhost:11434",
+      "available_models": [
+        {
+          "name": "qwen3:14b",
+          "display_name": "Qwen3 14B",
+          "max_tokens": 32768,
+          "supports_tools": true,
+        },
+        {
+          "name": "qwen2.5-coder:32b",
+          "display_name": "Qwen2.5 Code 32B",
+          "max_tokens": 32768,
+          "supports_tools": true,
+        },
+      ],
     },
   },
   "vim_mode": true,
