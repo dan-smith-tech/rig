@@ -7,14 +7,52 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "proxy": "",
+  "git": {
+    "inline_blame": {
+      "show_commit_summary": true
+    }
+  },
+  "title_bar": {
+    "show_onboarding_banner": false,
+    "show_user_picture": false,
+    "show_user_menu": false,
+    "show_sign_in": false,
+    "show_branch_status_icon": true
+  },
+  "diagnostics": {
+    "button": true
+  },
+  "terminal": {
+    "dock": "bottom",
+    "button": true
+  },
+  "status_bar": {
+    "active_language_button": true
+  },
+  "toolbar": {
+    "code_actions": false
+  },
+  "auto_signature_help": true,
+  "scroll_beyond_last_line": "one_page",
+  "autosave": {
+    "after_delay": {
+      "milliseconds": 1000
+    }
+  },
+  "redact_private_values": true,
   "cli_default_open_behavior": "existing_window",
   "project_panel": {
-    "dock": "right",
+    "hide_root": true,
+    "diagnostic_badges": false,
+    "bold_folder_labels": false,
+    "dock": "left",
   },
   "outline_panel": {
     "dock": "right",
   },
   "collaboration_panel": {
+    "button": false,
     "dock": "right",
   },
   "soft_wrap": "editor_width",
@@ -34,16 +72,18 @@
     },
   },
   "edit_predictions": {
+    "allow_data_collection": "no",
     "mode": "subtle",
     "provider": "copilot",
   },
   "agent": {
+    "flexible": false,
     "default_model": {
-      "provider": "ollama",
-      "model": "qwen2.5-coder:32b",
-      "enable_thinking": false,
+      "provider": "copilot_chat",
+      "model": "claude-sonnet-4.6",
+      "enable_thinking": true,
     },
-    "dock": "left",
+    "dock": "right",
     "expand_terminal_card": false,
     "expand_edit_card": false,
     "enable_feedback": false,
@@ -62,7 +102,7 @@
     },
     "inline_assistant_model": {
       "provider": "copilot_chat",
-      "model": "claude-sonnet-4.5",
+      "model": "claude-sonnet-4.6",
       "enable_thinking": false,
     },
   },
