@@ -2,17 +2,17 @@
 
 set -e
 
+# check if script is run from rig directory
 if [ ! -f "$(pwd)/configure.sh" ]; then
     echo "Error: must be run from rig repository directory"
     exit 1
 fi
 
-CURRENT_USER=$(whoami)
+# set hostname
+read -r -p "Hostname [novigrad]: " HOSTNAME
+sudo hostnamectl set-hostname "${HOSTNAME:-novigrad}"
 
-read -p "Hostname (default novigrad): " hostname
-HOSTNAME=${hostname:-novigrad}
-sudo hostnamectl set-hostname "$HOSTNAME"
-
+# install yay if not already installed
 if command -v yay &> /dev/null; then
     :
 else
@@ -24,16 +24,20 @@ else
     rm -rf $(pwd)/../yay*
 fi
 
+# install packages
 sudo pacman -S --noconfirm base-devel github-cli rustup stow zed zsh
 yay -S --noconfirm brave-bin catppuccin-plasma-colorscheme-mocha
 
-sudo chsh -s /usr/bin/zsh "$CURRENT_USER"
-
+# sync configs
 cd "$HOME/rig/dotfiles"
 stow --adopt -t ~ nvim kitty zshrc zed gitignore
 git restore .
 cd ..
 
+# set zsh as default shell
+sudo chsh -s /usr/bin/zsh "$(whoami)"
+
+# setup git
 git config --global pull.rebase true
 git config --global core.excludesfile '~/.gitignore_global'
 git config --global core.editor nvim
@@ -45,8 +49,10 @@ read -p "Git name: " git_name
 git config --global user.name "$git_name"
 gh auth login
 
+# setup rust
 rustup default stable
 
+# enable virtual keyboard
 echo 'KWIN_IM_SHOW_ALWAYS=1' | sudo tee -a /etc/environment
 
 sudo reboot
