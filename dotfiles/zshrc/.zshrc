@@ -27,6 +27,10 @@ fi
 fpath+="$PURE_DIR"
 autoload -U promptinit; promptinit
 prompt pure
+# Remove blank line above prompt
+eval "$(typeset -f prompt_pure_preprompt_render | sed '/# Initial newline/d; /^\t\tprint$/d')"
+# Use absolute path instead of ~-abbreviated path
+PROMPT="${PROMPT:gs|%~|%/|}"
 
 ## Source plugins
 source "${SYNTAX_HIGHLIGHTING_DIR}/zsh-syntax-highlighting.zsh"

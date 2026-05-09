@@ -1,0 +1,32 @@
+[
+  {
+    "context": "Editor && (vim_mode == visual || vim_mode == insert)",
+    "bindings": {
+      "ctrl-c": "editor::Copy",
+    },
+  },
+  {
+    "context": "Editor && (vim_mode == visual || vim_mode == insert || vim_mode == normal)",
+    "bindings": {
+      "ctrl-v": "editor::Paste",
+    },
+  },
+  {
+    "context": "Terminal && selection",
+    "bindings": {
+      "ctrl-c": "terminal::Copy",
+    },
+  },
+  {
+    "context": "Terminal && !selection",
+    "bindings": {
+      "ctrl-c": ["terminal::SendText", "\u0003"],
+    },
+  },
+  {
+    "context": "Terminal",
+    "bindings": {
+      "ctrl-v": "terminal::Paste",
+    },
+  },
+]

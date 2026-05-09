@@ -18,7 +18,12 @@ vim.opt.tabstop = 4
 vim.opt.softtabstop = 4
 vim.opt.shiftwidth = 4
 
--- download and set catppuccin mocha theme
+-- ctrl+c copies, ctrl+v pastes
+vim.keymap.set("v", "<C-c>", '"+y', { noremap = true, silent = true })
+vim.keymap.set({ "n", "v" }, "<C-v>", '"+p', { noremap = true, silent = true })
+vim.keymap.set("i", "<C-v>", '<C-r>+', { noremap = true, silent = true })
+
+-- install catppuccin theme if not already installed and set it as the colorscheme
 local catpath = vim.fn.stdpath("data") .. "/site/pack/plugins/start/catppuccin"
 if not vim.uv.fs_stat(catpath) then
     vim.fn.system({
