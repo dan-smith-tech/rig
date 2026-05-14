@@ -46,11 +46,6 @@ git config --global user.name "$git_name"
 
 # setup ssh key for github
 ssh-keygen -t ed25519 -C "$git_email" -f "$HOME/.ssh/id_ed25519"
-echo ""
-echo "Add this public key to your GitHub account (github.com/settings/keys):"
-echo ""
-cat "$HOME/.ssh/id_ed25519.pub"
-echo ""
 
 # setup rust
 rustup default stable
@@ -66,4 +61,6 @@ EOF
 # enable virtual keyboard
 echo 'KWIN_IM_SHOW_ALWAYS=1' | sudo tee -a /etc/environment
 
-sudo reboot
+echo ""
+echo "Add this public key to https://github.com/settings/keys:"
+cat "$HOME/.ssh/id_ed25519.pub"
