@@ -12,17 +12,13 @@ fi
 read -r -p "Hostname [novigrad]: " HOSTNAME
 sudo hostnamectl set-hostname "${HOSTNAME:-novigrad}"
 
-# install yay if not already installed
-if command -v yay &> /dev/null; then
-    :
-else
-    cd $(mktemp -d)
-    git clone https://aur.archlinux.org/yay.git
-    cd yay
-    makepkg -si --noconfirm
-    cd "$HOME"
-    rm -rf $(pwd)/../yay*
-fi
+# install yay
+cd $(mktemp -d)
+git clone https://aur.archlinux.org/yay.git
+cd yay
+makepkg -si --noconfirm
+cd "$HOME"
+rm -rf $(pwd)/../yay*
 
 # install packages
 sudo pacman -S --noconfirm base-devel openssh rustup stow zed zsh
@@ -59,9 +55,6 @@ echo ""
 # setup rust
 rustup default stable
 
-# enable virtual keyboard
-echo 'KWIN_IM_SHOW_ALWAYS=1' | sudo tee -a /etc/environment
-
 # setup sddm autologin
 sudo mkdir -p /etc/sddm.conf.d
 sudo tee /etc/sddm.conf.d/autologin.conf > /dev/null <<EOF
@@ -69,5 +62,8 @@ sudo tee /etc/sddm.conf.d/autologin.conf > /dev/null <<EOF
 User=$(whoami)
 Session=plasma
 EOF
+
+# enable virtual keyboard
+echo 'KWIN_IM_SHOW_ALWAYS=1' | sudo tee -a /etc/environment
 
 sudo reboot
