@@ -61,6 +61,25 @@ EOF
 # enable virtual keyboard
 echo 'KWIN_IM_SHOW_ALWAYS=1' | sudo tee -a /etc/environment
 
+# manual configuration steps
 echo ""
-echo "Add this public key to https://github.com/settings/keys:"
-cat "$HOME/.ssh/id_ed25519.pub"
+echo "Automatic configuration complete. Final manual steps:"
+echo ""
+echo "1. Open 'System Settings' and configure:"
+echo "   - shortcuts"
+echo "   - display"
+echo "   - wallpaper"
+echo "   - theme"
+echo "   - panel settings"
+echo ""
+echo "2. Open brave://settings and configure:"
+echo "   - privacy and security"
+echo "   - no persistent cookies"
+echo "   - no telemetry"
+echo "   - Catppuccin Mocha theme"
+echo ""
+echo "3. Add the following public key to https://github.com/settings/keys:"
+sed 's/^/   /' "$HOME/.ssh/id_ed25519.pub"
+echo ""
+echo "4. Sign into Steam and install games."
+echo ""
