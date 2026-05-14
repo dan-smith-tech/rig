@@ -21,7 +21,7 @@ cd "$HOME"
 rm -rf $(pwd)/../yay*
 
 # install packages
-sudo pacman -S --noconfirm base-devel openssh rustup stow zed zsh
+sudo pacman -S --noconfirm base-devel openssh python rustup stow zed zsh
 yay -S --noconfirm brave-bin catppuccin-plasma-colorscheme-mocha
 
 # sync configs
