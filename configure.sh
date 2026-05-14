@@ -25,7 +25,7 @@ else
 fi
 
 # install packages
-sudo pacman -S --noconfirm base-devel github-cli rustup stow zed zsh
+sudo pacman -S --noconfirm base-devel openssh rustup stow zed zsh
 yay -S --noconfirm brave-bin catppuccin-plasma-colorscheme-mocha
 
 # sync configs
@@ -47,7 +47,14 @@ read -p "Git email: " git_email
 git config --global user.email "$git_email"
 read -p "Git name: " git_name
 git config --global user.name "$git_name"
-gh auth login
+
+# setup ssh key for github
+ssh-keygen -t ed25519 -C "$git_email" -f "$HOME/.ssh/id_ed25519"
+echo ""
+echo "Add this public key to your GitHub account (github.com/settings/keys):"
+echo ""
+cat "$HOME/.ssh/id_ed25519.pub"
+echo ""
 
 # setup rust
 rustup default stable
