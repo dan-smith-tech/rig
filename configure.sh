@@ -62,4 +62,12 @@ rustup default stable
 # enable virtual keyboard
 echo 'KWIN_IM_SHOW_ALWAYS=1' | sudo tee -a /etc/environment
 
+# setup sddm autologin
+sudo mkdir -p /etc/sddm.conf.d
+sudo tee /etc/sddm.conf.d/autologin.conf > /dev/null <<EOF
+[Autologin]
+User=$(whoami)
+Session=plasma
+EOF
+
 sudo reboot
