@@ -51,12 +51,10 @@ ssh-keygen -t ed25519 -C "$git_email" -f "$HOME/.ssh/id_ed25519"
 rustup default stable
 
 # setup sddm autologin
-sudo mkdir -p /etc/sddm.conf.d
-sudo tee /etc/sddm.conf.d/autologin.conf > /dev/null <<EOF
-[Autologin]
-User=$(whoami)
-Session=plasma
-EOF
+sudo sed -i 's/^Session=$/Session=plasma.desktop/; s/^User=$/User='"$(whoami)"'/' /etc/sddm.conf.d/kde_settings.conf
+
+# disable kwallet
+kwriteconfig6 --file kwalletrc --group Wallet --key Enabled false
 
 # enable virtual keyboard
 echo 'KWIN_IM_SHOW_ALWAYS=1' | sudo tee -a /etc/environment
