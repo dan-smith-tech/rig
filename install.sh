@@ -137,6 +137,9 @@ mkdir -p /boot/EFI
 mount "/dev/$(get_partition "$TARGET_DEVICE" 1)" /boot/EFI
 grub-install --target=x86_64-efi --bootloader-id=grub_uefi --recheck
 
+sed -i 's/^GRUB_TIMEOUT=.*/GRUB_TIMEOUT=0/' /etc/default/grub
+sed -i 's/^GRUB_TIMEOUT_STYLE=.*/GRUB_TIMEOUT_STYLE=hidden/' /etc/default/grub
+
 mkdir -p /boot/grub/locale
 cp /usr/share/locale/en\\@quot/LC_MESSAGES/grub.mo /boot/grub/locale/en.mo 2>/dev/null || true
 grub-mkconfig -o /boot/grub/grub.cfg
