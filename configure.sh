@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -euo pipefail
 
 # check if script is run from rig directory
 if [ ! -f "$(pwd)/configure.sh" ]; then
@@ -13,12 +13,13 @@ read -r -p "Hostname [novigrad]: " HOSTNAME
 sudo hostnamectl set-hostname "${HOSTNAME:-novigrad}"
 
 # install yay
-cd $(mktemp -d)
+tmpdir="$(mktemp -d)"
+cd "$tmpdir"
 git clone https://aur.archlinux.org/yay.git
 cd yay
 makepkg -si --noconfirm
 cd "$HOME"
-rm -rf $(pwd)/../yay*
+rm -rf "$tmpdir"
 
 # install packages
 sudo pacman -S --noconfirm base-devel git neovim openssh python rustup stow zed zsh
@@ -35,13 +36,13 @@ sudo chsh -s /usr/bin/zsh "$(whoami)"
 
 # setup git
 git config --global pull.rebase true
-git config --global core.excludesfile '~/.gitignore_global'
+git config --global core.excludesfile "$HOME/.gitignore_global"
 git config --global core.editor nvim
 git config --global diff.tool kitty
 git config --global difftool.kitty.cmd 'kitten diff $LOCAL $REMOTE'
-read -p "Git email: " git_email
+read -r -p "Git email: " git_email
 git config --global user.email "$git_email"
-read -p "Git name: " git_name
+read -r -p "Git name: " git_name
 git config --global user.name "$git_name"
 
 # setup ssh key for github
@@ -53,15 +54,12 @@ rustup default stable
 # setup sddm autologin
 sudo sed -i 's/^Session=$/Session=plasma.desktop/; s/^User=$/User='"$(whoami)"'/' /etc/sddm.conf.d/kde_settings.conf
 
-# disable kwallet
-kwriteconfig6 --file kwalletrc --group Wallet --key Enabled false
-
 # stop brave from prompting to unlock kwallet
 mkdir -p "$HOME/.config"
 echo '--password-store=basic' > "$HOME/.config/brave-flags.conf"
 
 # enable virtual keyboard
-echo 'KWIN_IM_SHOW_ALWAYS=1' | sudo tee -a /etc/environment
+echo 'KWIN_IM_SHOW_ALWAYS=1' | sudo tee -a /etc/environment > /dev/null
 
 # manual configuration steps
 echo ""
