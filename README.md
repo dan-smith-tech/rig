@@ -1,8 +1,8 @@
 # My Arch Linux Setup
 
-I value simplicity and minimalism. Even as a computer scientist, I use as little software as possible. I want my operating system to be lightweight and performant, free from bloatware, spyware, or unnecessary features. Full configurability and complete control over my system are essential to me. Therefore, I exclusively use [Arch Linux](https://archlinux.org/).
+I value simplicity and minimalism. Even as a computer scientist, I use as little software as possible. I want my operating system to be lightweight and performant, free from bloatware, telemetry and spyware, or unnecessary features. Full configurability and complete control over my system are essential to me. Therefore, I exclusively use [Arch Linux](https://archlinux.org/).
 
-I have created two scripts that automate my entire installation and configuration process. Both scripts are commented to explain each step, enabling the process to be followed manually and adapted as needed.
+My entire installation process is automated by two scripts: `install` and `configure`. The `install` script performs an  installation of Arch Linux with a zero-bloat base KDE Plasma install, and the `configure` script sets up my preferred software and configurations.
 
 ## Pre-installation
 
@@ -72,19 +72,18 @@ I have created two scripts that automate my entire installation and configuratio
 
    ```bash
    nmcli device wifi connect <network> --ask
-
    ```
 
 10. Clone this repo:
 
-    ```bash
-    git clone https://github.com/dan-smith-tech/rig.git
-    ```
+   ```bash
+   git clone https://github.com/dan-smith-tech/rig.git
+   ```
 
 11. Run the `configure` script:
 
-    ```bash
-    ./configure.sh
-    ```
+   ```bash
+   ./configure.sh
+   ```
 
 12. Follow the prompts. The system will automatically reboot when the configuration is complete.

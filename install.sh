@@ -1,38 +1,19 @@
 #!/bin/bash
 
-set -e
+set -euo pipefail
 
 USERNAME="dan"
-ENABLE_SWAP=false
-SWAP_SIZE=8
-INSTALL_NVIDIA=true
 
-echo "=== Arch Linux Installation Script ==="
-echo "This script will completely wipe the selected disk!"
-
-echo
-read -p "Enable swap? (y/N): " enable_swap
-case "$enable_swap" in
-    [yY]|[yY][eE][sS]) ENABLE_SWAP=true ;;
-    *) ENABLE_SWAP=false ;;
+# determine install type: laptop gets 8G swap, PC gets NVIDIA/Steam
+read -r -p "Installing for laptop or PC? [PC]: " install_type
+case "${install_type,,}" in
+    laptop) IS_LAPTOP=true ;;
+    *) IS_LAPTOP=false ;;
 esac
 
-if [ "$ENABLE_SWAP" = true ]; then
-    read -p "Enter swap size in GB (default 8): " swap_size_input
-    if [ -n "$swap_size_input" ] && [[ "$swap_size_input" =~ ^[0-9]+$ ]]; then
-        SWAP_SIZE="$swap_size_input"
-    fi
-fi
-
-read -p "Install NVIDIA drivers? (Y/n): " install_nvidia
-case "$install_nvidia" in
-    [nN]|[nN][oO]) INSTALL_NVIDIA=false ;;
-    *) INSTALL_NVIDIA=true ;;
-esac
-
+# resolve partition name for nvme/mmcblk vs sdX devices
 get_partition() {
-    local dev="$1"
-    local part="$2"
+    local dev="$1" part="$2"
     if [[ "$dev" =~ ^(nvme|mmcblk) ]]; then
         echo "${dev}p${part}"
     else
@@ -40,23 +21,22 @@ get_partition() {
     fi
 }
 
+# select and confirm target disk
 echo
-echo "Available disks:"
 lsblk
 echo
-read -p "Enter the target device to wipe (e.g., sda, nvme0n1): " TARGET_DEVICE
+read -r -p "Target device to wipe (e.g. sda, nvme0n1): " TARGET_DEVICE
 if [ ! -b "/dev/$TARGET_DEVICE" ]; then
-    echo "Error: Device /dev/$TARGET_DEVICE does not exist!"
+    echo "Error: /dev/$TARGET_DEVICE does not exist"
     exit 1
 fi
-echo "Selected device: /dev/$TARGET_DEVICE"
 lsblk "/dev/$TARGET_DEVICE"
-echo "Wiping device..."
+echo
 sgdisk --zap-all "/dev/$TARGET_DEVICE"
 partprobe "/dev/$TARGET_DEVICE"
 sleep 2
 
-echo "Creating partitions..."
+# create GPT partitions: EFI (1G), /boot (1G), LVM (remainder)
 parted -s /dev/$TARGET_DEVICE \
     mklabel gpt \
     mkpart primary fat32 1MiB 1GiB \
@@ -67,11 +47,9 @@ sleep 2
 partprobe "/dev/$TARGET_DEVICE"
 sleep 5
 
-echo "Formatting partitions..."
-umount -l "/dev/$(get_partition "$TARGET_DEVICE" 1)" 2>/dev/null || true
-umount -l "/dev/$(get_partition "$TARGET_DEVICE" 2)" 2>/dev/null || true
-umount -l "/dev/$(get_partition "$TARGET_DEVICE" 3)" 2>/dev/null || true
+# format partitions and set up LVM volumes
 for part in 1 2 3; do
+    umount -l "/dev/$(get_partition "$TARGET_DEVICE" $part)" 2>/dev/null || true
     blockdev --rereadpt "/dev/$TARGET_DEVICE"
     wipefs -a "/dev/$(get_partition "$TARGET_DEVICE" $part)" || true
 done
@@ -82,84 +60,85 @@ dd if=/dev/zero of="$LVM_PART" bs=1M count=100 status=none
 wipefs -a "$LVM_PART"
 pvcreate --yes --force "$LVM_PART"
 vgcreate vg_system "$LVM_PART"
-if [ "$ENABLE_SWAP" = true ]; then
-    lvcreate -L "${SWAP_SIZE}GB" vg_system -n lv_swap
+if [ "$IS_LAPTOP" = true ]; then
+    lvcreate -L 8G vg_system -n lv_swap
 fi
 lvcreate -l 100%FREE vg_system -n lv_root
 modprobe dm_mod
 vgscan
 vgchange -ay
 mkfs.ext4 /dev/vg_system/lv_root
-if [ "$ENABLE_SWAP" = true ]; then
+if [ "$IS_LAPTOP" = true ]; then
     mkswap /dev/vg_system/lv_swap
     swapon /dev/vg_system/lv_swap
 fi
 
-echo "Mounting partitions..."
+# mount root and boot
 mount /dev/vg_system/lv_root /mnt
 mkdir -p /mnt/boot
 mount "/dev/$(get_partition "$TARGET_DEVICE" 2)" /mnt/boot
 
-echo "Installing base system..."
+# bootstrap base system and generate fstab
 pacstrap /mnt base
 genfstab -U /mnt >> /mnt/etc/fstab
 
-echo "About to run chroot setup (set password for root and then the user)..."
+# write and run chroot setup script
 cat > /mnt/setup_chroot.sh << EOF
 #!/bin/bash
 
+# set root and user passwords
 passwd
-
 useradd -m -g users -G tty,input,video,audio,optical,storage,wheel "$USERNAME"
 passwd "$USERNAME"
 
-pacman -S --noconfirm base bluez bluez-utils bluedevil efibootmgr grub kitty linux linux-firmware linux-headers lvm2 networkmanager sudo tesseract tesseract-data-eng plasma dolphin ark gwenview okular
+# install packages
+pacman -S --noconfirm ark base bluedevil bluez bluez-utils dolphin efibootmgr grub gwenview kitty linux linux-firmware linux-headers lvm2 networkmanager okular plasma sudo tesseract tesseract-data-eng
 
-if [ "$INSTALL_NVIDIA" = true ]; then
+# install GPU drivers and gaming tools (PC) or Intel/audio drivers (laptop)
+if [ "$IS_LAPTOP" = false ]; then
     sed -i '/^#\\[multilib\\]/,/^#Include = \\/etc\\/pacman.d\\/mirrorlist/ { s/^#//; }' /etc/pacman.conf
     pacman -Syu --noconfirm
-    pacman -S --noconfirm nvidia-open nvidia-utils nvidia-container-toolkit egl-wayland lib32-nvidia-utils steam gamescope
+    pacman -S --noconfirm egl-wayland gamescope lib32-nvidia-utils nvidia-container-toolkit nvidia-open nvidia-utils steam
 else
-    pacman -S --noconfirm vulkan-intel vulkan-icd-loader vulkan-tools lib32-vulkan-intel lib32-vulkan-icd-loader sof-firmware
+    pacman -S --noconfirm lib32-vulkan-icd-loader lib32-vulkan-intel sof-firmware vulkan-icd-loader vulkan-intel vulkan-tools
 fi
 
+# allow users in wheel group to use sudo
 echo '%wheel ALL=(ALL:ALL) ALL' >> /etc/sudoers
 
+# configure mkinitcpio for LVM and regenerate initramfs
 sed -i 's/^HOOKS=.*/HOOKS=(base udev autodetect microcode modconf kms keyboard keymap consolefont block lvm2 filesystems fsck)/' /etc/mkinitcpio.conf
 mkinitcpio -p linux
 
+# generate locales for GB and US English
 sed -i 's/^#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen
 sed -i 's/^#en_GB.UTF-8 UTF-8/en_GB.UTF-8 UTF-8/' /etc/locale.gen
 locale-gen
 echo "LANG=en_US.UTF-8" > /etc/locale.conf
 
+# setup grub with hidden menu and no timeout
 mkdir -p /boot/EFI
 mount "/dev/$(get_partition "$TARGET_DEVICE" 1)" /boot/EFI
 grub-install --target=x86_64-efi --bootloader-id=grub_uefi --recheck
-
 sed -i 's/^GRUB_TIMEOUT=.*/GRUB_TIMEOUT=0/' /etc/default/grub
 sed -i 's/^GRUB_TIMEOUT_STYLE=.*/GRUB_TIMEOUT_STYLE=hidden/' /etc/default/grub
-
 mkdir -p /boot/grub/locale
 cp /usr/share/locale/en\\@quot/LC_MESSAGES/grub.mo /boot/grub/locale/en.mo 2>/dev/null || true
 grub-mkconfig -o /boot/grub/grub.cfg
 
-systemctl enable sddm.service
-systemctl enable NetworkManager
-systemctl enable bluetooth.service
+# enable services
+systemctl enable sddm.service NetworkManager bluetooth.service
 
-echo "Setup complete."
 EOF
 
 chmod +x /mnt/setup_chroot.sh
 arch-chroot /mnt /setup_chroot.sh
 rm /mnt/setup_chroot.sh
 
-echo "Unmounting partitions..."
+# unmount
 umount -R /mnt
 
-echo "Installation complete."
-echo "Remove installation media and reboot."
+echo
 
 for i in {3..1}; do
     echo -ne "Rebooting in $i seconds...\r"
