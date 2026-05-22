@@ -56,6 +56,10 @@ sudo sed -i 's/^Session=$/Session=plasma.desktop/; s/^User=$/User='"$(whoami)"'/
 # disable kwallet
 kwriteconfig6 --file kwalletrc --group Wallet --key Enabled false
 
+# stop brave from prompting to unlock kwallet
+mkdir -p "$HOME/.config"
+echo '--password-store=basic' > "$HOME/.config/brave-flags.conf"
+
 # enable virtual keyboard
 echo 'KWIN_IM_SHOW_ALWAYS=1' | sudo tee -a /etc/environment
 
