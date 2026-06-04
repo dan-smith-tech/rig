@@ -1,46 +1,98 @@
-// Zed settings
-//
-// For information on how to configure Zed, see the Zed
-// documentation: https://zed.dev/docs/configuring-zed
-//
-// To see all of Zed's default settings without changing your
-// custom settings, run `zed: open default settings` from the
-// command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "edit_predictions": {
+    "allow_data_collection": "no",
+  },
+  "agent_servers": {
+    "github-copilot-cli": {
+      "type": "registry",
+      "default_config_options": {
+        "model": "claude-sonnet-4.6",
+        "allow_all": "on",
+      },
+    },
+  },
+  "agent": {
+    "notify_when_agent_waiting": "never",
+    "enable_feedback": false,
+    "tool_permissions": {
+      "default": "allow",
+      "tools": {
+        "terminal": {
+          "always_deny": [
+            { "pattern": "git commit*" },
+            { "pattern": "git add*" },
+            { "pattern": "git rm*" },
+            { "pattern": "git mv*" },
+            { "pattern": "git reset*" },
+            { "pattern": "git revert*" },
+            { "pattern": "git rebase*" },
+            { "pattern": "git merge*" },
+            { "pattern": "git cherry-pick*" },
+            { "pattern": "git stash*" },
+            { "pattern": "git checkout*" },
+            { "pattern": "git switch*" },
+            { "pattern": "git tag*" },
+            { "pattern": "git push*" },
+            { "pattern": "git remote remove*" },
+            { "pattern": "git remote prune*" },
+            { "pattern": "git remote set-head*" },
+            { "pattern": "git update-ref*" },
+            { "pattern": "git reflog expire*" },
+            { "pattern": "git filter-branch*" },
+            { "pattern": "git filter-repo*" },
+            { "pattern": "git gc --prune*" },
+            { "pattern": "git reflog delete*" },
+            { "pattern": "git symbolic-ref*" },
+            { "pattern": "git bisect*" },
+            { "pattern": "git submodule deinit*" },
+            { "pattern": "git submodule update*" },
+            { "pattern": "git submodule sync*" },
+            { "pattern": "git submodule foreach*" },
+            { "pattern": "git notes add*" },
+            { "pattern": "git notes remove*" },
+            { "pattern": ".*\\.git(?:/.*)?" },
+          ],
+        },
+      },
+    },
+    "sidebar_side": "right",
+    "dock": "right",
+    "favorite_models": [],
+    "model_parameters": [],
+  },
   "proxy": "",
   "git": {
     "inline_blame": {
-      "show_commit_summary": true
-    }
+      "show_commit_summary": true,
+    },
   },
   "title_bar": {
     "show_onboarding_banner": false,
     "show_user_picture": false,
     "show_user_menu": false,
     "show_sign_in": false,
-    "show_branch_status_icon": true
+    "show_branch_status_icon": true,
   },
   "diagnostics": {
-    "button": true
+    "button": true,
   },
   "terminal": {
     "dock": "bottom",
-    "button": true
+    "button": true,
   },
   "status_bar": {
-    "active_language_button": true
+    "active_language_button": true,
   },
   "toolbar": {
-    "code_actions": false
+    "code_actions": false,
   },
   "auto_signature_help": true,
   "scroll_beyond_last_line": "one_page",
   "autosave": {
     "after_delay": {
-      "milliseconds": 1000
-    }
+      "milliseconds": 1000,
+    },
   },
-  "redact_private_values": true,
   "cli_default_open_behavior": "existing_window",
   "project_panel": {
     "hide_root": true,
@@ -53,78 +105,11 @@
   },
   "collaboration_panel": {
     "button": false,
-    "dock": "right",
   },
   "soft_wrap": "editor_width",
   "git_panel": {
     "dock": "left",
     "tree_view": false,
-  },
-  "agent_servers": {
-    "github-copilot-cli": {
-      "default_config_options": {
-        "allow_all": "on",
-      },
-      "type": "registry",
-    },
-    "github-copilot": {
-      "type": "registry",
-    },
-  },
-  "edit_predictions": {
-    "allow_data_collection": "no",
-    "mode": "subtle",
-    "provider": "copilot",
-  },
-  "agent": {
-    "sidebar_side": "right",
-    "flexible": false,
-    "default_model": {
-      "provider": "copilot_chat",
-      "model": "claude-sonnet-4.6",
-      "enable_thinking": true,
-    },
-    "dock": "right",
-    "expand_terminal_card": false,
-    "expand_edit_card": false,
-    "enable_feedback": false,
-    "single_file_review": false,
-    "tool_permissions": {
-      "default": "allow",
-      "tools": {
-        "terminal": {
-          "always_deny": [
-            {
-              "pattern": "git\\s+(add|stage|commit|push|pull|fetch|rebase|merge|cherry-pick|revert|reset|stash|tag|rm|mv|clean|restore\\s+--staged)",
-            },
-          ],
-        },
-      },
-    },
-    "inline_assistant_model": {
-      "provider": "copilot_chat",
-      "model": "claude-sonnet-4.6",
-      "enable_thinking": false,
-    },
-  },
-  "language_models": {
-    "ollama": {
-      "api_url": "http://localhost:11434",
-      "available_models": [
-        {
-          "name": "qwen3:14b",
-          "display_name": "Qwen3 14B",
-          "max_tokens": 32768,
-          "supports_tools": true,
-        },
-        {
-          "name": "qwen2.5-coder:32b",
-          "display_name": "Qwen2.5 Code 32B",
-          "max_tokens": 32768,
-          "supports_tools": true,
-        },
-      ],
-    },
   },
   "vim_mode": true,
   "buffer_font_family": ".ZedMono",
@@ -142,23 +127,5 @@
     "mode": "system",
     "light": "One Light",
     "dark": "Catppuccin Mocha",
-  },
-  "lsp": {
-    "texlab": {
-      "settings": {
-        "texlab": {
-          "build": {
-            "onSave": true,
-            "executable": "latexmk",
-            "args": [
-              "-pdf",
-              "-synctex=1",
-              "-interaction=nonstopmode",
-              "-recorder",
-            ],
-          },
-        },
-      },
-    },
   },
 }
