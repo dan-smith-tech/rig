@@ -41,9 +41,6 @@ source "${AUTOSUGGESTIONS_DIR}/zsh-autosuggestions.zsh"
 autoload -U compinit
 compinit
 
-## Load zoxide
-eval "$(zoxide init --cmd cd zsh)"
-
 # Configure history
 HISTFILE=~/.zsh/history
 HISTSIZE=5000
@@ -57,7 +54,7 @@ setopt hist_save_no_dups
 setopt hist_find_no_dups
 setopt hist_ignore_space
 
-# Set command colors 
+# Set command colors
 alias ls='ls --color=auto'
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 alias grep='grep --color=auto'
