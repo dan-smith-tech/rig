@@ -83,7 +83,7 @@ My entire installation process is automated by two scripts: `install` and `confi
 11. Run the `configure` script:
 
    ```bash
-   ./configure.sh
+   ./configure.sh [--work]
    ```
 
 12. Follow the prompts. The system will automatically reboot when the configuration is complete.
