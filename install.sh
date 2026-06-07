@@ -63,8 +63,7 @@ sleep 5
 # format partitions and set up LVM volumes
 for part in 1 2 3; do
     umount -l "/dev/$(get_partition "$TARGET_DEVICE" $part)" 2>/dev/null || true
-    blockdev --rereadpt "/dev/$TARGET_DEVICE"
-    wipefs -a "/dev/$(get_partition "$TARGET_DEVICE" $part)" || true
+    wipefs -a "/dev/$(get_partition "$TARGET_DEVICE" $part)" 2>/dev/null || true
 done
 mkfs.fat -F32 "/dev/$(get_partition "$TARGET_DEVICE" 1)"
 mkfs.ext4 "/dev/$(get_partition "$TARGET_DEVICE" 2)"
