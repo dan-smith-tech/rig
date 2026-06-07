@@ -78,7 +78,7 @@ echo 'KWIN_IM_SHOW_ALWAYS=1' | sudo tee -a /etc/environment > /dev/null
 
 # work setup
 if [ "$IS_WORK" = true ]; then
-    sudo pacman -S --noconfirm nodejs npm docker
+    sudo pacman -S --noconfirm nodejs npm docker docker-compose
     yay -S --noconfirm mattermost-desktop zoom
     sudo systemctl enable --now docker
     sudo usermod -aG docker "$(whoami)"
