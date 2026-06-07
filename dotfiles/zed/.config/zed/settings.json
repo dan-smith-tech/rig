@@ -6,6 +6,7 @@
     "github-copilot-cli": {
       "type": "registry",
       "default_config_options": {
+        "reasoning_effort": "high",
         "model": "claude-sonnet-4.6",
         "allow_all": "on",
       },
