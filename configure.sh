@@ -62,9 +62,11 @@ rustup default stable
 # setup sddm autologin
 sudo sed -i 's/^Session=$/Session=plasma.desktop/; s/^User=$/User='"$(whoami)"'/' /etc/sddm.conf.d/kde_settings.conf
 
-# stop brave from prompting to unlock kwallet
+# stop brave from prompting to unlock kwallet (unless on work setup, which uses kwallet)
 mkdir -p "$HOME/.config"
-echo '--password-store=basic' > "$HOME/.config/brave-flags.conf"
+if [ "$IS_WORK" = false ]; then
+    echo '--password-store=basic' > "$HOME/.config/brave-flags.conf"
+fi
 
 # enable virtual keyboard
 echo 'KWIN_IM_SHOW_ALWAYS=1' | sudo tee -a /etc/environment > /dev/null
