@@ -8,6 +8,14 @@ if [ ! -f "$(pwd)/configure.sh" ]; then
     exit 1
 fi
 
+# parse flags
+IS_WORK=false
+for arg in "$@"; do
+    case "$arg" in
+        --work) IS_WORK=true ;;
+    esac
+done
+
 # set hostname
 read -r -p "Hostname [novigrad]: " HOSTNAME
 sudo hostnamectl set-hostname "${HOSTNAME:-novigrad}"
@@ -60,6 +68,14 @@ echo '--password-store=basic' > "$HOME/.config/brave-flags.conf"
 
 # enable virtual keyboard
 echo 'KWIN_IM_SHOW_ALWAYS=1' | sudo tee -a /etc/environment > /dev/null
+
+# work setup
+if [ "$IS_WORK" = true ]; then
+    sudo pacman -S --noconfirm nodejs npm docker
+    yay -S --noconfirm mattermost-desktop zoom
+    sudo systemctl enable --now docker
+    sudo usermod -aG docker "$(whoami)"
+fi
 
 # manual configuration steps
 echo ""
