@@ -34,11 +34,9 @@ lsblk "/dev/$TARGET_DEVICE"
 echo
 
 # tear down any active LVM/mounts on target device before wiping
-for vg in $(pvs --noheadings -o pv_name,vg_name 2>/dev/null \
-        | awk -v d="/dev/$TARGET_DEVICE" '$1 ~ d {print $2}' | sort -u); do
-    vgchange -an "$vg" 2>/dev/null || true
-    vgremove -f "$vg" 2>/dev/null || true
-done
+vgscan 2>/dev/null || true
+vgchange -an vg_system 2>/dev/null || true
+vgremove -f vg_system 2>/dev/null || true
 while IFS= read -r part; do
     swapoff "/dev/$part" 2>/dev/null || true
     umount -l "/dev/$part" 2>/dev/null || true
