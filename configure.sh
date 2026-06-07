@@ -30,7 +30,7 @@ cd "$HOME"
 rm -rf "$tmpdir"
 
 # install packages
-sudo pacman -S --noconfirm base-devel neovim openssh python rustup stow zed zsh
+sudo pacman -S --noconfirm base-devel less neovim openssh python rustup stow zed zsh
 yay -S --noconfirm brave-bin catppuccin-plasma-colorscheme-mocha
 
 # sync configs
