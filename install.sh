@@ -44,10 +44,9 @@ while IFS= read -r part; do
     umount -l "/dev/$part" 2>/dev/null || true
 done < <(lsblk -ln -o NAME "/dev/$TARGET_DEVICE" | tail -n +2)
 sleep 1
+partx --delete "/dev/$TARGET_DEVICE" 2>/dev/null || true
 
 sgdisk --zap-all "/dev/$TARGET_DEVICE"
-partprobe "/dev/$TARGET_DEVICE"
-sleep 2
 
 # create GPT partitions: EFI (1G), /boot (1G), LVM (remainder)
 parted -s /dev/$TARGET_DEVICE \
@@ -62,7 +61,6 @@ sleep 5
 
 # format partitions and set up LVM volumes
 for part in 1 2 3; do
-    umount -l "/dev/$(get_partition "$TARGET_DEVICE" $part)" 2>/dev/null || true
     wipefs -a "/dev/$(get_partition "$TARGET_DEVICE" $part)" 2>/dev/null || true
 done
 mkfs.fat -F32 "/dev/$(get_partition "$TARGET_DEVICE" 1)"
