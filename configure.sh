@@ -60,7 +60,12 @@ ssh-keygen -t ed25519 -C "$git_email" -f "$HOME/.ssh/id_ed25519"
 rustup default stable
 
 # setup sddm autologin
-sudo sed -i 's/^Session=$/Session=plasma.desktop/; s/^User=$/User='"$(whoami)"'/' /etc/sddm.conf.d/kde_settings.conf
+sudo mkdir -p /etc/sddm.conf.d
+sudo tee /etc/sddm.conf.d/kde_settings.conf > /dev/null << EOF
+[Autologin]
+Session=plasma.desktop
+User=$(whoami)
+EOF
 
 # stop brave from prompting to unlock kwallet (unless on work setup, which uses kwallet)
 mkdir -p "$HOME/.config"
