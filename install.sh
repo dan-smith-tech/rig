@@ -100,7 +100,7 @@ useradd -m -g users -G tty,input,video,audio,optical,storage,wheel "$USERNAME"
 passwd "$USERNAME"
 
 # install packages
-pacman -S --noconfirm ark base bluedevil bluez bluez-utils dolphin efibootmgr grub gwenview kitty linux linux-firmware linux-headers lvm2 networkmanager okular plasma sudo tesseract tesseract-data-eng
+pacman -S --noconfirm ark base bluedevil bluez bluez-utils dolphin efibootmgr git grub gwenview kitty linux linux-firmware linux-headers lvm2 networkmanager okular plasma sudo tesseract tesseract-data-eng
 
 # install GPU drivers and gaming tools (PC) or Intel/audio drivers (laptop)
 if [ "$IS_LAPTOP" = false ]; then
