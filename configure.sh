@@ -78,8 +78,9 @@ echo 'KWIN_IM_SHOW_ALWAYS=1' | sudo tee -a /etc/environment > /dev/null
 
 # work setup
 if [ "$IS_WORK" = true ]; then
-    sudo pacman -S --noconfirm nodejs npm docker docker-compose
+    sudo pacman -S --noconfirm nodejs npm docker docker-compose thunderbird
     yay -S --noconfirm mattermost-desktop zoom
+    git clone https://github.com/catppuccin/thunderbird.git
     sudo systemctl enable --now docker
     sudo usermod -aG docker "$(whoami)"
 fi
@@ -113,3 +114,10 @@ sed 's/^/   /' "$HOME/.ssh/id_ed25519.pub"
 echo ""
 echo "5. [Optional] Sign into Steam and install games."
 echo ""
+if [ "$IS_WORK" = true ]; then
+    echo "6. Open Thunderbird and configure:"
+    echo "   - in 'Settings' > 'Add-ons and Themes' select the gear icon and select 'Install Add-on From File', selecting mocha-teal.xpi"
+    echo "   - delete the cloned repo"
+    echo "   - import email and calendar"
+    echo ""
+fi
