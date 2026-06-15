@@ -108,7 +108,7 @@ if [ "$IS_LAPTOP" = false ]; then
     pacman -Syu --noconfirm
     pacman -S --noconfirm cuda egl-wayland gamescope lib32-nvidia-utils nvidia-container-toolkit nvidia-open nvidia-utils opencl-nvidia steam
 else
-    pacman -S --noconfirm intel-media-driver lib32-vulkan-icd-loader lib32-vulkan-intel mesa sof-firmware vulkan-icd-loader vulkan-intel vulkan-tools
+    pacman -S --noconfirm intel-media-driver mesa sof-firmware vulkan-icd-loader vulkan-intel vulkan-tools
 fi
 
 # allow users in wheel group to use sudo
