@@ -52,7 +52,7 @@ ssh-keygen -t ed25519 -C "$git_email" -f "$HOME/.ssh/id_ed25519"
 rustup default stable
 
 # setup ollama
-mkdir -p /etc/systemd/system/ollama.service.d
+sudo mkdir -p /etc/systemd/system/ollama.service.d
 sudo tee /etc/systemd/system/ollama.service.d/override.conf > /dev/null << 'EOF'
 [Service]
 Environment="OLLAMA_CONTEXT_LENGTH=32768"
