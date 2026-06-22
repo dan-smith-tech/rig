@@ -5,10 +5,6 @@ vim.opt.number = true
 -- use spaces instead of tabs
 vim.opt.expandtab = true
 
--- enable spell checking for UK and US English
-vim.opt.spell = true
-vim.opt.spelllang = { "en_us", "en_gb" }
-
 -- soft wrap at word boundaries (matches zed soft_wrap: "editor_width")
 vim.opt.wrap = true
 vim.opt.linebreak = true
