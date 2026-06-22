@@ -8,14 +8,6 @@ if [ ! -f "$(pwd)/configure.sh" ]; then
     exit 1
 fi
 
-# parse flags
-IS_WORK=false
-for arg in "$@"; do
-    case "$arg" in
-        --work) IS_WORK=true ;;
-    esac
-done
-
 # set hostname
 read -r -p "Hostname [novigrad]: " HOSTNAME
 sudo hostnamectl set-hostname "${HOSTNAME:-novigrad}"
@@ -77,23 +69,17 @@ Session=plasma.desktop
 User=$(whoami)
 EOF
 
-# stop brave from prompting to unlock kwallet (unless on work setup, which uses kwallet)
+# stop brave from prompting to unlock kwallet
 mkdir -p "$HOME/.config"
-if [ "$IS_WORK" = false ]; then
-    echo '--password-store=basic' > "$HOME/.config/brave-flags.conf"
-fi
+echo '--password-store=basic' > "$HOME/.config/brave-flags.conf"
 
 # enable virtual keyboard
 echo 'KWIN_IM_SHOW_ALWAYS=1' | sudo tee -a /etc/environment > /dev/null
 
-# work setup
-if [ "$IS_WORK" = true ]; then
-    sudo pacman -S --noconfirm nodejs npm docker docker-compose thunderbird
-    yay -S --noconfirm mattermost-desktop zoom
-    git clone https://github.com/catppuccin/thunderbird.git
-    sudo systemctl enable --now docker
-    sudo usermod -aG docker "$(whoami)"
-fi
+# work tools
+sudo pacman -S --noconfirm nodejs npm docker docker-compose thunderbird
+yay -S --noconfirm mattermost-desktop zoom
+sudo usermod -aG docker "$(whoami)"
 
 # manual configuration steps
 echo ""
@@ -125,10 +111,8 @@ sed 's/^/   /' "$HOME/.ssh/id_ed25519.pub"
 echo ""
 echo "5. [Optional] Sign into Steam and install games."
 echo ""
-if [ "$IS_WORK" = true ]; then
-    echo "6. Open Thunderbird and configure:"
-    echo "   - in 'Settings' > 'Add-ons and Themes' select the gear icon and select 'Install Add-on From File', selecting mocha-teal.xpi"
-    echo "   - delete the cloned repo"
-    echo "   - import email and calendar"
-    echo ""
-fi
+echo "6. Setup work tools:"
+echo "   - configure email in KMail"
+echo "   - sign into Mattermost"
+echo "   - sign into Zoom"
+echo ""
