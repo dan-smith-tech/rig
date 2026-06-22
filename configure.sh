@@ -30,7 +30,7 @@ cd "$HOME"
 rm -rf "$tmpdir"
 
 # install packages
-sudo pacman -S --noconfirm base-devel less neovim openssh python rustup stow zed zsh
+sudo pacman -S --noconfirm base-devel less neovim openssh ollama-cuda python rustup stow zed zsh
 yay -S --noconfirm brave-bin catppuccin-plasma-colorscheme-mocha
 
 # sync configs
@@ -58,6 +58,16 @@ ssh-keygen -t ed25519 -C "$git_email" -f "$HOME/.ssh/id_ed25519"
 
 # setup rust
 rustup default stable
+
+# setup ollama
+mkdir -p /etc/systemd/system/ollama.service.d
+sudo tee /etc/systemd/system/ollama.service.d/override.conf > /dev/null << 'EOF'
+[Service]
+Environment="OLLAMA_CONTEXT_LENGTH=32768"
+EOF
+sudo systemctl daemon-reload
+sudo systemctl enable --now ollama
+ollama pull qwen3.6:27b
 
 # setup sddm autologin
 sudo mkdir -p /etc/sddm.conf.d

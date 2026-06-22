@@ -2,17 +2,13 @@
   "edit_predictions": {
     "allow_data_collection": "no",
   },
-  "agent_servers": {
-    "github-copilot-cli": {
-      "type": "registry",
-      "default_config_options": {
-        "reasoning_effort": "high",
-        "model": "claude-sonnet-4.6",
-        "allow_all": "on",
-      },
-    },
-  },
+  "agent_servers": {},
   "agent": {
+    "default_model": {
+      "provider": "ollama",
+      "model": "qwen3.6:27b",
+      "enable_thinking": true,
+    },
     "notify_when_agent_waiting": "never",
     "enable_feedback": false,
     "tool_permissions": {
