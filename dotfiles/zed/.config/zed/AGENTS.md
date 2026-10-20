@@ -18,3 +18,12 @@ Before you consider any implementation complete, look for local tests, CI config
 - Add or update tests for the behaviour you changed where the project has a test setup.
 - Do not finish until the checks pass. In your final message, list which checks you ran and their results, and which you could not run.
 - Make sure none of the commands you run for validation invoke any of the forbidden git operations above (for example a pre-commit hook runner or a release script that commits or tags). If one would, do not run it, and tell the user instead.
+
+## Re-read my code before editing
+
+I may have changed files at any point since your last edit or since the last time you read them. Never assume that what you remember of a file is still accurate.
+
+- Before making any further edit, re-read the current version of every file you are about to touch, and any closely related files it depends on.
+- Treat my edits as intentional. Keep them unless I have explicitly asked you to change them, and if something looks like a mistake, point it out instead of silently fixing it.
+- Update your own understanding of the codebase (including any notes or memory of file contents) to match what is on disk now, and repeat this check whenever a new round of edits begins, even within the same task.
+- If a file has changed in a way that affects earlier work, such as renamed symbols or moved code, mention it briefly in your final message.
