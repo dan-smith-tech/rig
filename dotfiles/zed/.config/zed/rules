@@ -1,3 +1,0 @@
-Always use the edit_file tool when making changes to files. Never output code blocks in the chat as a substitute for editing files directly.
-If you need to debug and run commands, run them instead of asking me to do so, assuming they are safe commands to run.
-Never run git commands that modify the history in any way, such as commit, rollback, push, etc.

@@ -56,9 +56,13 @@ sudo mkdir -p /etc/systemd/system/ollama.service.d
 sudo tee /etc/systemd/system/ollama.service.d/override.conf > /dev/null << 'EOF'
 [Service]
 Environment="OLLAMA_CONTEXT_LENGTH=32768"
+Environment="OLLAMA_FLASH_ATTENTION=1"
+Environment="OLLAMA_KV_CACHE_TYPE=q8_0"
+Environment="OLLAMA_KEEP_ALIVE=-1"
 EOF
 sudo systemctl daemon-reload
-sudo systemctl enable --now ollama
+sudo systemctl enable ollama
+sudo systemctl restart ollama
 ollama pull qwen3.6:27b
 
 # setup sddm autologin
