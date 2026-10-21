@@ -4,7 +4,7 @@
   "language_models": {
     "ollama": {
       "context_window": 87040,
-      "api_url": "http://localhost:11434",
+      "api_url": "http://192.168.1.15:11434",
     },
   },
   "edit_predictions": {
