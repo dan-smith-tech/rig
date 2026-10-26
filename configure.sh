@@ -2,12 +2,6 @@
 
 set -euo pipefail
 
-# check if script is run from rig directory
-if [ ! -f "$(pwd)/configure.sh" ]; then
-    echo "Error: must be run from rig repository directory"
-    exit 1
-fi
-
 # set hostname
 read -r -p "Hostname [novigrad]: " HOSTNAME
 sudo hostnamectl set-hostname "${HOSTNAME:-novigrad}"
@@ -45,11 +39,8 @@ git config --global user.email "$git_email"
 read -r -p "Git name: " git_name
 git config --global user.name "$git_name"
 
-# setup ssh key for github
+# setup ssh key
 ssh-keygen -t ed25519 -C "$git_email" -f "$HOME/.ssh/id_ed25519"
-
-# setup rust
-rustup default stable
 
 # setup ollama
 sudo mkdir -p /etc/systemd/system/ollama.service.d
@@ -65,29 +56,5 @@ sudo systemctl enable ollama
 sudo systemctl restart ollama
 ollama pull qwen3.6:27b
 
-# setup sddm autologin
-sudo mkdir -p /etc/sddm.conf.d
-sudo tee /etc/sddm.conf.d/kde_settings.conf > /dev/null << EOF
-[Autologin]
-Session=plasma.desktop
-User=$(whoami)
-EOF
-
-# stop brave from prompting to unlock kwallet
-mkdir -p "$HOME/.config"
-echo '--password-store=basic' > "$HOME/.config/brave-flags.conf"
-
-# enable virtual keyboard
-echo 'KWIN_IM_SHOW_ALWAYS=1' | sudo tee -a /etc/environment > /dev/null
-
-# extra work-specific tools
-sudo pacman -S --noconfirm php nodejs npm docker docker-compose
-sudo usermod -aG docker "$(whoami)"
-# enable php iconv for phpactor language server in Zed
-if grep -Eq '^[;[:space:]]*extension[[:space:]]*=[[:space:]]*iconv([.]so)?[[:space:]]*$' /etc/php/php.ini; then
-    sudo sed -Ei 's|^[;[:space:]]*extension[[:space:]]*=[[:space:]]*iconv([.]so)?[[:space:]]*$|extension=iconv|' /etc/php/php.ini
-elif ! grep -Eq '^[[:space:]]*extension[[:space:]]*=[[:space:]]*iconv([[:space:]]*)$' /etc/php/php.ini; then
-    echo 'extension=iconv' | sudo tee -a /etc/php/php.ini > /dev/null
-fi
 
 echo "Automated setup complete. Continue with manual configuration detailed in \`configure.md\`."

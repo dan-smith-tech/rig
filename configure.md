@@ -24,7 +24,7 @@ Open **System Settings** and configure:
 - Wallpaper
 - Theme
 - Panel layout & settings
-- *Optional:* Natural scrolling in mouse/touchpad settings
+- _Optional:_ Natural scrolling in mouse/touchpad settings
 
 ## 3. Brave Browser
 
@@ -47,12 +47,23 @@ Launch Zed and configure:
 
 ## 5. Steam (PC only)
 
-*Optional — skip if on laptop.*
+_Optional — skip if on laptop._
 
 Sign into Steam and install your games.
 
 ## 6. Work Tools
 
-- Configure email in **KMail**
-- Sign into **Mattermost**
-- Sign into **Zoom**
+1. Login to web tools.
+2. Install tools:
+   ```bash
+   paru -S --noconfirm php nodejs npm docker docker-compose
+   sudo usermod -aG docker "$(whoami)"
+   ```
+3. Enable php iconv for phpactor language server in Zed:
+   ```bash
+    if grep -Eq '^[;[:space:]]_extension[[:space:]]_=[[:space:]]_iconv([.]so)?[[:space:]]_$' /etc/php/php.ini; then
+        sudo sed -Ei 's|^[;[:space:]]*extension[[:space:]]*=[[:space:]]*iconv([.]so)?[[:space:]]*$|extension=iconv|' /etc/php/php.ini
+    elif ! grep -Eq '^[[:space:]]_extension[[:space:]]_=[[:space:]]_iconv([[:space:]]_)$' /etc/php/php.ini; then
+    echo 'extension=iconv' | sudo tee -a /etc/php/php.ini > /dev/null
+    fi
+   ```
