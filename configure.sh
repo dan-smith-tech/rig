@@ -2,27 +2,48 @@
 
 set -euo pipefail
 
-# set hostname
-read -r -p "Hostname [novigrad]: " HOSTNAME
-sudo hostnamectl set-hostname "${HOSTNAME:-novigrad}"
+pkgs=(
+    less
+    neovim
+    openssh
+    ollama-cuda
+    python
+    rustup
+    stow
+    zed
+    zsh
+    brave-bin
+    catppuccin-plasma-colorscheme-mocha
+)
+
+read -r -p "Hostname [novigrad]: " new_host
+read -r -p "Git email: " git_email
+read -r -p "Git name: " git_name
+sudo -v
+
+# set device name on network
+sudo hostnamectl set-hostname "${new_host:-novigrad}"
 
 # install paru
 tmpdir="$(mktemp -d)"
-cd "$tmpdir"
-git clone https://aur.archlinux.org/paru-bin.git
-cd paru-bin
-makepkg -si --noconfirm
-cd "$HOME"
+(
+    cd "$tmpdir"
+    git clone https://aur.archlinux.org/paru-bin.git
+    cd paru-bin
+    makepkg -si --noconfirm
+)
 rm -rf "$tmpdir"
 
-# install packages
-paru -S --needed --noconfirm --skipreview less neovim openssh ollama-cuda python rustup stow zed zsh brave-bin catppuccin-plasma-colorscheme-mocha
+# install and setup packages
+paru -S --needed --noconfirm --skipreview "${pkgs[@]}"
+rustup default stable
 
 # sync configs
-cd "$HOME/rig/dotfiles"
-stow --adopt -t ~ nvim kitty zshrc zed gitignore
-git restore .
-cd ..
+(
+    cd "$HOME/rig/dotfiles"
+    stow --adopt -t ~ nvim kitty zshrc zed gitignore
+    git restore .
+)
 
 # set zsh as default shell
 sudo chsh -s /usr/bin/zsh "$(whoami)"
@@ -33,9 +54,7 @@ git config --global core.excludesfile "$HOME/.gitignore_global"
 git config --global core.editor nvim
 git config --global diff.tool kitty
 git config --global difftool.kitty.cmd 'kitten diff $LOCAL $REMOTE'
-read -r -p "Git email: " git_email
 git config --global user.email "$git_email"
-read -r -p "Git name: " git_name
 git config --global user.name "$git_name"
 
 # setup ssh key
@@ -51,8 +70,8 @@ Environment="OLLAMA_KV_CACHE_TYPE=q8_0"
 Environment="OLLAMA_KEEP_ALIVE=-1"
 EOF
 sudo systemctl daemon-reload
-sudo systemctl enable ollama
-sudo systemctl restart ollama
+sudo systemctl enable --now ollama
+until ollama list > /dev/null 2>&1; do sleep 1; done
 ollama pull qwen3.6:27b
 
 echo "Automated setup complete. Continue with manual configuration detailed in \`configure.md\`."
