@@ -46,9 +46,10 @@ sudo pacman -S --needed --noconfirm base-devel git
 # install paru
 tmpdir="$(mktemp -d)"
 (
+    cd "$tmpdir"
     git clone https://aur.archlinux.org/paru.git
     cd paru
-    makepkg -si
+    makepkg -sir
 )
 rm -rf "$tmpdir"
 
