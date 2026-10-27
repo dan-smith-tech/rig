@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-pkgs=(
+packages=(
     less
     neovim
     openssh
@@ -16,6 +16,7 @@ pkgs=(
     catppuccin-plasma-colorscheme-mocha
 )
 
+# collect user inputs before blocking commands run
 read -r -p "Hostname [novigrad]: " new_host
 read -r -p "Git email: " git_email
 read -r -p "Git name: " git_name
@@ -35,7 +36,7 @@ tmpdir="$(mktemp -d)"
 rm -rf "$tmpdir"
 
 # install and setup packages
-paru -S --needed --noconfirm --skipreview "${pkgs[@]}"
+paru -S --needed --noconfirm --skipreview "${packages[@]}"
 rustup default stable
 
 # sync configs
@@ -74,4 +75,5 @@ sudo systemctl enable --now ollama
 until ollama list > /dev/null 2>&1; do sleep 1; done
 ollama pull qwen3.6:27b
 
+# log manual instructions post-configure
 echo "Automated setup complete. Continue with manual configuration detailed in \`configure.md\`."
