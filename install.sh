@@ -22,12 +22,14 @@ if [ ! -b "/dev/$TARGET_DEVICE" ]; then
     exit 1
 fi
 
-# free and wipe the target disk
+# free and wipe the target disk, including any old lvm
 swapoff -a
+vgchange -an 2>/dev/null || true
 while IFS= read -r part; do
     umount -l "/dev/$part" 2>/dev/null || true
+    wipefs -af "/dev/$part"
 done < <(lsblk -ln -o NAME "/dev/$TARGET_DEVICE" | tail -n +2)
-sgdisk --zap-all "/dev/$TARGET_DEVICE"
+wipefs -af "/dev/$TARGET_DEVICE"
 
 # create the efi and root partitions
 EFI_PART="/dev/$(get_partition "$TARGET_DEVICE" 1)"
@@ -35,15 +37,15 @@ ROOT_PART="/dev/$(get_partition "$TARGET_DEVICE" 2)"
 parted -s "/dev/$TARGET_DEVICE" \
     mklabel gpt \
     mkpart primary fat32 1MiB 1GiB \
+    set 1 esp on \
     mkpart primary ext4 1GiB 100%
-partprobe "/dev/$TARGET_DEVICE"
+udevadm settle
 
 # format and mount the partitions
 mkfs.fat -F32 "$EFI_PART"
 mkfs.ext4 "$ROOT_PART"
 mount "$ROOT_PART" /mnt
-mkdir /mnt/boot
-mount "$EFI_PART" /mnt/boot
+mount --mkdir -o umask=0077 "$EFI_PART" /mnt/boot
 
 # pick the microcode package from the cpu vendor
 if grep -qm1 'GenuineIntel' /proc/cpuinfo; then
@@ -53,43 +55,42 @@ else
 fi
 
 # bootstrap the base system
-pacstrap /mnt base linux linux-firmware networkmanager sudo neovim "$MICROCODE"
+pacstrap -K /mnt base linux linux-firmware networkmanager sudo neovim "$MICROCODE"
 genfstab -U /mnt >> /mnt/etc/fstab
 
 # set the root and user passwords
 arch-chroot /mnt passwd
-arch-chroot /mnt useradd -m -g users -G tty,input,video,audio,optical,storage,wheel "$USERNAME"
+arch-chroot /mnt useradd -m -G wheel "$USERNAME"
 arch-chroot /mnt passwd "$USERNAME"
 
 # allow wheel users to sudo without a password
-arch-chroot /mnt bash -c 'echo "%wheel ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/wheel'
+echo '%wheel ALL=(ALL:ALL) NOPASSWD: ALL' > /mnt/etc/sudoers.d/wheel
+chmod 0440 /mnt/etc/sudoers.d/wheel
 
-# set the timezone locales and keymap
+# set the timezone clock and locales
 arch-chroot /mnt bash -s <<'EOF'
 ln -sf /usr/share/zoneinfo/Europe/Zurich /etc/localtime
-echo 'Europe/Zurich' > /etc/timezone
+hwclock --systohc
 sed -i 's/^#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen
 sed -i 's/^#en_GB.UTF-8 UTF-8/en_GB.UTF-8 UTF-8/' /etc/locale.gen
 locale-gen
 echo 'LANG=en_GB.UTF-8' > /etc/locale.conf
-echo 'KEYMAP=intl' > /etc/vconsole.conf
 EOF
 
 # install the bootloader and write the loader entry
-ROOT_UUID="$(blkid -s PARTUUID -o value "$ROOT_PART")"
-arch-chroot /mnt bootctl install --boot-path=/boot
-echo 'LoaderTimeout 0' > /mnt/boot/loader/loader.conf
+ROOT_PARTUUID="$(blkid -s PARTUUID -o value "$ROOT_PART")"
+arch-chroot /mnt bootctl install
 mkdir -p /mnt/boot/loader/entries
 cat > /mnt/boot/loader/entries/arch.conf <<EOF
 title   arch
 linux   /vmlinuz-linux
 initrd  /${MICROCODE}.img
 initrd  /initramfs-linux.img
-options root=PARTUUID=${ROOT_UUID} rw
+options root=PARTUUID=${ROOT_PARTUUID} rw
 EOF
 
-# enable network management
-arch-chroot /mnt systemctl enable NetworkManager
+# enable networking, time sync, and bootloader updates
+arch-chroot /mnt systemctl enable NetworkManager systemd-timesyncd
 
 # unmount and reboot
 umount -R /mnt
