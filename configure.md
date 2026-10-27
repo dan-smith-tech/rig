@@ -1,6 +1,6 @@
 # Post-Install Configuration
 
-Run [`configure.sh`](./configure.sh) first, then follow the steps below to finish setting up the system.
+Run [`configure-pc.sh`](./configure-pc.sh) or [`configure-laptop.sh`](./configure-laptop.sh) first, then follow the steps below to finish setting up the system.
 
 ---
 

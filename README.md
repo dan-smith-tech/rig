@@ -2,7 +2,7 @@
 
 I value simplicity and minimalism. Even as a computer scientist, I use as little software as possible. I want my operating system to be lightweight and performant, free from bloatware, telemetry and spyware, or unnecessary features. Full configurability and complete control over my system are essential to me. Therefore, I exclusively use [Arch Linux](https://archlinux.org/).
 
-My entire installation process is automated by two scripts: `install` and `configure`. The `install` script performs an  installation of Arch Linux with a zero-bloat base KDE Plasma install, and the `configure` script sets up my preferred software and configurations.
+My entire installation process is automated by a set of scripts. `install.sh` performs a zero-bloat base install of Arch Linux, and `configure-pc.sh` or `configure-laptop.sh` adds the device specific software and my preferred configurations.
 
 ## Pre-installation
 
@@ -12,7 +12,7 @@ My entire installation process is automated by two scripts: `install` and `confi
 
 3. Enter the Arch Linux live environment.
 
-4. If using a wireless network, connect to it over WiFi:
+4. If using a wireless network, connect to it over WiFi. The install script drops into `iwctl` if it cannot reach the network, or connect beforehand:
 
    List available devices:
 
@@ -46,7 +46,7 @@ My entire installation process is automated by two scripts: `install` and `confi
 
 ## Installation
 
-5. Fetch the `install` script:
+5. Fetch the install script:
 
    ```bash
    curl -O https://raw.githubusercontent.com/dan-smith-tech/rig/main/install.sh
@@ -58,7 +58,7 @@ My entire installation process is automated by two scripts: `install` and `confi
    chmod +x install.sh
    ```
 
-7. Run the `install` script:
+7. Run the install script:
 
    ```bash
    ./install.sh
@@ -76,14 +76,20 @@ My entire installation process is automated by two scripts: `install` and `confi
 
 10. Clone this repo:
 
-   ```bash
-   git clone https://github.com/dan-smith-tech/rig.git
-   ```
+    ```bash
+    git clone https://github.com/dan-smith-tech/rig.git
+    ```
 
-11. Run the `configure` script:
+11. Run the configure script for your device:
 
-   ```bash
-   ./configure.sh [--work]
-   ```
+    ```bash
+    ./configure-pc.sh
+    ```
 
-12. Follow the prompts. The system will automatically reboot when the configuration is complete.
+    or
+
+    ```bash
+    ./configure-laptop.sh
+    ```
+
+12. Follow the prompts. Finish the manual steps listed in [configure.md](./configure.md).
