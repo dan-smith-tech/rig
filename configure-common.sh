@@ -79,13 +79,11 @@ git config --global pull.rebase true
 git config --global core.excludesfile "$HOME/.gitignore_global"
 git config --global core.editor nvim
 git config --global diff.tool kitty
-# git expands $LOCAL and $REMOTE at difftool time
-# shellcheck disable=SC2016
 git config --global difftool.kitty.cmd 'kitten diff $LOCAL $REMOTE'
 git config --global user.email "$git_email"
 git config --global user.name "$git_name"
 
-# generate the ssh key
+# generate ssh key
 ssh-keygen -t ed25519 -C "$git_email" -f "$HOME/.ssh/id_ed25519"
 
 # point to the manual steps

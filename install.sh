@@ -14,25 +14,13 @@ get_partition() {
     fi
 }
 
-# connect over wifi if there is no network
-if ! ping -c 1 -W 2 archlinux.org > /dev/null 2>&1; then
-    echo "no connection, use iwctl to connect then exit to retry"
-    while ! ping -c 1 -W 2 archlinux.org > /dev/null 2>&1; do
-        iwctl
-    done
-fi
-
 # select the target disk
-echo
 lsblk
-echo
 read -r -p "Target device to wipe (e.g. sda, nvme0n1): " TARGET_DEVICE
 if [ ! -b "/dev/$TARGET_DEVICE" ]; then
     echo "/dev/$TARGET_DEVICE does not exist"
     exit 1
 fi
-lsblk "/dev/$TARGET_DEVICE"
-echo
 
 # free and wipe the target disk
 swapoff -a
@@ -105,11 +93,4 @@ arch-chroot /mnt systemctl enable NetworkManager
 
 # unmount and reboot
 umount -R /mnt
-echo
-
-for i in {3..1}; do
-    echo -ne "Rebooting in $i seconds...\r"
-    sleep 1
-done
-echo
 reboot
