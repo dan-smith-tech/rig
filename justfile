@@ -92,24 +92,16 @@ _pc:
     #!/usr/bin/env bash
     set -euo pipefail
 
-    # enable multilib before installing anything from it
+    # enable lib-32 support by enabling multilib
     sudo sed -i '/^#\[multilib\]/,/^#Include = \/etc\/pacman.d\/mirrorlist/ s/^#//' /etc/pacman.conf
     sudo pacman -Syu --noconfirm
+
     paru -S --needed --noconfirm --skipreview {{ pc_packages }}
 
     # configure and start ollama
-    sudo mkdir -p /etc/systemd/system/ollama.service.d
-    sudo tee /etc/systemd/system/ollama.service.d/override.conf > /dev/null << 'EOF'
-    [Service]
-    Environment="OLLAMA_CONTEXT_LENGTH=32768"
-    Environment="OLLAMA_FLASH_ATTENTION=1"
-    Environment="OLLAMA_KV_CACHE_TYPE=q8_0"
-    Environment="OLLAMA_KEEP_ALIVE=-1"
-    EOF
-    sudo systemctl daemon-reload
     sudo systemctl enable --now ollama
     until ollama list > /dev/null 2>&1; do sleep 1; done
-    ollama pull qwen3.6:27b
+    ollama pull qwen3.8:27b
 
 pc: _common _pc
     sudo hostnamectl set-hostname novigrad
