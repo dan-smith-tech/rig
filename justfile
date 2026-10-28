@@ -13,12 +13,15 @@ packages := replace_regex("
     dolphin
     git
     gwenview
+    kscreen
     kwallet-pam
     kitty
     less
     okular
     openssh
     plasma-desktop
+    plasma-nm
+    plasma-pa
     python
     rustup
     sddm
