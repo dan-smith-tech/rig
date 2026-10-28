@@ -1,55 +1,58 @@
 # Post-Install Configuration
 
-Run [`configure-pc.sh`](./configure-pc.sh) or [`configure-laptop.sh`](./configure-laptop.sh) first, then follow the steps below to finish setting up the system.
+Run `configure-<device>.sh` first, then follow the steps below to finish setting up the system.
 
----
+## 1. Plasma
 
-## 1. GitHub SSH Key
+Open **System Settings** and configure:
+
+1. Global Theme colours, Icons, Login Screen
+2. Wallpaper
+3. Screen Locking
+4. Power Management
+5. Users
+6. Session
+
+Right click on the panel and select **Panel Configuration** to setup and bin applets to the bar.
+
+Press `Meta + T` to configure the window layout settings.
+
+## 2. Brave
+
+Install Proton Pass extension.
+
+Sync settings with brave://settings/braveSync/setup.
+
+Open `brave://settings` and configure:
+
+1. Get started:
+   1. On startup
+   1. Customise new tab page
+2. Appearance
+3. Content:
+   1. Containers
+4. Shields
+   1. Forget me
+   2. Content filtering
+   3. Social media blocking
+5. Privacy and security
+   1. Data collection
+6. Leo
+7. Autofill and passwords
+8. Downloads
+9. System:
+   1. Show full-screen reminder to press Esc on exit
+
+## 3. GitHub
 
 Add the generated public key to GitHub so you can push without a password:
 
-1. Copy your public key:
+1. Copy public key:
    ```bash
    cat ~/.ssh/id_ed25519.pub
    ```
 2. Go to **[GitHub Settings → SSH and GPG keys](https://github.com/settings/keys)**
-3. Click **New SSH key**, paste the content, and save.
-
-## 2. KDE Plasma (System Settings)
-
-Open **System Settings** and configure:
-
-- Shortcuts
-- Display resolution / orientation
-- Wallpaper
-- Theme
-- Panel layout & settings
-- _Optional:_ Natural scrolling in mouse/touchpad settings
-
-## 3. Brave Browser
-
-Open `brave://settings` and configure:
-
-- Privacy and security preferences
-- Disable persistent cookies
-- Disable telemetry
-- Install content filters / blockers
-- Apply **Catppuccin Mocha** theme
-
-## 4. Zed Editor
-
-Launch Zed and configure:
-
-- **Catppuccin Mocha** theme
-- **Catppuccin Mocha** icons
-- Enable spell checker
-- Set up inline and agent Copilot
-
-## 5. Steam (PC only)
-
-_Optional — skip if on laptop._
-
-Sign into Steam and install your games.
+3. Select **New SSH key**, paste the content, and save.
 
 ## 6. Work Tools
 
