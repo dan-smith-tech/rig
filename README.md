@@ -92,7 +92,7 @@ I value simplicity and minimalism. Even as a computer scientist, I use as little
 
 1. Open **System Settings** and configure:
 
-   1. Global Theme colours, Icons, Login Screen
+   1. Global Theme Colours, Icons, Login Screen
    2. Wallpaper
    3. Screen Locking
    4. Power Management
