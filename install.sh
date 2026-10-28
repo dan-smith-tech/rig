@@ -54,8 +54,8 @@ else
     MICROCODE="amd-ucode"
 fi
 
-# bootstrap the base system
-pacstrap -K /mnt base linux linux-firmware networkmanager sudo neovim "$MICROCODE"
+# bootstrap the base system (note git and just is for post-install configure)
+pacstrap -K /mnt base linux linux-firmware networkmanager sudo neovim "$MICROCODE" git just
 genfstab -U /mnt >> /mnt/etc/fstab
 
 # set the root and user passwords

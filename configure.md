@@ -58,19 +58,10 @@ Add the generated public key to GitHub so you can push without a password:
 
 (Remember repositories need to have SSH origins, not HTTPS)
 
-## 6. Work Tools
+## 4. Steam
 
-1. Login to web tools.
-2. Install tools:
-   ```bash
-   paru -S --noconfirm php nodejs npm docker docker-compose
-   sudo usermod -aG docker "$(whoami)"
-   ```
-3. Enable php iconv for phpactor language server in Zed:
-   ```bash
-    if grep -Eq '^[;[:space:]]_extension[[:space:]]_=[[:space:]]_iconv([.]so)?[[:space:]]_$' /etc/php/php.ini; then
-        sudo sed -Ei 's|^[;[:space:]]*extension[[:space:]]*=[[:space:]]*iconv([.]so)?[[:space:]]*$|extension=iconv|' /etc/php/php.ini
-    elif ! grep -Eq '^[[:space:]]_extension[[:space:]]_=[[:space:]]_iconv([[:space:]]_)$' /etc/php/php.ini; then
-    echo 'extension=iconv' | sudo tee -a /etc/php/php.ini > /dev/null
-    fi
-   ```
+Add the following Gamescope settings to launch settings:
+
+```bash
+gamescope -W 3440 -H 1440 -w 3440 -h 1440 -r 144 --hdr-enabled --hdr-debug-force-output --fullscreen --force-grab-cursor -- env DXVK_HDR=1 ENABLE_HDR_WSI=1 %command% --launcher-skip
+```
