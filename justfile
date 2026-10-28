@@ -21,6 +21,7 @@ packages := replace_regex("
     python
     rustup
     sddm
+    sddm-kcm
     stow
     tesseract
     tesseract-data-eng
