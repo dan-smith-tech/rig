@@ -18,7 +18,7 @@ shared_packages=(
     zsh
     brave-bin
     catppuccin-plasma-colorscheme-mocha
-    plasma
+    plasma-desktop
     sddm
     kitty
     dolphin
