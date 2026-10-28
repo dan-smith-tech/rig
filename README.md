@@ -81,7 +81,7 @@ I value simplicity and minimalism. Even as a computer scientist, I use as little
 11. Run the configure script for the relevant device:
 
     ```bash
-    ./configure-<device>.sh
+    just <device>
     ```
 
 ## Manual Configuration
