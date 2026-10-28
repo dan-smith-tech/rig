@@ -43,6 +43,8 @@ Open `brave://settings` and configure:
 9. System:
    1. Show full-screen reminder to press Esc on exit
 
+Enable and disable icons in the toolbar.
+
 ## 3. GitHub
 
 Add the generated public key to GitHub so you can push without a password:
