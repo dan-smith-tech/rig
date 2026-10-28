@@ -99,9 +99,15 @@ I value simplicity and minimalism. Even as a computer scientist, I use as little
    5. Users
    6. Session
 
-2. Right click on the panel and select **Panel Configuration** to setup and bin applets to the bar.
+2. Right click on the Panel and select `Panel Configuration` to setup and bin applets to the bar.
 
-3. Press `Meta + T` to configure the window layout settings.
+3. Right click on the Panel and select `Add or Manage Widgets...`, then select the KDE Logo to remove the Application Launcher.
+
+4. Press `Meta + T` to configure the window layout settings.
+
+5. Create shortcuts:
+
+   1. Plasma Workspace: `Meta`
 
 ### Brave
 
