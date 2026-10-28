@@ -92,6 +92,4 @@ EOF
 # enable networking, time sync, and bootloader updates
 arch-chroot /mnt systemctl enable NetworkManager systemd-timesyncd
 
-# unmount and reboot
 umount -R /mnt
-reboot

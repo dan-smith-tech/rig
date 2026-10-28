@@ -56,13 +56,13 @@ I value simplicity and minimalism. Even as a computer scientist, I use as little
    chmod +x install.sh
    ```
 
-7. Run the install:
+7. Run the install and follow the prompts:
 
    ```bash
    ./install.sh
    ```
 
-8. Follow the prompts. The system will automatically reboot when the installation is complete.
+8. Reboot the device.
 
 ## Post-installation
 
@@ -83,6 +83,8 @@ I value simplicity and minimalism. Even as a computer scientist, I use as little
     ```bash
     just <device>
     ```
+
+12. Reboot the device.
 
 ## Manual Configuration
 
