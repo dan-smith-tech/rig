@@ -140,13 +140,15 @@ I value simplicity and minimalism. Even as a computer scientist, I use as little
 ### GitHub
 
 1. Copy public key:
-
    ```bash
    cat ~/.ssh/id_ed25519.pub
    ```
-
 1. Go to [GitHub Settings → SSH and GPG keys](https://github.com/settings/keys)
 1. Select `New SSH key`, paste the content, and save.
+1. Change this repository to use SSH over HTTPS:
+   ```bash
+   git remote set-url origin git@github.com:dan-smith-tech/rig.git
+   ```
 
 ### Steam
 
