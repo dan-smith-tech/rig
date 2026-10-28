@@ -1,6 +1,8 @@
 set shell := ["bash", "-euo", "pipefail", "-c"]
 
-shared := replace_regex("
+# --- common ---
+
+packages := replace_regex("
     ark
     base-devel
     bluedevil
@@ -47,7 +49,7 @@ _common:
     rm -rf "$tmpdir"
 
     # install the shared packages
-    paru -S --needed --noconfirm --skipreview {{ shared }}
+    paru -S --needed --noconfirm --skipreview {{ packages }}
     rustup default stable
     sudo systemctl enable sddm bluetooth
 
@@ -71,6 +73,21 @@ _common:
     # generate ssh key
     ssh-keygen -t ed25519 -C "$git_email" -f "$HOME/.ssh/id_ed25519"
 
+# --- pc ---
+
+pc_packages := replace_regex("
+    cuda
+    egl-wayland
+    gamescope
+    lib32-nvidia-utils
+    nvidia-container-toolkit
+    nvidia-open
+    nvidia-utils
+    ollama-cuda
+    opencl-nvidia
+    steam
+", '\s+', ' ')
+
 _pc:
     #!/usr/bin/env bash
     set -euo pipefail
@@ -78,7 +95,7 @@ _pc:
     # enable multilib before installing anything from it
     sudo sed -i '/^#\[multilib\]/,/^#Include = \/etc\/pacman.d\/mirrorlist/ s/^#//' /etc/pacman.conf
     sudo pacman -Syu --noconfirm
-    paru -S --needed --noconfirm --skipreview cuda egl-wayland gamescope lib32-nvidia-utils nvidia-container-toolkit nvidia-open nvidia-utils ollama-cuda opencl-nvidia steam
+    paru -S --needed --noconfirm --skipreview {{ pc_packages }}
 
     # configure and start ollama
     sudo mkdir -p /etc/systemd/system/ollama.service.d
@@ -97,14 +114,36 @@ _pc:
 pc: _common _pc
     sudo hostnamectl set-hostname novigrad
 
+# --- laptop ---
+
+laptop_packages := replace_regex("
+    intel-media-driver
+    mesa
+    sof-firmware
+    vulkan-icd-loader
+    vulkan-intel
+    vulkan-tools
+", '\s+', ' ')
+
 _laptop:
-    paru -S --needed --noconfirm --skipreview intel-media-driver mesa sof-firmware vulkan-icd-loader vulkan-intel vulkan-tools
+    paru -S --needed --noconfirm --skipreview {{ laptop_packages }}
 
 laptop: _common _laptop
     sudo hostnamectl set-hostname skellige
 
+# --- work ---
+
+work_packages := replace_regex("
+    docker
+    docker-compose
+    libreoffice-still
+    nodejs
+    npm
+    php
+", '\s+', ' ')
+
 _work:
-    paru -S --needed --noconfirm --skipreview docker docker-compose libreoffice-still nodejs npm php
+    paru -S --needed --noconfirm --skipreview {{ work_packages }}
     sudo usermod -aG docker "$USER"
 
 work: _common _laptop _work
