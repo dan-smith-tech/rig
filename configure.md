@@ -56,6 +56,8 @@ Add the generated public key to GitHub so you can push without a password:
 2. Go to **[GitHub Settings → SSH and GPG keys](https://github.com/settings/keys)**
 3. Select **New SSH key**, paste the content, and save.
 
+(Remember repositories need to have SSH origins, not HTTPS)
+
 ## 6. Work Tools
 
 1. Login to web tools.
