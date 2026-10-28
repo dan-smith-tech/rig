@@ -13,6 +13,7 @@ packages := replace_regex("
     dolphin
     git
     gwenview
+    kwallet-pam
     kitty
     less
     okular
