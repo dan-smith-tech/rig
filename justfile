@@ -26,6 +26,7 @@ packages := replace_regex("
     rustup
     sddm
     sddm-kcm
+    spectacle
     stow
     tesseract
     tesseract-data-eng
