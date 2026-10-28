@@ -1,14 +1,12 @@
 # My Arch Linux Setup
 
-I value simplicity and minimalism. Even as a computer scientist, I use as little software as possible. I want my operating system to be lightweight and performant, free from bloatware, telemetry and spyware, or unnecessary features. Full configurability and complete control over my system are essential to me. Therefore, I exclusively use [Arch Linux](https://archlinux.org/).
-
-My entire installation process is automated by a set of scripts. `install.sh` performs a zero-bloat base install of Arch Linux, and `configure-pc.sh` or `configure-laptop.sh` adds the device specific software and my preferred configurations.
+I value simplicity and minimalism. Even as a computer scientist, I use as little software as possible. I want my operating system to be lightweight, performant, and free from telemetry and spyware. Full configurability and complete control over my system are essential to me. Therefore, I exclusively use [Arch Linux](https://archlinux.org/).
 
 ## Pre-installation
 
 1. Flash the [Arch Linux ISO](https://www.archlinux.org/download/) to a USB drive.
 
-2. Insert the USB drive into the computer and boot into it via the BIOS boot menu.
+2. Insert the USB drive into the computer and temporarily boot into it via the BIOS boot menu.
 
 3. Enter the Arch Linux live environment.
 
@@ -58,7 +56,7 @@ My entire installation process is automated by a set of scripts. `install.sh` pe
    chmod +x install.sh
    ```
 
-7. Run the install script:
+7. Run the install:
 
    ```bash
    ./install.sh
@@ -80,16 +78,72 @@ My entire installation process is automated by a set of scripts. `install.sh` pe
     git clone https://github.com/dan-smith-tech/rig.git
     ```
 
-11. Run the configure script for your device:
+11. Run the configure script for the relevant device:
 
     ```bash
-    ./configure-pc.sh
+    ./configure-<device>.sh
     ```
 
-    or
+## Manual Configuration
 
-    ```bash
-    ./configure-laptop.sh
-    ```
+### Plasma
 
-12. Follow the prompts. Finish the manual steps listed in [configure.md](./configure.md).
+1. Open **System Settings** and configure:
+
+   1. Global Theme colours, Icons, Login Screen
+   2. Wallpaper
+   3. Screen Locking
+   4. Power Management
+   5. Users
+   6. Session
+
+2. Right click on the panel and select **Panel Configuration** to setup and bin applets to the bar.
+
+3. Press `Meta + T` to configure the window layout settings.
+
+### Brave
+
+1. Install Proton Pass extension.
+
+1. Sync settings at brave://settings/braveSync/setup.
+
+1. Open brave://settings and configure:
+
+   1. Get started:
+      1. On startup
+      1. Customise new tab page
+   1. Appearance
+   1. Content:
+      1. Containers
+   1. Shields
+      1. Forget me
+      1. Content filtering
+      1. Social media blocking
+   1. Privacy and security
+      1. Data collection
+   1. Leo
+   1. Autofill and passwords
+   1. Downloads
+   1. System:
+      1. Show full-screen reminder to press Esc on exit
+
+1. Enable and disable icons in the toolbar.
+
+### GitHub
+
+1. Copy public key:
+
+   ```bash
+   cat ~/.ssh/id_ed25519.pub
+   ```
+
+1. Go to [GitHub Settings → SSH and GPG keys](https://github.com/settings/keys)
+1. Select `New SSH key`, paste the content, and save.
+
+### Steam
+
+1. Add the following Gamescope settings to launch settings:
+
+   ```bash
+   gamescope -W 3440 -H 1440 -w 3440 -h 1440 -r 144 --hdr-enabled --hdr-debug-force-output --fullscreen --force-grab-cursor -- env DXVK_HDR=1 ENABLE_HDR_WSI=1 %command% --launcher-skip
+   ```
