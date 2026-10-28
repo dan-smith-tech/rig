@@ -114,7 +114,6 @@ laptop_packages := replace_regex("
     sof-firmware
     vulkan-icd-loader
     vulkan-intel
-    vulkan-tools
 ", '\s+', ' ')
 
 _laptop:
