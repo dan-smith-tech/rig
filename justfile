@@ -143,6 +143,7 @@ work_packages := replace_regex("
 _work:
     paru -S --needed --noconfirm --skipreview {{ work_packages }}
     sudo usermod -aG docker "$USER"
+    sudo systemctl enable --now docker
 
 work: _common _laptop _work
     sudo hostnamectl set-hostname oxenfurt
