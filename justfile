@@ -83,15 +83,11 @@ _common:
 # --- pc ---
 
 pc_packages := replace_regex("
-    cuda
-    egl-wayland
     gamescope
     lib32-nvidia-utils
-    nvidia-container-toolkit
     nvidia-open
     nvidia-utils
     ollama-cuda
-    opencl-nvidia
     steam
 ", '\s+', ' ')
 
