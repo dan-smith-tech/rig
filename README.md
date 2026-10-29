@@ -93,11 +93,12 @@ I value simplicity and minimalism. Even as a computer scientist, I use as little
 1. Open **System Settings** and configure:
 
    1. Global Theme Colours, Icons, Login Screen
-   2. Wallpaper (plus Layout set to `Desktop`)
-   3. Screen Locking
-   4. Power Management
-   5. Users
-   6. Session
+   1. Keyboard -> Virtual Keyboard -> Plasma Keyboard
+   1. Wallpaper (plus Layout set to `Desktop`)
+   1. Screen Locking
+   1. Power Management
+   1. Users
+   1. Session
 
 2. Right click on the Panel and select `Panel Configuration` to setup and bin applets to the bar.
 
