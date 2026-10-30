@@ -31,6 +31,7 @@ packages := replace_regex("
     tesseract
     tesseract-data-eng
     wireguard-tools
+    uv
     zed
     zsh
 ", '\s+', ' ')
