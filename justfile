@@ -107,6 +107,11 @@ _pc:
     until ollama list > /dev/null 2>&1; do sleep 1; done
     ollama pull qwen3.8:27b
 
+    # expose ollama on the lan
+    sudo mkdir -p /etc/systemd/system/ollama.service.d
+    printf '[Service]\nEnvironment="OLLAMA_HOST=0.0.0.0"\n' | sudo tee /etc/systemd/system/ollama.service.d/override.conf > /dev/null
+    sudo systemctl daemon-reload
+
 pc: _common _pc
     sudo hostnamectl set-hostname novigrad
 
@@ -144,3 +149,84 @@ _work:
 
 work: _common _laptop _work
     sudo hostnamectl set-hostname oxenfurt
+
+# --- homelab ---
+
+homelab_packages := replace_regex("
+    libvirt
+    nvidia-open
+    nvidia-utils
+    openssh
+    qemu
+    qemu-hw-usb-host
+    virt-install
+", '\s+', ' ')
+
+_homelab:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    sudo -v
+
+    # install paru
+    sudo pacman -Syu --needed --noconfirm base-devel git
+    tmpdir="$(mktemp -d)"
+    (
+        cd "$tmpdir"
+        git clone https://aur.archlinux.org/paru.git
+        cd paru
+        makepkg -sir --noconfirm
+    )
+    rm -rf "$tmpdir"
+
+    # replace the wired interface with a bridge for port forwarding
+    wired="$(nmcli -t -f DEVICE,TYPE device status | awk -F: '$2=="ethernet"{print $1; exit}')"
+    if [ -z "$wired" ]; then
+        echo "No wired interface found"
+        exit 1
+    fi
+    sudo nmcli con add type bridge ifname br0 con-name br0 ipv4.method auto ipv6.method ignore
+    sudo nmcli con add type bridge-slave ifname "$wired" con-name "${wired}-slave" master br0
+    sudo nmcli con up br0
+
+    # install the packages
+    paru -S --needed --noconfirm --skipreview {{ homelab_packages }}
+
+    # allow remote access
+    sudo systemctl enable sshd
+
+    # download the latest home assistant image
+    workdir="/var/lib/libvirt/images/haos"
+    compressed="${workdir}/haos.qcow2.xz"
+    image="${workdir}/haos.qcow2"
+    ha_url="$(curl -fsSL https://api.github.com/repos/home-assistant/operating-system/releases/latest \
+        | grep '"browser_download_url"' \
+        | grep 'haos_ova-' \
+        | grep '\.qcow2\.xz' \
+        | cut -d '"' -f4 \
+        | head -n1)"
+    sudo mkdir -p "$workdir"
+    sudo curl -fL "$ha_url" -o "$compressed"
+    sudo xz -dkf "$compressed"
+    sudo rm -f "$compressed"
+
+    # create and autostart the home assistant vm
+    sudo systemctl enable --now libvirtd
+    sudo virt-install \
+        --name haos \
+        --description "Home Assistant OS" \
+        --os-variant=generic \
+        --virt-type kvm \
+        --ram=8192 \
+        --vcpus=4 \
+        --disk "${image},bus=scsi" \
+        --controller type=scsi,model=virtio-scsi \
+        --network bridge=br0,model=virtio \
+        --hostdev 003.003 \
+        --import \
+        --graphics none \
+        --boot uefi
+    sudo virsh autostart haos
+
+homelab: _homelab
+    sudo hostnamectl set-hostname nilfgaard
