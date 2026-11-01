@@ -154,6 +154,7 @@ work: _common _laptop _work
 
 homelab_packages := replace_regex("
     libvirt
+    nftables
     nvidia-open
     nvidia-utils
     openssh

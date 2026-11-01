@@ -249,13 +249,15 @@ I value simplicity and minimalism. Even as a computer scientist, I use as little
 3. Persist the NAT rules for the `br0` bridge across reboots:
 
    ```bash
-   cat <<'EOF' | sudo tee /etc/iptables/iptables.rules > /dev/null
-   *nat
-   :POSTROUTING ACCEPT [0:0]
-   -A POSTROUTING -o br0 -j MASQUERADE
-   COMMIT
+   cat <<'EOF' | sudo tee /etc/nftables.conf > /dev/null
+   table ip nat {
+       chain postrouting {
+           type nat hook postrouting priority srcnat; policy accept;
+           oifname "br0" masquerade
+       }
+   }
    EOF
-   sudo systemctl enable --now iptables.service
+   sudo systemctl enable --now nftables
    ```
 
 #### Client
