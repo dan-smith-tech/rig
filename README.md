@@ -1,4 +1,4 @@
-# My Arch Linux Setup
+# Personal Linux Fleet
 
 I value simplicity and minimalism. Even as a computer scientist, I use as little software as possible. I want my operating system to be lightweight, performant, and free from telemetry and spyware. Full configurability and complete control over my system are essential to me. Therefore, I exclusively use [Arch Linux](https://archlinux.org/).
 
@@ -88,7 +88,7 @@ The base install is managed by [`install.sh`](install.sh), and I have a [`just` 
 
 12. Reboot the device.
 
-## Manual Configuration
+## Manual Steps
 
 ### Plasma
 
