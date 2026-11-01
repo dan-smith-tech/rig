@@ -2,6 +2,8 @@
 
 I value simplicity and minimalism. Even as a computer scientist, I use as little software as possible. I want my operating system to be lightweight, performant, and free from telemetry and spyware. Full configurability and complete control over my system are essential to me. Therefore, I exclusively use [Arch Linux](https://archlinux.org/).
 
+The base install is managed by [`install.sh`](install.sh), and I have a [`just` command](justfile) for each of my device setups. Any and all manual steps are documented below.
+
 ## Pre-installation
 
 1. Flash the [Arch Linux ISO](https://www.archlinux.org/download/) to a USB drive.
