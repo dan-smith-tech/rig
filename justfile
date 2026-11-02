@@ -11,7 +11,6 @@ packages := replace_regex("
     brave-bin
     catppuccin-plasma-colorscheme-mocha
     dolphin
-    git
     gwenview
     kscreen
     kwallet-pam
@@ -155,8 +154,9 @@ work: _common _laptop _work
 homelab_packages := replace_regex("
     libvirt
     nftables
-    nvidia-open
-    nvidia-utils
+    linux-headers
+    nvidia-580xx-dkms
+    nvidia-580xx-utils
     openssh
     qemu
     qemu-hw-usb-host
@@ -169,16 +169,8 @@ _homelab:
 
     sudo -v
 
-    # install paru
-    sudo pacman -Syu --needed --noconfirm base-devel git
-    tmpdir="$(mktemp -d)"
-    (
-        cd "$tmpdir"
-        git clone https://aur.archlinux.org/paru.git
-        cd paru
-        makepkg -sir --noconfirm
-    )
-    rm -rf "$tmpdir"
+    # disable auto plasma boot
+    sudo systemctl disable --now sddm
 
     # replace the wired interface with a bridge for port forwarding
     wired="$(nmcli -t -f DEVICE,TYPE device status | awk -F: '$2=="ethernet"{print $1; exit}')"
@@ -229,5 +221,68 @@ _homelab:
         --boot uefi
     sudo virsh autostart haos
 
-homelab: _homelab
+    # autologin only applies when sddm is started on demand
+    sudo mkdir -p /etc/sddm.conf.d
+    printf '[Autologin]\nUser=%s\nSession=plasma\n' "$USER" | sudo tee /etc/sddm.conf.d/autologin.conf > /dev/null
+
+    # commands called over ssh by home assistant
+    sudo tee /usr/local/bin/htpc-launch > /dev/null <<'EOF'
+    #!/bin/sh
+    app="${1:-${SSH_ORIGINAL_COMMAND:-}}"
+    app="$(printf '%s' "$app" | tr '[:upper:]' '[:lower:]')"
+
+    # close the app cleanly so the browser can flush its profile to disk
+    stop_app() {
+        pgrep -u "$USER" -f -- '--app=https://www.youtube.com/tv' > /dev/null || return 0
+        pkill -TERM -u "$USER" -f -- '--app=https://www.youtube.com/tv'
+        for _ in $(seq 1 15); do
+            pgrep -u "$USER" -f -- 'brave-htpc' > /dev/null || break
+            sleep 1
+        done
+        pkill -KILL -u "$USER" -f -- 'brave-htpc' 2>/dev/null || true
+        sleep 1
+    }
+
+    case "$app" in
+        off|stop)
+            stop_app
+            sudo systemctl stop sddm
+            sudo systemctl start getty@tty1
+            sudo chvt 1
+            ;;
+        youtube)
+            mkdir -p "$HOME/.cache"
+            echo "$app" > "$HOME/.cache/htpc"
+            stop_app
+            sudo systemctl restart sddm
+            ;;
+        *)
+            echo "unknown app: $app" >&2
+            exit 1
+            ;;
+    esac
+    EOF
+    sudo chmod 755 /usr/local/bin/htpc-launch
+
+    # started by plasma, runs whichever app was requested
+    # --autoplay-policy=no-user-gesture-required prevents black screen after off->youtube cucle
+    sudo tee /usr/local/bin/htpc-session > /dev/null <<'EOF'
+    #!/bin/sh
+    case "$(cat "$HOME/.cache/htpc")" in
+        youtube)
+            exec brave \
+                --password-store=basic \
+                --user-data-dir="$HOME/.config/brave-htpc" \
+                --user-agent='Mozilla/5.0 (PS4; Leanback Shell) Cobalt/26.lts.0-qa; compatible;' \
+                --app='https://www.youtube.com/tv' \
+                --autoplay-policy=no-user-gesture-required \
+                --start-fullscreen
+            ;;
+    esac
+    EOF
+    sudo chmod 755 /usr/local/bin/htpc-session
+    mkdir -p ~/.config/autostart
+    printf '[Desktop Entry]\nType=Application\nName=HTPC session\nExec=/usr/local/bin/htpc-session\n' > ~/.config/autostart/htpc-session.desktop
+
+homelab: _common _homelab
     sudo hostnamectl set-hostname nilfgaard
