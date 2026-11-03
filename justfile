@@ -235,8 +235,8 @@ _homelab:
 
     # close the app cleanly so the browser can flush its profile to disk
     stop_app() {
-        pgrep -u "$USER" -f -- '--app=https://www.youtube.com/tv' > /dev/null || return 0
-        pkill -TERM -u "$USER" -f -- '--app=https://www.youtube.com/tv'
+        pgrep -u "$USER" -f -- 'brave-htpc' > /dev/null || return 0
+        pkill -TERM -u "$USER" -f -- 'brave-htpc'
         for _ in $(seq 1 15); do
             pgrep -u "$USER" -f -- 'brave-htpc' > /dev/null || break
             sleep 1
@@ -252,7 +252,7 @@ _homelab:
             sudo systemctl start getty@tty1
             sudo chvt 1
             ;;
-        youtube)
+        youtube|netflix)
             mkdir -p "$HOME/.cache"
             echo "$app" > "$HOME/.cache/htpc"
             stop_app
@@ -266,11 +266,11 @@ _homelab:
     EOF
     sudo chmod 755 /usr/local/bin/htpc-launch
 
-    # started by plasma, runs whichever app was requested
-    # --autoplay-policy=no-user-gesture-required prevents black screen after off->youtube cucle
     sudo tee /usr/local/bin/htpc-session > /dev/null <<'EOF'
     #!/bin/sh
+    # started by plasma, runs whichever app was requested
     case "$(cat "$HOME/.cache/htpc")" in
+        # --autoplay-policy=no-user-gesture-required prevents black screen after off->youtube cycle
         youtube)
             exec brave \
                 --password-store=basic \
@@ -278,6 +278,13 @@ _homelab:
                 --user-agent='Mozilla/5.0 (PS4; Leanback Shell) Cobalt/26.lts.0-qa; compatible;' \
                 --app='https://www.youtube.com/tv' \
                 --autoplay-policy=no-user-gesture-required \
+                --start-fullscreen
+            ;;
+        netflix)
+            exec brave \
+                --password-store=basic \
+                --user-data-dir="$HOME/.config/brave-htpc" \
+                --app='https://www.netflix.com' \
                 --start-fullscreen
             ;;
     esac

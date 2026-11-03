@@ -369,7 +369,7 @@ Accept the host key on the first connection. The first command should start Plas
 2. Create the dropdown: Settings -> Devices & services -> Helpers -> Create helper -> Dropdown.
 
    1. Name: `HTPC app`
-   1. Options: `off`, `youtube`
+   1. Options: `off`, `youtube`, `netflix`
    1. Icon: `mdi:television`
 
    This creates `input_select.htpc_app`.
