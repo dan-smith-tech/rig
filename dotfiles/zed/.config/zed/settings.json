@@ -5,6 +5,15 @@
     "ollama": {
       "context_window": 75000,
       "api_url": "http://192.168.1.15:11434",
+      "available_models": [
+        {
+          "name": "qwen3.8:27b",
+          "display_name": "Qwen3.8 27B",
+          "max_tokens": 75000,
+          "supports_tools": true,
+          "supports_thinking": true,
+        },
+      ],
     },
   },
   "edit_predictions": {
@@ -21,6 +30,10 @@
   },
   "agent_servers": {},
   "agent": {
+    "auto_compact": {
+      "enabled": true,
+      "threshold": "85%",
+    },
     "threads_sidebar": {
       "position": "right",
     },
