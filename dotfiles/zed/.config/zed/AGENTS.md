@@ -53,6 +53,7 @@
 ## Keep context small
 
 - Use quiet or summary modes for builds, tests, linters and package managers, or pipe through tail or grep.
+- Ensure the `compact` skill is run before the context window fills up.
 - Never print whole logs, lockfiles, generated files or large JSON.
 - Search first, then read only the needed line range.
 - Do not re-read a file you just read unless it may have changed.
