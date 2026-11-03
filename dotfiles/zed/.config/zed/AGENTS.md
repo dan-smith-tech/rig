@@ -27,3 +27,24 @@ I may have changed files at any point since your last edit or since the last tim
 - Treat my edits as intentional. Keep them unless I have explicitly asked you to change them, and if something looks like a mistake, point it out instead of silently fixing it.
 - Update your own understanding of the codebase (including any notes or memory of file contents) to match what is on disk now, and repeat this check whenever a new round of edits begins, even within the same task.
 - If a file has changed in a way that affects earlier work, such as renamed symbols or moved code, mention it briefly in your final message.
+
+## Keep the context window small
+
+The context window is limited, and one oversized tool result can overflow it and break the whole thread, so avoid filling it with output you do not need.
+
+- Prefer quiet or summary modes for builds, tests, linters and package managers, so that only warnings and failures are printed. Where a tool has no quiet mode, pipe the output through tail or grep for the relevant part.
+- Never print whole log files, lockfiles, generated files or large JSON. Search them or read a limited range of lines instead.
+- Read only the part of a file you need. Use search to locate it first, and do not re-read a file you have only just read unless it may have changed.
+- Never fetch a whole repository page, a long README or any page likely to be large. Prefer a narrow source, such as Context7 for library documentation or a specific raw file. Fetch one page at a time and stop once you have what you need.
+- If a page or output may be long, say so and ask me to paste the relevant section instead of fetching it.
+- If the rtk command is installed, prefix noisy read-only commands with it, for example rtk git status, rtk git diff, rtk git log, rtk ls, rtk read, rtk grep and rtk cargo test. If a filtered output looks wrong, run rtk bypass <command> to see the raw output. If a wrapped command errors, run the plain command instead. Never use rtk to wrap any of the forbidden git operations above.
+- Keep replies short and plain. Do not restate the task, do not repeat code you have already shown, and do not add summaries that repeat the diff.
+
+## Look up current documentation
+
+Do not rely on memory for library or framework APIs, especially for recent versions.
+
+- When using a third party library, check the version in the project's dependency files, then use the Context7 tools to fetch documentation for that version before writing code against it: resolve the Context7 ID with `resolve-library-id` first, then query it with `query-docs`. Name the library (or Context7 ID like `/org/repo`) and the version in the query.
+- If Context7 has no result, say so and check the library's source or installed package instead of guessing.
+- If a Context7 call fails with an authentication or connection error, do not keep retrying and do not fall back to guessing from memory. Tell me the server appears disconnected and that I need to re-authenticate in Settings -> AI -> MCP Servers (sign in to context7 in the browser), then retry the call once I confirm it is active again.
+- Keep lookups narrow. Ask for the specific topic you need, not the whole documentation.

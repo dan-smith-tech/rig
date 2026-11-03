@@ -153,6 +153,26 @@ The base install is managed by [`install.sh`](install.sh), and I have a [`just` 
    git remote set-url origin git@github.com:dan-smith-tech/rig.git
    ```
 
+### Zed
+
+#### Context7
+
+1. Open **Settings** -> **AI** -> **MCP Servers** and select the sign-in link for `context7`. Zed opens a browser.
+
+1. Sign in with GitHub and authorise Context7.
+
+1. Back in Zed, `context7` should show as active and its tools available to the agent.
+
+When the token expires, the server shows as offline and its tools stop working. Repeat the steps above to re-authenticate.
+
+#### RTK
+
+1. After a few days of usage check the token savings:
+
+   ```bash
+   rtk gain
+   ```
+
 ### Steam
 
 1. Add the following Gamescope settings to launch settings:

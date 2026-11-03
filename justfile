@@ -22,6 +22,7 @@ packages := replace_regex("
     plasma-nm
     plasma-pa
     python
+    rtk-bin
     rustup
     sddm
     sddm-kcm

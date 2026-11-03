@@ -1,4 +1,9 @@
 {
+  "context_servers": {
+    "context7": {
+      "url": "https://mcp.context7.com/mcp/oauth",
+    },
+  },
   "diff_view_style": "unified",
   "format_on_save": "on",
   "language_models": {
@@ -32,7 +37,7 @@
   "agent": {
     "auto_compact": {
       "enabled": true,
-      "threshold": "85%",
+      "threshold": "75%",
     },
     "threads_sidebar": {
       "position": "right",
