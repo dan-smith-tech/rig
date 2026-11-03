@@ -397,6 +397,14 @@ Accept the host key on the first connection. The first command should start Plas
 1. Power Management (never sleep, never turn off the screen)
 1. Display and Monitor (check the TV resolution and scale)
 
+#### KDE Connect
+
+Use the phone as a mouse and keyboard to drive the HTPC. `kdeconnect` is installed and its daemon auto-starts with the Plasma session, so it only needs the session running.
+
+1. Install the [KDE Connect](https://kdeconnect.kde.org/) app on the phone, enable it, and make sure the phone and HTPC share a network.
+2. Start the HTPC session (pick any app in the `HTPC app` dropdown) and, for this one-time pairing, plug in a keyboard.
+3. From the phone, request pairing with the HTPC and then mouse and keyboard, and accept the prompts on the HTPC itself.
+
 #### YouTube pairing
 
 1. Choose `youtube` in the `HTPC app` dropdown.

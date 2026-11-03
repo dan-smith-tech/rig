@@ -153,6 +153,7 @@ work: _common _laptop _work
 # --- homelab ---
 
 homelab_packages := replace_regex("
+    kdeconnect
     libvirt
     nftables
     linux-headers
