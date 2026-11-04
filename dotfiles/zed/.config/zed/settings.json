@@ -8,13 +8,13 @@
   "format_on_save": "on",
   "language_models": {
     "ollama": {
-      "context_window": 75000,
+      "context_window": 80000,
       "api_url": "http://192.168.1.15:11434",
       "available_models": [
         {
           "name": "qwen3.8:27b",
           "display_name": "Qwen3.8 27B",
-          "max_tokens": 75000,
+          "max_tokens": 80000,
           "supports_tools": true,
           "supports_thinking": true,
         },
@@ -37,7 +37,6 @@
   "agent": {
     "auto_compact": {
       "enabled": true,
-      "threshold": "75%",
     },
     "threads_sidebar": {
       "position": "right",

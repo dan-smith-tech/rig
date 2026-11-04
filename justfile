@@ -109,7 +109,7 @@ _pc:
 
     # expose ollama on the lan
     sudo mkdir -p /etc/systemd/system/ollama.service.d
-    printf '[Service]\nEnvironment="OLLAMA_HOST=0.0.0.0"\nEnvironment="OLLAMA_CONTEXT_LENGTH=75000"\n' | sudo tee /etc/systemd/system/ollama.service.d/override.conf > /dev/null
+    printf '[Service]\nEnvironment="OLLAMA_HOST=0.0.0.0"\nEnvironment="OLLAMA_CONTEXT_LENGTH=80000"\n' | sudo tee /etc/systemd/system/ollama.service.d/override.conf > /dev/null
     sudo systemctl daemon-reload
 
 pc: _common _pc
