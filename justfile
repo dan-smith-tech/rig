@@ -102,15 +102,15 @@ _pc:
 
     paru -S --needed --noconfirm --skipreview {{ pc_packages }}
 
-    # configure and start ollama
+    # sync the ollama system config override
+    cd "{{ justfile_directory() }}/dotfiles"
+    sudo stow --adopt -t / ollama
+    git restore .
+
+    # start ollama and pull the model
     sudo systemctl enable --now ollama
     until ollama list > /dev/null 2>&1; do sleep 1; done
     ollama pull qwen3.8:27b
-
-    # expose ollama on the lan
-    sudo mkdir -p /etc/systemd/system/ollama.service.d
-    printf '[Service]\nEnvironment="OLLAMA_HOST=0.0.0.0"\nEnvironment="OLLAMA_CONTEXT_LENGTH=80000"\n' | sudo tee /etc/systemd/system/ollama.service.d/override.conf > /dev/null
-    sudo systemctl daemon-reload
 
 pc: _common _pc
     sudo hostnamectl set-hostname novigrad
