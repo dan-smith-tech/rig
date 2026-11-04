@@ -251,7 +251,7 @@ _homelab:
             sudo systemctl start getty@tty1
             sudo chvt 1
             ;;
-        youtube|netflix)
+        youtube|netflix|prime)
             mkdir -p "$HOME/.cache"
             echo "$app" > "$HOME/.cache/htpc"
             stop_app
@@ -284,6 +284,13 @@ _homelab:
                 --password-store=basic \
                 --user-data-dir="$HOME/.config/brave-htpc" \
                 --app='https://www.netflix.com' \
+                --start-fullscreen
+            ;;
+        prime)
+            exec brave \
+                --password-store=basic \
+                --user-data-dir="$HOME/.config/brave-htpc" \
+                --app='https://www.primevideo.com' \
                 --start-fullscreen
             ;;
     esac
