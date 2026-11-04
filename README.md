@@ -326,7 +326,7 @@ When the token expires, the server shows as offline and its tools stop working. 
 
 ### HTPC
 
-The homelab doubles as the HTPC. Plasma is not started at boot. Home Assistant starts it over SSH when an app is chosen, and Brave opens fullscreen in that app. Choosing `off` stops the session.
+The homelab doubles as the HTPC. Plasma is not started at boot. Home Assistant starts it over SSH when an app is chosen, and the app opens fullscreen. Choosing `off` stops the session.
 
 #### Home Assistant SSH key
 

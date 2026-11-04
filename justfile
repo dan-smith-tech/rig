@@ -235,14 +235,13 @@ _homelab:
 
     # close the app cleanly so the browser can flush its profile to disk
     stop_app() {
-        pgrep -u "$USER" -f -- 'brave-htpc' > /dev/null || return 0
-        pkill -TERM -u "$USER" -f -- 'brave-htpc'
+        pgrep -u "$USER" -f -- 'brave-htpc' > /dev/null || true
+        pkill -TERM -u "$USER" -f -- 'brave-htpc' 2>/dev/null || true
         for _ in $(seq 1 15); do
             pgrep -u "$USER" -f -- 'brave-htpc' > /dev/null || break
             sleep 1
         done
         pkill -KILL -u "$USER" -f -- 'brave-htpc' 2>/dev/null || true
-        sleep 1
     }
 
     case "$app" in
