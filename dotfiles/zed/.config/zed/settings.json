@@ -17,6 +17,7 @@
           "max_tokens": 80000,
           "supports_tools": true,
           "supports_thinking": true,
+          "supports_images": true,
         },
       ],
     },
