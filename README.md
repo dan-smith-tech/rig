@@ -96,6 +96,7 @@ The base install is managed by [`install.sh`](install.sh), and I have a [`just` 
 
    1. Global Theme Colours, Icons, Login Screen
    1. Keyboard -> Virtual Keyboard -> Plasma Keyboard
+   1. Display & Monitor -> HDR
    1. Wallpaper (plus Layout set to `Desktop`)
    1. Screen Locking
    1. Power Management
@@ -137,6 +138,7 @@ The base install is managed by [`install.sh`](install.sh), and I have a [`just` 
    1. Downloads
    1. System:
       1. Show full-screen reminder to press Esc on exit
+      1. Memory saver
 
 1. Customise the toolbar icons.
 
@@ -178,7 +180,7 @@ When the token expires, the server shows as offline and its tools stop working. 
 1. Add the following Gamescope settings to launch settings:
 
    ```bash
-   gamescope -W 3440 -H 1440 -w 3440 -h 1440 -r 144 --hdr-enabled --hdr-debug-force-output --fullscreen --force-grab-cursor -- env DXVK_HDR=1 ENABLE_HDR_WSI=1 %command% --launcher-skip
+   gamescope -W 3440 -H 1440 -r 144 --hdr-enabled --fullscreen --force-grab-cursor -- env DXVK_HDR=1 %command% --launcher-skip
    ```
 
 ### SSH

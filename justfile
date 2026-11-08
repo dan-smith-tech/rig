@@ -25,6 +25,7 @@ packages := replace_regex("
     tesseract-data-eng
     wireguard-tools
     uv
+    wl-clipboard
     zed
     zsh
 ", '\s+', ' ')
@@ -51,7 +52,7 @@ _common:
     # install shared packages
     paru -S --needed --noconfirm --skipreview {{ packages }}
     # remove bloat
-    sudo pacman -Rns discover plasma-workspace-wallpapers
+    sudo pacman -Rns  --noconfirm discover plasma-workspace-wallpapers
 
     # initialise packages
     rustup default stable
