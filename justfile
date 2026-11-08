@@ -4,29 +4,22 @@ set shell := ["bash", "-euo", "pipefail", "-c"]
 
 packages := replace_regex("
     ark
-    base-devel
-    bluedevil
     bluez
     bluez-utils
     brave-bin
     catppuccin-plasma-colorscheme-mocha
     dolphin
     gwenview
-    kscreen
-    kwallet-pam
+    kdeconnect
     kitty
     less
     okular
     openssh
-    plasma-desktop
-    plasma-nm
-    plasma-pa
+    plasma
     python
     rtk-bin
     rustup
     sddm
-    sddm-kcm
-    spectacle
     stow
     tesseract
     tesseract-data-eng
@@ -46,7 +39,6 @@ _common:
     sudo -v
 
     # install paru
-    sudo pacman -Syu --needed --noconfirm base-devel git
     tmpdir="$(mktemp -d)"
     (
         cd "$tmpdir"
@@ -56,8 +48,12 @@ _common:
     )
     rm -rf "$tmpdir"
 
-    # install the shared packages
+    # install shared packages
     paru -S --needed --noconfirm --skipreview {{ packages }}
+    # remove bloat
+    sudo pacman -Rns discover plasma-workspace-wallpapers
+
+    # initialise packages
     rustup default stable
     sudo systemctl enable sddm bluetooth
 
@@ -153,7 +149,6 @@ work: _common _laptop _work
 # --- homelab ---
 
 homelab_packages := replace_regex("
-    kdeconnect
     libvirt
     nftables
     linux-headers
