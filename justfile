@@ -223,6 +223,17 @@ _homelab:
     sudo mkdir -p /etc/sddm.conf.d
     printf '[Autologin]\nUser=%s\nSession=plasma\n' "$USER" | sudo tee /etc/sddm.conf.d/autologin.conf > /dev/null
 
+    # no login screens: boot and off are a black console, sessions only via htpc-launch
+    sudo systemctl set-default multi-user.target
+    sudo systemctl mask getty@tty1
+
+    # fully disable the kde wallet: no pam hook, no daemon, no stored wallet
+    sudo pacman -Rns --noconfirm kwallet-pam
+    pkill -u "$USER" kwalletd6 || true
+    rm -rf ~/.local/share/kwalletd ~/.local/share/kwalletd6
+    rm -f ~/.config/kwalletd5rc
+    systemctl --user mask 'dbus-:1.2-org.freedesktop.impl.portal.desktop.kwallet@.service' || true
+
     # commands called over ssh by home assistant
     sudo tee /usr/local/bin/htpc-launch > /dev/null <<'EOF'
     #!/bin/sh
@@ -244,7 +255,6 @@ _homelab:
         off|stop)
             stop_app
             sudo systemctl stop sddm
-            sudo systemctl start getty@tty1
             sudo chvt 1
             ;;
         http://*|https://*)
