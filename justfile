@@ -246,14 +246,14 @@ _homelab:
             sudo systemctl start getty@tty1
             sudo chvt 1
             ;;
-        youtube|netflix|prime)
+        http://*|https://*)
             mkdir -p "$HOME/.cache"
             echo "$app" > "$HOME/.cache/htpc"
             stop_app
             sudo systemctl restart sddm
             ;;
         *)
-            echo "unknown app: $app" >&2
+            echo "usage: htpc-launch off | htpc-launch https://..." >&2
             exit 1
             ;;
     esac
@@ -262,10 +262,11 @@ _homelab:
 
     sudo tee /usr/local/bin/htpc-session > /dev/null <<'EOF'
     #!/bin/sh
-    # started by plasma, runs whichever app was requested
-    case "$(cat "$HOME/.cache/htpc")" in
-        # --autoplay-policy=no-user-gesture-required prevents black screen after off->youtube cycle
-        youtube)
+    # started by plasma, opens the requested url in brave
+    url="$(cat "$HOME/.cache/htpc")"
+    case "$url" in
+        *youtube.com*)
+            # the tv user agent and autoplay policy prevent a black screen after an off->youtube cycle
             exec brave \
                 --password-store=basic \
                 --user-data-dir="$HOME/.config/brave-htpc" \
@@ -274,21 +275,13 @@ _homelab:
                 --autoplay-policy=no-user-gesture-required \
                 --start-fullscreen
             ;;
-        netflix)
-            exec brave \
-                --password-store=basic \
-                --user-data-dir="$HOME/.config/brave-htpc" \
-                --app='https://www.netflix.com' \
-                --start-fullscreen
-            ;;
-        prime)
-            exec brave \
-                --password-store=basic \
-                --user-data-dir="$HOME/.config/brave-htpc" \
-                --app='https://www.primevideo.com' \
-                --start-fullscreen
-            ;;
     esac
+
+    exec brave \
+        --password-store=basic \
+        --user-data-dir="$HOME/.config/brave-htpc" \
+        --app="$url" \
+        --start-fullscreen
     EOF
     sudo chmod 755 /usr/local/bin/htpc-session
     mkdir -p ~/.config/autostart

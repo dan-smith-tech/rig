@@ -351,7 +351,7 @@ The homelab doubles as the HTPC. Plasma is not started at boot. Home Assistant s
 5. Test from the Home Assistant terminal, using the homelab's LAN address (find it with `ip -4 addr show br0`):
 
    ```bash
-   ssh -i /config/.ssh/id_ed25519 dan@192.168.1.20 youtube
+   ssh -i /config/.ssh/id_ed25519 dan@192.168.1.20 https://www.youtube.com/tv
    ssh -i /config/.ssh/id_ed25519 dan@192.168.1.20 off
    ```
 
@@ -369,29 +369,22 @@ Accept the host key on the first connection. The first command should start Plas
 2. Create the dropdown: Settings -> Devices & services -> Helpers -> Create helper -> Dropdown.
 
    1. Name: `HTPC app`
-   1. Options: `off`, `youtube`, `netflix`, `prime`
+   1. Options: `Off`, `YouTube`, `Netflix`, `Prime`
    1. Icon: `mdi:television`
 
    This creates `input_select.htpc_app`.
 
-3. Create the automation: Settings -> Automations & scenes -> Create automation -> Create new automation. Open the three dots menu, choose `Edit in YAML`, and paste:
+3. Create the `HTPC app changed` automation (Settings -> Automations & scenes). It runs when `input_select.htpc_app` changes and does three things:
 
-   ```yaml
-   alias: HTPC app changed
-   triggers:
-     - trigger: state
-       entity_id: input_select.htpc_app
-   actions:
-     - action: shell_command.htpc_launch
-       data:
-         app: "{{ states('input_select.htpc_app') }}"
-   ```
+   1. Toggles the TV power (`script.toggle_tv_power`) when the choice and `input_boolean.is_tv_on` disagree: an app picked while the TV is off, or `Off` picked while the TV is on.
+   2. Sends the URL to the HTPC via `shell_command.htpc_launch`, looked up in a `url_map` automation variable keyed by the dropdown option: `YouTube: https://www.youtube.com/tv`, `Netflix: https://www.netflix.com`, `Prime: https://www.primevideo.com`. `Off` is not in the map, so the lookup falls back to `off` and the HTPC stops. The keys must match the option values exactly, case included.
+   3. Notifies the phone to launch the matching app: YouTube ReVanced for YouTube, KDE Connect for Netflix and Prime.
 
 4. Add the `HTPC app` dropdown to a dashboard. In other automations, set it with the `input_select.select_option` action.
 
 #### Plasma
 
-1. Choose `youtube` in the `HTPC app` dropdown, plug in a keyboard, and open **System Settings** to configure:
+1. Choose `YouTube` in the `HTPC app` dropdown, plug in a keyboard, and open **System Settings** to configure:
 
 1. Screen Locking (disable)
 1. Power Management (never sleep, never turn off the screen)
@@ -407,13 +400,14 @@ Use the phone as a mouse and keyboard to drive the HTPC. `kdeconnect` is install
 
 #### YouTube pairing
 
-1. Choose `youtube` in the `HTPC app` dropdown.
+1. Choose `YouTube` in the `HTPC app` dropdown.
 2. With a keyboard (or KDE Connect), open Settings in the YouTube TV interface and choose `Link with TV code`.
 3. In the YouTube phone app, go to Settings -> Watch on TV -> Enter TV code.
 4. The pairing lives in `~/.config/brave-htpc`, so it only needs doing once.
 
 #### Adding an app
 
-1. Add the name to the `case` in `htpc-launch` and a block in `htpc-session`, both inside the justfile.
-2. Add the name to the `input_select` options in Home Assistant.
-3. Rerun `just homelab`.
+1. Add the name to the `input_select` options in Home Assistant.
+2. Add `Name: https://...` to the `url_map` in the HTPC automation.
+3. Optionally, add a `choose` branch in the automation so the phone launches the matching app.
+4. Only if the app needs special browser flags: add a `case` in `htpc-session` inside the justfile.
