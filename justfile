@@ -274,6 +274,7 @@ _homelab:
     sudo tee /usr/local/bin/htpc-session > /dev/null <<'EOF'
     #!/bin/sh
     # started by plasma, opens the requested url in brave
+    # --ozone-platform=x11: netflix (widevine) video is black on the wayland backend with this nvidia driver
     url="$(cat "$HOME/.cache/htpc")"
     case "$url" in
         *youtube.com*)
@@ -284,6 +285,7 @@ _homelab:
                 --user-agent='Mozilla/5.0 (PS4; Leanback Shell) Cobalt/26.lts.0-qa; compatible;' \
                 --app='https://www.youtube.com/tv' \
                 --autoplay-policy=no-user-gesture-required \
+                --ozone-platform=x11 \
                 --start-fullscreen
             ;;
     esac
@@ -292,6 +294,7 @@ _homelab:
         --password-store=basic \
         --user-data-dir="$HOME/.config/brave-htpc" \
         --app="$url" \
+        --ozone-platform=x11 \
         --start-fullscreen
     EOF
     sudo chmod 755 /usr/local/bin/htpc-session
