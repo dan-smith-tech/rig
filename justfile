@@ -131,18 +131,28 @@ laptop: _common _laptop
 # --- work ---
 
 work_packages := replace_regex("
-    docker
-    docker-compose
     libreoffice-still
     nodejs
     npm
     php
+    podman
+    podman-compose
 ", '\s+', ' ')
 
 _work:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
     paru -S --needed --noconfirm --skipreview {{ work_packages }}
-    sudo usermod -aG docker "$USER"
-    sudo systemctl enable --now docker
+
+    # allow rootless users to bind low ports on the host (below 1024)
+    echo 'net.ipv4.ip_unprivileged_port_start=80' | sudo tee /etc/sysctl.d/99-unprivileged-ports.conf
+    sudo sysctl --system
+
+    # sync the podman low port bind permissions for inside the container
+    cd "{{ justfile_directory() }}/dotfiles"
+    stow --adopt -t ~ podman
+    git restore .
 
 work: _common _laptop _work
     sudo hostnamectl set-hostname oxenfurt
