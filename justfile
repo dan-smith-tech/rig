@@ -154,6 +154,9 @@ _work:
     stow --adopt -t ~ podman
     git restore .
 
+    # enable PHP iconv which is needed by phpactor (zed language server)
+    sudo sed -i 's/^;extension=iconv/extension=iconv/' /etc/php/php.ini
+
 work: _common _laptop _work
     sudo hostnamectl set-hostname oxenfurt
 
