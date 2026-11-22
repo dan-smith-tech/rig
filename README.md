@@ -185,6 +185,8 @@ When the token expires, the server shows as offline and its tools stop working. 
 
 ### SSH
 
+The pc's IP `192.168.1.15` is reserved in the router for its MAC (`10:7c:61:3e:15:f7`), so it is reachable from any VPN client (the tunnel routes `192.168.1.0/24`).
+
 #### Client
 
 1. Add a host entry to `~/.ssh/config` (using the server's LAN IP - find it on the server with `ip a`):
@@ -194,29 +196,43 @@ When the token expires, the server shows as offline and its tools stop working. 
        HostName 192.168.x.x
        User dan
        IdentityFile ~/.ssh/id_ed25519
+
+   Host pc
+       HostName 192.168.1.15
+       User dan
+       IdentityFile ~/.ssh/id_ed25519
    ```
 
-2. Copy the public key to the clipboard:
+2. On the client, the first connection to each destination (the homelab and the pc) installs your public key on that machine; enter its password when prompted:
 
    ```bash
-   wl-copy < ~/.ssh/id_ed25519.pub
+   ssh-copy-id homelab
+   ssh-copy-id pc
    ```
 
-#### Server
-
-1. Create the SSH directory and allow the client's public key:
+3. On the client, test key-based login to each destination:
 
    ```bash
-   mkdir -p ~/.ssh
-   chmod 700 ~/.ssh
-   nvim ~/.ssh/authorized_keys
+   ssh homelab
+   ssh pc
    ```
 
-   > Test from the client:
+4. Once key-based login works, disable password authentication on that machine (re-run on the homelab and the pc):
+
+   ```bash
+   cat <<'EOF' | sudo tee /etc/ssh/sshd_config.d/10-no-password.conf > /dev/null
+   PasswordAuthentication no
+   EOF
+   sudo systemctl reload sshd
+   ```
+
+   > Verify from the client that password login is now refused (keep the key-based session open):
    >
    > ```bash
-   > ssh homelab
+   > ssh -o PubkeyAuthentication=no <host>
    > ```
+   >
+   > It should fail immediately with `Permission denied (publickey)` rather than prompting for a password.
 
 ### VPN
 

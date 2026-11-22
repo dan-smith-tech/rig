@@ -99,6 +99,9 @@ _pc:
 
     paru -S --needed --noconfirm --skipreview {{ pc_packages }}
 
+    # allow remote access over ssh
+    sudo systemctl enable sshd
+
     # sync the ollama system config override
     cd "{{ justfile_directory() }}/dotfiles"
     sudo stow --adopt -t / ollama
