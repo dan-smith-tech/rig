@@ -134,7 +134,8 @@ laptop: _common _laptop
 # --- work ---
 
 work_packages := replace_regex("
-    libreoffice-still
+    python-eduvpn-client
+    python-eduvpn_common
     nodejs
     npm
     php
