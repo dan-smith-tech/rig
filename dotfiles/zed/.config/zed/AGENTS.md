@@ -61,3 +61,12 @@
 - If a page may be long, say so and ask me to paste the relevant section.
 - Keep replies short and plain. No task restating, repeated code or diff summaries.
 - In general, keep language simple and to the point.
+
+## Keep docs in sync
+
+- If you add, change or remove functionality of a tool that has local documentation in the project, update that documentation in the same task.
+- The docs must match the new behaviour exactly, whatever the change (features, options, defaults, output, examples, removed features).
+- Find the relevant docs first (README, docs folder, man pages, help text, doc comments) and check each one for stale content.
+- Do not leave docs for later, and do not finish while any doc disagrees with the code.
+- If you are unsure whether a doc is affected, check it. If it is, update it.
+- Mention in the final message which docs you updated.
